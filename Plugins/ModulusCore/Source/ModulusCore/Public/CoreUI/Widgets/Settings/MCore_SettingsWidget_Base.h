@@ -119,7 +119,11 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     TObjectPtr<UCommonTextBlock> Txt_SettingName;
-    
+
+    /** Optional. When supplied by the WBP, this widget is shown while the row is hovered or in the focus path, hidden otherwise. Set HitTestInvisible to avoid stealing hover events. */
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+    TObjectPtr<UWidget> Highlight;
+
     // ====================================================================
     // DATA
     // ====================================================================
@@ -150,11 +154,19 @@ protected:
 
     //~ Begin UUserWidget interface
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
     virtual void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
+    virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
     //~ End UUserWidget interface
 
     /** Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
     void BroadcastFocusedIfValid();
+
+    /** Updates Highlight visibility based on current hover and focus-path state. Safe to call when Highlight is unbound. */
+    void UpdateHighlightState();
+
+    bool bIsRowMouseOver = false;
+    bool bIsRowInFocusPath = false;
 
 private:
     UFUNCTION()

@@ -217,13 +217,31 @@ void UMCore_SettingsWidget_Base::NativeDestruct()
 void UMCore_SettingsWidget_Base::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	bIsRowMouseOver = true;
+	UpdateHighlightState();
 	BroadcastFocusedIfValid();
+}
+
+void UMCore_SettingsWidget_Base::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	bIsRowMouseOver = false;
+	UpdateHighlightState();
 }
 
 void UMCore_SettingsWidget_Base::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnAddedToFocusPath(InFocusEvent);
+	bIsRowInFocusPath = true;
+	UpdateHighlightState();
 	BroadcastFocusedIfValid();
+}
+
+void UMCore_SettingsWidget_Base::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
+{
+	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
+	bIsRowInFocusPath = false;
+	UpdateHighlightState();
 }
 
 void UMCore_SettingsWidget_Base::BroadcastFocusedIfValid()
@@ -231,6 +249,17 @@ void UMCore_SettingsWidget_Base::BroadcastFocusedIfValid()
 	if (const UMCore_DA_SettingDefinition* Def = GetSettingDefinition())
 	{
 		OnSettingFocused.Broadcast(Def->SettingTag, Def->Description);
+	}
+}
+
+void UMCore_SettingsWidget_Base::UpdateHighlightState()
+{
+	if (Highlight)
+	{
+		const ESlateVisibility NewVisibility = (bIsRowMouseOver || bIsRowInFocusPath)
+			? ESlateVisibility::HitTestInvisible
+			: ESlateVisibility::Hidden;
+		Highlight->SetVisibility(NewVisibility);
 	}
 }
 
