@@ -118,7 +118,8 @@ public:
 	/**
 	 * Settings collections for this project. All collections aggregate into a unified
 	 * settings inventory. Categories with the same GameplayTag merge across collections.
-	 * Settings sort by SortOrder within merged categories.
+	 * Display order follows each collection's Settings array; cross-collection ordering
+	 * follows the position of each collection in this array.
 	 */
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings",
 		meta=(DisplayName="Settings Collections"))
@@ -285,11 +286,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
 	UMCore_DA_SettingDefinition* FindSettingDefinitionByTag(const FGameplayTag& SettingTag) const;
 
-	/** Returns all settings across all collections for a category, sorted by SortOrder. */
+	/** Returns all settings across all collections for a category, ordered by collection
+	 *  array index then by setting array position within each collection. */
 	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
 	TArray<UMCore_DA_SettingDefinition*> GetSettingsForCategory(const FGameplayTag& CategoryTag) const;
 
-	/** Returns all unique category tags across all collections, sorted by minimum SortOrder per category. */
+	/** Returns all unique category tags across all collections in first-seen order
+	 *  (collection array index, then setting array position). */
 	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
 	TArray<FGameplayTag> GetAllSettingsCategories() const;
 

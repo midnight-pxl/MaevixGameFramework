@@ -140,10 +140,6 @@ public:
 		meta = (Categories = "Settings.Category"))
 	FGameplayTag CategoryTag;
 
-	/* Sort priority within category (lower = appears first) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Category")
-	int32 SortOrder{0};
-
 	/**
 	 * Optional visual grouping label within a settings page.
 	 * Settings sharing the same SectionName under a sub-category are rendered

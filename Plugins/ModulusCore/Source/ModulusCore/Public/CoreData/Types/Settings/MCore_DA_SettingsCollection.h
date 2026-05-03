@@ -18,7 +18,8 @@ class UMCore_DA_SettingDefinition;
 
 /**
  * Collection of setting definitions for a settings panel.
- * Provides category-based filtering, tag-based lookup, and sort-order awareness.
+ * Provides category-based filtering and tag-based lookup. Display order
+ * follows the position of each entry in the Settings array.
  *
  * Create as a DataAsset; add to UMCore_CoreSettings::SettingsCollections.
  */
@@ -46,11 +47,11 @@ public:
 	// METHODS
 	// ============================================================================
 
-	/** Returns all settings matching a category tag, sorted by SortOrder. */
+	/** Returns all settings matching a category tag, in Settings array order. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
 	TArray<UMCore_DA_SettingDefinition*> GetSettingsInCategory(const FGameplayTag& CategoryTag) const;
 
-	/** Returns all unique category tags, sorted by lowest SortOrder in each category. */
+	/** Returns all unique category tags in first-seen order across the Settings array. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
 	TArray<FGameplayTag> GetAllCategories() const;
 
