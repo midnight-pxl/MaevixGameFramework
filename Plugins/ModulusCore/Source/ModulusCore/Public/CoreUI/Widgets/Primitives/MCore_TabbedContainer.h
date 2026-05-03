@@ -101,6 +101,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tabbed Container")
 	void SetTabCycleActions(const FDataTableRowHandle& PrevAction, const FDataTableRowHandle& NextAction);
 
+	/**
+	 * Sets the TabList's visibility. Use Hidden (not Collapsed) to reserve layout space
+	 * when the tab list should be invisible but the page area should not shift.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Tabbed Container")
+	void SetTabListVisibility(ESlateVisibility InVisibility);
+
 	// ============================================================================
 	// TAB STATE
 	// ============================================================================

@@ -353,18 +353,21 @@ void UMCore_SettingsPanel::BuildPanel()
 		{
 			const TArray<FGameplayTag>& Children = ParentToChildren[ParentTag];
 
-			if (Children.Num() == 1)
-			{
-				PageWidget = BuildSinglePage(Children[0]);
-				TabIDToLeafTag.Add(TabID, Children[0]);
-			}
-			else
-			{
-				PageWidget = BuildTabbedPage(ParentTag, Children);
+			PageWidget = BuildTabbedPage(ParentTag, Children);
 
-				if (PageWidget)
+			if (PageWidget)
+			{
+				if (UMCore_TabbedContainer* AsTabbed = Cast<UMCore_TabbedContainer>(PageWidget))
 				{
-					MainTabToSubContainer.Add(TabID, Cast<UMCore_TabbedContainer>(PageWidget));
+					MainTabToSubContainer.Add(TabID, AsTabbed);
+				}
+
+				/* Single-child main tabs (Audio, Accessibility) still go through the tabbed-container
+				 * path so the page layout is shape-stable across all main tabs. The TabList is hidden
+				 * but space-reserved so settings content lands at the same Y on every tab. */
+				if (Children.Num() == 1)
+				{
+					TabIDToLeafTag.Add(TabID, Children[0]);
 				}
 			}
 		}
@@ -400,16 +403,6 @@ void UMCore_SettingsPanel::BuildPanel()
 	}
 
 	OnPanelBuildComplete();
-}
-
-UScrollBox* UMCore_SettingsPanel::BuildSinglePage(const FGameplayTag& SubcategoryTag)
-{
-	UScrollBox* ScrollBox = NewObject<UScrollBox>(this);
-	PopulatePage(ScrollBox, SubcategoryTag);
-
-	OnCategoryPageCreated(SubcategoryTag, ScrollBox);
-
-	return ScrollBox;
 }
 
 UMCore_TabbedContainer* UMCore_SettingsPanel::BuildTabbedPage(
@@ -454,6 +447,14 @@ UMCore_TabbedContainer* UMCore_SettingsPanel::BuildTabbedPage(
 	if (!FirstSubTabID.IsNone())
 	{
 		SubContainer->SelectTab(FirstSubTabID);
+	}
+
+	/* Hide the TabList (but reserve its layout space) when there's only one child.
+	 * This keeps the page area shape-consistent across all main tabs, so settings
+	 * content lands at the same Y position regardless of sub-tab presence. */
+	if (ChildTags.Num() <= 1)
+	{
+		SubContainer->SetTabListVisibility(ESlateVisibility::Hidden);
 	}
 
 	return SubContainer;

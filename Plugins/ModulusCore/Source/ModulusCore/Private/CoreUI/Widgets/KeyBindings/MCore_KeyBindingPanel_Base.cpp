@@ -21,6 +21,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/ScrollBox.h"
 #include "InputMappingContext.h"
+#include "Components/ScrollBoxSlot.h"
 #include "CoreData/Libraries/MCore_GameSettingsLibrary.h"
 #include "CoreData/Logging/LogModulusSettings.h"
 #include "GameFramework/PlayerController.h"
@@ -317,7 +318,10 @@ UScrollBox* UMCore_KeyBindingPanel_Base::BuildContextPage(APlayerController* Own
        UCommonTextBlock* Header = CreateThemedCategoryHeader(CategoryDisplayName);
        if (Header)
        {
-          ScrollBox->AddChild(Header);
+          if (UScrollBoxSlot* HeaderSlot = Cast<UScrollBoxSlot>(ScrollBox->AddChild(Header)))
+          {
+	          HeaderSlot->SetPadding(FMargin(16.0f, 0.0f, 0.0f, 4.0f));
+          }
           OnCategoryHeaderCreated(CategoryDisplayName, Header);
        }
 

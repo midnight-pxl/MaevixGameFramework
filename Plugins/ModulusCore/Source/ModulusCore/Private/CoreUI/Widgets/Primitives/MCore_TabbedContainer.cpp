@@ -197,6 +197,14 @@ void UMCore_TabbedContainer::SetTabCycleActions(
 	if (Btn_TabNext) { Btn_TabNext->SetInputAction(NextAction); }
 }
 
+void UMCore_TabbedContainer::SetTabListVisibility(ESlateVisibility InVisibility)
+{
+	if (TabList)
+	{
+		TabList->SetVisibility(InVisibility);
+	}
+}
+
 void UMCore_TabbedContainer::HandleTabSelected(FName TabNameID)
 {
 	TObjectPtr<UWidget>* FoundWidget = PageWidgets.Find(TabNameID);

@@ -136,8 +136,6 @@ private:
 	// ============================================================================
  
 	void BuildPanel();
- 
-	UScrollBox* BuildSinglePage(const FGameplayTag& SubcategoryTag);
 
 	UMCore_TabbedContainer* BuildTabbedPage(
 		const FGameplayTag& ParentTag, const TArray<FGameplayTag>& ChildTags);

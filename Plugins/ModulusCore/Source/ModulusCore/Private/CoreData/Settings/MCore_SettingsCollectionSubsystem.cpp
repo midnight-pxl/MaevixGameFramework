@@ -85,16 +85,12 @@ TArray<UMCore_DA_SettingDefinition*> UMCore_SettingsCollectionSubsystem::GetSett
 	{
 		Combined.Append(Collection->GetSettingsInCategory(CategoryTag));
 	}
-	Combined.Sort([](const UMCore_DA_SettingDefinition& A, const UMCore_DA_SettingDefinition& B)
-	{
-		return A.SortOrder < B.SortOrder;
-	});
 	return Combined;
 }
 
 TArray<FGameplayTag> UMCore_SettingsCollectionSubsystem::GetAllSettingsCategories()
 {
-	TMap<FGameplayTag, int32> CategoryMinSort;
+	TArray<FGameplayTag> Result;
 	for (const UMCore_DA_SettingsCollection* Collection : GetAllSettingsCollections())
 	{
 		for (const TObjectPtr<UMCore_DA_SettingDefinition>& Setting : Collection->GetAllSettings())
@@ -103,23 +99,9 @@ TArray<FGameplayTag> UMCore_SettingsCollectionSubsystem::GetAllSettingsCategorie
 			{
 				continue;
 			}
-			if (int32* Existing = CategoryMinSort.Find(Setting->CategoryTag))
-			{
-				*Existing = FMath::Min(*Existing, Setting->SortOrder);
-			}
-			else
-			{
-				CategoryMinSort.Add(Setting->CategoryTag, Setting->SortOrder);
-			}
+			Result.AddUnique(Setting->CategoryTag);
 		}
 	}
-
-	TArray<FGameplayTag> Result;
-	CategoryMinSort.GetKeys(Result);
-	Result.Sort([&CategoryMinSort](const FGameplayTag& A, const FGameplayTag& B)
-	{
-		return CategoryMinSort[A] < CategoryMinSort[B];
-	});
 	return Result;
 }
 
