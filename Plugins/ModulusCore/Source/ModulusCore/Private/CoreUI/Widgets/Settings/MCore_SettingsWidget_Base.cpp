@@ -214,6 +214,26 @@ void UMCore_SettingsWidget_Base::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+void UMCore_SettingsWidget_Base::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	BroadcastFocusedIfValid();
+}
+
+void UMCore_SettingsWidget_Base::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
+{
+	Super::NativeOnAddedToFocusPath(InFocusEvent);
+	BroadcastFocusedIfValid();
+}
+
+void UMCore_SettingsWidget_Base::BroadcastFocusedIfValid()
+{
+	if (const UMCore_DA_SettingDefinition* Def = GetSettingDefinition())
+	{
+		OnSettingFocused.Broadcast(Def->SettingTag, Def->Description);
+	}
+}
+
 void UMCore_SettingsWidget_Base::HandleLocalEvent(const FMCore_EventData& EventData)
 {
 	if (EventData.EventTag.MatchesTagExact(MCore_SettingsTags::MCore_Settings_Event_ExternalValueChange)

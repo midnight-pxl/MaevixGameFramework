@@ -148,6 +148,14 @@ protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeDestruct() override;
 
+    //~ Begin UUserWidget interface
+    virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    virtual void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
+    //~ End UUserWidget interface
+
+    /** Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
+    void BroadcastFocusedIfValid();
+
 private:
     UFUNCTION()
     void HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme);
