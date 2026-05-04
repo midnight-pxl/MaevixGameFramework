@@ -14,6 +14,7 @@ class UMCore_ConfirmationDialog;
 class UMCore_SettingsRevertCountdown;
 class UMCore_DA_SettingDefinition;
 class UMCore_SettingsWidget_Base;
+class UMCore_PDA_UITheme_Base;
 class UCommonTextBlock;
 class UScrollBox;
 
@@ -44,6 +45,8 @@ protected:
 	virtual void NativeOnDeactivated() override;
 	virtual void NativeDestruct() override;
 	virtual UWidget* NativeGetDesiredFocusTarget() const override;
+
+	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme) override;
  
 	// ============================================================================
 	// CONFIGURATION
@@ -223,6 +226,9 @@ private:
  
 	UPROPERTY()
 	TArray<TObjectPtr<UMCore_SettingsWidget_Base>> AllSettingWidgets;
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UCommonTextBlock>> SpawnedSectionHeaders;
 
 	UPROPERTY()
 	TArray<TObjectPtr<UMCore_TabbedContainer>> SubTabContainers;

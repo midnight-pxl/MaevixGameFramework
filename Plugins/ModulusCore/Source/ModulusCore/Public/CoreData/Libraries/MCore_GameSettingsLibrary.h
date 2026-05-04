@@ -212,9 +212,13 @@ private:
 		const UMCore_DA_SettingDefinition* Setting,
 		float FloatValue, int32 IntValue, bool BoolValue);
 
+	/* Definition is optional but required for any NamedSetter that needs back-
+	 * reference to its origin DA (e.g., MCore.SetActiveTheme reads ThemeOptions
+	 * from Definition). Passing nullptr is safe for legacy buckets. */
 	static bool ApplyViaNamedSetter(const FName& SetterName,
 		float FloatValue, int32 IntValue, bool bBoolValue,
-		const UObject* WorldContextObject);
+		const UObject* WorldContextObject,
+		const UMCore_DA_SettingDefinition* Definition = nullptr);
 
 	/* Type-aware reflection write. Three-value signature mirrors
 	 * ApplyViaNamedSetter: each typed cast picks the value matching its

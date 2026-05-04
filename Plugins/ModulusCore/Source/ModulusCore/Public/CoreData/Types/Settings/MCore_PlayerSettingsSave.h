@@ -67,6 +67,12 @@ class MODULUSCORE_API UMCore_PlayerSettingsSave : public USaveGame
 	UPROPERTY(SaveGame)
 	bool bQualityPresetInitialized{false};
 
+	/* Soft path to the user's active UMCore_PDA_UITheme_Base. Empty path =
+	   no override (UISubsystem falls back to project default). FSoftObjectPath
+	   survives asset moves/renames better than an FName ID. */
+	UPROPERTY(SaveGame)
+	FSoftObjectPath ActiveThemePath;
+
 	// ========================================================================
 	// GENERIC SETTING STORAGE
 	// ========================================================================

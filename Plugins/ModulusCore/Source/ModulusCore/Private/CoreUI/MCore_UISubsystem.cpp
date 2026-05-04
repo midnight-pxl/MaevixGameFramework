@@ -4,7 +4,10 @@
 
 #include "CoreData/Logging/LogModulusUI.h"
 #include "CoreData/DevSettings/MCore_CoreSettings.h"
+#include "CoreData/Settings/MCore_PlayerSettingsSubsystem.h"
 #include "CoreData/Tags/MCore_UILayerTags.h"
+#include "CoreData/Tags/MCore_ThemeTags.h"
+#include "CoreData/Types/Settings/MCore_PlayerSettingsSave.h"
 #include "CoreUI/Widgets/MCore_GameMenuHub.h"
 #include "CoreUI/Widgets/MCore_PrimaryGameLayout.h"
 #include "CoreData/Assets/UI/Themes/MCore_PDA_UITheme_Base.h"
@@ -31,13 +34,35 @@ void UMCore_UISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	LoadWidgetClasses();
 	CreatePrimaryGameLayout();
 	
-	/* Load theming for widget creation */
+	/* Load theming with fallback chain: saved → DefaultThemeIndex → first valid */
 	const UMCore_CoreSettings* DevSettings = UMCore_CoreSettings::Get();
-	if (DevSettings && DevSettings->IsValidThemeIndex(DevSettings->DefaultThemeIndex))
+	if (UMCore_PDA_UITheme_Base* SavedTheme = LoadSavedActiveTheme())
+	{
+		SetActiveTheme(SavedTheme);
+		UE_LOG(LogModulusUI, Verbose,
+			TEXT("UISubsystem::Initialize -- loaded saved theme '%s'"),
+			*SavedTheme->GetPathName());
+	}
+	else if (DevSettings && DevSettings->IsValidThemeIndex(DevSettings->DefaultThemeIndex))
 	{
 		SetActiveThemeByIndex(DevSettings->DefaultThemeIndex);
 		UE_LOG(LogModulusUI, Verbose, TEXT("UISubsystem::Initialize -- loaded default theme from index %d"),
 			DevSettings->DefaultThemeIndex);
+	}
+	else if (DevSettings)
+	{
+		/* Last-resort floor: pick the first valid AvailableThemes entry. */
+		for (int32 i = 0; i < DevSettings->AvailableThemes.Num(); ++i)
+		{
+			if (!DevSettings->AvailableThemes[i].ThemeAsset.IsNull())
+			{
+				UE_LOG(LogModulusUI, Warning,
+					TEXT("UISubsystem::Initialize -- DefaultThemeIndex misconfigured; falling back to first valid theme at index %d"),
+					i);
+				SetActiveThemeByIndex(i);
+				break;
+			}
+		}
 	}
 
 	/* Register default menu tabs from CoreSettings */
@@ -718,14 +743,85 @@ bool UMCore_UISubsystem::SetActiveThemeByIndex(int32 ThemeIndex)
 		return false;
 	}
 
-	CachedActiveTheme = ThemeEntry.ThemeAsset.LoadSynchronous();
+	UMCore_PDA_UITheme_Base* LoadedTheme = ThemeEntry.ThemeAsset.LoadSynchronous();
+	if (!LoadedTheme)
+	{
+		UE_LOG(LogModulusUI, Warning, TEXT("UISubsystem::SetActiveThemeByIndex -- failed to load theme at index %d"), ThemeIndex);
+		return false;
+	}
+
+	SetActiveTheme(LoadedTheme);
 	ActiveThemeIndex = ThemeIndex;
-	OnThemeChanged.Broadcast(CachedActiveTheme);
 
 	UE_LOG(LogModulusUI, Log, TEXT("UISubsystem::SetActiveThemeByIndex -- theme changed to '%s' (index %d)"),
 		*ThemeEntry.DisplayName.ToString(), ThemeIndex);
 
 	return true;
+}
+
+void UMCore_UISubsystem::SetActiveTheme(UMCore_PDA_UITheme_Base* NewTheme)
+{
+	if (!NewTheme || NewTheme == CachedActiveTheme) { return; }
+
+	CachedActiveTheme = NewTheme;
+	ActiveThemeIndex = INDEX_NONE;
+
+	OnThemeChanged.Broadcast(CachedActiveTheme);
+	BroadcastThemeChangedTagEvent(CachedActiveTheme);
+	PersistActiveTheme(CachedActiveTheme);
+
+	UE_LOG(LogModulusUI, Log, TEXT("UISubsystem::SetActiveTheme -- theme changed to '%s'"),
+		*NewTheme->GetPathName());
+}
+
+UMCore_PDA_UITheme_Base* UMCore_UISubsystem::LoadSavedActiveTheme() const
+{
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer) { return nullptr; }
+
+	UMCore_PlayerSettingsSubsystem* SettingsSubsystem = LocalPlayer->GetSubsystem<UMCore_PlayerSettingsSubsystem>();
+	if (!SettingsSubsystem) { return nullptr; }
+
+	UMCore_PlayerSettingsSave* Save = SettingsSubsystem->GetPlayerSettings();
+	if (!Save || !Save->ActiveThemePath.IsValid()) { return nullptr; }
+
+	return Cast<UMCore_PDA_UITheme_Base>(Save->ActiveThemePath.TryLoad());
+}
+
+void UMCore_UISubsystem::PersistActiveTheme(UMCore_PDA_UITheme_Base* NewTheme)
+{
+	if (!NewTheme) { return; }
+
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer) { return; }
+
+	UMCore_PlayerSettingsSubsystem* SettingsSubsystem = LocalPlayer->GetSubsystem<UMCore_PlayerSettingsSubsystem>();
+	if (!SettingsSubsystem) { return; }
+
+	UMCore_PlayerSettingsSave* Save = SettingsSubsystem->GetPlayerSettings();
+	if (!Save) { return; }
+
+	const FSoftObjectPath NewPath(NewTheme);
+	if (Save->ActiveThemePath == NewPath) { return; }
+
+	Save->ActiveThemePath = NewPath;
+	Save->SaveSettings();
+}
+
+void UMCore_UISubsystem::BroadcastThemeChangedTagEvent(UMCore_PDA_UITheme_Base* NewTheme)
+{
+	if (!NewTheme) { return; }
+
+	ULocalPlayer* LocalPlayer = GetLocalPlayer();
+	if (!LocalPlayer) { return; }
+
+	UMCore_LocalEventSubsystem* LES = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>();
+	if (!LES) { return; }
+
+	FMCore_EventData EventData;
+	EventData.EventTag = MCore_ThemeTags::MCore_Theme_Changed;
+	EventData.EventParams.Emplace(TEXT("ThemePath"), NewTheme->GetPathName());
+	LES->BroadcastLocalEvent(EventData);
 }
 
 void UMCore_UISubsystem::NotifyTextSizeChanged()

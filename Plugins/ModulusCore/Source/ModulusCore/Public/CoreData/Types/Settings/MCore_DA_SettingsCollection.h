@@ -12,6 +12,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "MCore_SettingsTypes.h"
 #include "MCore_DA_SettingsCollection.generated.h"
 
 class UMCore_DA_SettingDefinition;
@@ -39,7 +40,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
 	TArray<TObjectPtr<UMCore_DA_SettingDefinition>> Settings;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection",
+		meta = (TitleProperty = "SectionDisplayName"))
+	TArray<FMCore_SettingsSection> Sections;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
 	TMap<FGameplayTag, FText> CategoryDisplayName;
 

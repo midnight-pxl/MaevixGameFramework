@@ -67,3 +67,17 @@ struct MODULUSCORE_API FMCore_BoolSettingChange
         meta = (DisplayName = "Value"))
     bool Value = false;
 };
+
+/* Visual section grouping declared on a SettingsCollection. Settings whose
+ * SectionID matches render under a shared header. */
+USTRUCT(BlueprintType)
+struct MODULUSCORE_API FMCore_SettingsSection
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Section")
+    FName SectionID;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Section")
+    FText SectionDisplayName;
+};

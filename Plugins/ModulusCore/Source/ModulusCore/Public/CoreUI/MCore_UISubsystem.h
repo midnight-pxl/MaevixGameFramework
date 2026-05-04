@@ -147,6 +147,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
 	bool SetActiveThemeByIndex(int32 ThemeIndex);
 
+	/**
+	 * Apply NewTheme as the active theme. Broadcasts OnThemeChanged delegate
+	 * AND the MCore.Theme.Changed local event tag, then persists the choice
+	 * to UMCore_PlayerSettingsSave. No-op if NewTheme is null or already
+	 * active. ActiveThemeIndex is set to INDEX_NONE because the asset may
+	 * not be registered in CoreSettings::AvailableThemes.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
+	void SetActiveTheme(UMCore_PDA_UITheme_Base* NewTheme);
+
 	/** Re-broadcasts OnThemeChanged so all widgets re-resolve text styles at the new size index. */
 	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
 	void NotifyTextSizeChanged();
@@ -188,6 +198,18 @@ private:
 	void OnPlayerControllerReady(APlayerController* OwningPlayer);
 	
 	void HandleLocalEvent(const FMCore_EventData& EventData);
+
+	/* Resolves a saved theme from the player save. Returns nullptr if no save
+	 * exists, ActiveThemePath is empty, or the asset failed to load. */
+	UMCore_PDA_UITheme_Base* LoadSavedActiveTheme() const;
+
+	/* Writes NewTheme's path to the player save and flushes to disk. */
+	void PersistActiveTheme(UMCore_PDA_UITheme_Base* NewTheme);
+
+	/* Broadcasts MCore.Theme.Changed via the local event subsystem, payload
+	 * carries ThemePath. Cross-plugin subscribers can react without coupling
+	 * to UISubsystem directly. */
+	void BroadcastThemeChangedTagEvent(UMCore_PDA_UITheme_Base* NewTheme);
 
 	FDelegateHandle PlayerControllerReadyHandle;
 	FDelegateHandle LocalEventHandle;

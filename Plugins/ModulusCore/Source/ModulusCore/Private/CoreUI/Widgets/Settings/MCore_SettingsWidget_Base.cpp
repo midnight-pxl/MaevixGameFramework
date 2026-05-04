@@ -40,12 +40,12 @@ void UMCore_SettingsWidget_Base::InitFromDefinition(const UMCore_DA_SettingDefin
 
 	if (Txt_SettingName)
 	{
-		Txt_SettingName->SetText(InDefinition->DisplayName);
+		Txt_SettingName->SetText(InDefinition->SettingDisplayName);
 	}
 
 	UE_LOG(LogModulusSettings, Verbose,
 		TEXT("SettingsWidget_Base::InitFromDefinition -- initialized from definition: %s (%s), widget=%s"),
-		*InDefinition->DisplayName.ToString(),
+		*InDefinition->SettingDisplayName.ToString(),
 		*InDefinition->SettingTag.ToString(),
 		*GetNameSafe(this));
 

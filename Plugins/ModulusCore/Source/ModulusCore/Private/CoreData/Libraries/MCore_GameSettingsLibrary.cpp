@@ -2,6 +2,7 @@
 
 #include "CoreData/Libraries/MCore_GameSettingsLibrary.h"
 
+#include "CoreData/Assets/UI/Themes/MCore_PDA_UITheme_Base.h"
 #include "CoreData/Settings/MCore_PlayerSettingsSubsystem.h"
 #include "CoreData/Logging/LogModulusSettings.h"
 #include "CoreData/Types/Settings/MCore_PlayerSettingsSave.h"
@@ -10,6 +11,7 @@
 #include "CoreData/Types/Settings/MCore_DA_SettingsCollection.h"
 #include "CoreData/Tags/MCore_SettingsTags.h"
 #include "CoreData/DevSettings/MCore_CoreSettings.h"
+#include "CoreUI/MCore_UISubsystem.h"
 
 #include "Engine/World.h"
 #include "Engine/Engine.h"
@@ -642,7 +644,7 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
 	/* Phase 1 — GameUserSettings (three-bucket dispatcher) */
 	if (!Setting->NamedSetter.IsNone())
 	{
-		ApplyViaNamedSetter(Setting->NamedSetter, FloatValue, IntValue, BoolValue, WorldContextObject);
+		ApplyViaNamedSetter(Setting->NamedSetter, FloatValue, IntValue, BoolValue, WorldContextObject, Setting);
 	}
 
 	/* Phase 2 — Console Variables */
@@ -718,12 +720,52 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
  * the FName matched none of them. */
 bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	float FloatValue, int32 IntValue, bool bBoolValue,
-	const UObject* WorldContextObject)
+	const UObject* WorldContextObject,
+	const UMCore_DA_SettingDefinition* Definition)
 {
 	if (SetterName.IsNone()) { return false; }
 
 	UE_LOG(LogModulusSettings, Verbose,
 		TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- dispatch '%s'"), *SetterName.ToString());
+
+	/* Theme apply — does not depend on UGameUserSettings; resolves the target
+	 * theme asset from Definition->ThemeOptions and hands off to UISubsystem. */
+	if (SetterName == TEXT("MCore.SetActiveTheme"))
+	{
+		if (!Definition || !Definition->ThemeOptions.IsValidIndex(IntValue))
+		{
+			UE_LOG(LogModulusSettings, Warning,
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: invalid index %d or missing Definition"),
+				IntValue);
+			return false;
+		}
+
+		UMCore_PDA_UITheme_Base* Theme =
+			Definition->ThemeOptions[IntValue].ThemeAsset.LoadSynchronous();
+		if (!Theme)
+		{
+			UE_LOG(LogModulusSettings, Warning,
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: asset failed to load at index %d"),
+				IntValue);
+			return false;
+		}
+
+		ULocalPlayer* LocalPlayer = WorldContextObject
+			? GEngine->GetFirstGamePlayer(WorldContextObject->GetWorld())
+			: nullptr;
+		UMCore_UISubsystem* UI = LocalPlayer
+			? LocalPlayer->GetSubsystem<UMCore_UISubsystem>()
+			: nullptr;
+		if (!UI)
+		{
+			UE_LOG(LogModulusSettings, Warning,
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: no UISubsystem for context"));
+			return false;
+		}
+
+		UI->SetActiveTheme(Theme);
+		return true;
+	}
 
 	// Editor-unsafe keys: these mutate the host process's window/display
 	// state when invoked in PIE, which freezes/destabilizes the editor.

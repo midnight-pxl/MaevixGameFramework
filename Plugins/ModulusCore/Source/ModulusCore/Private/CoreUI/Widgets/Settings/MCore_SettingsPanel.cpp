@@ -2,9 +2,13 @@
 
 #include "CoreUI/Widgets/Settings/MCore_SettingsPanel.h"
 
+#include "CoreData/Assets/UI/Themes/MCore_PDA_UITheme_Base.h"
 #include "CoreData/DevSettings/MCore_CoreSettings.h"
 #include "CoreData/Libraries/MCore_GameSettingsLibrary.h"
+#include "CoreData/Libraries/MCore_ThemeLibrary.h"
 #include "CoreData/Types/Settings/MCore_DA_SettingDefinition.h"
+#include "CoreData/Types/Settings/MCore_DA_SettingsCollection.h"
+#include "CoreData/Types/Settings/MCore_SettingsTypes.h"
 #include "CoreUI/MCore_UISubsystem.h"
 #include "CoreUI/Widgets/Primitives/MCore_ActionButton.h"
 #include "CoreUI/Widgets/Primitives/MCore_ButtonBase.h"
@@ -20,6 +24,7 @@
 
 #include "CommonTextBlock.h"
 #include "Components/ScrollBox.h"
+#include "Components/ScrollBoxSlot.h"
 #include "Components/SizeBox.h"
 
 // ============================================================================
@@ -241,6 +246,7 @@ void UMCore_SettingsPanel::NativeDestruct()
 		}
 	}
 	AllSettingWidgets.Empty();
+	SpawnedSectionHeaders.Reset();
 
 	if (PendingConfirmationDialog.IsValid())
 	{
@@ -281,6 +287,26 @@ void UMCore_SettingsPanel::OnPanelBuildComplete_Implementation()
 }
 
 // ============================================================================
+// THEME
+// ============================================================================
+
+void UMCore_SettingsPanel::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme)
+{
+	Super::ApplyTheme_Implementation(NewTheme);
+	if (!NewTheme) { return; }
+
+	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
+	for (UCommonTextBlock* Header : SpawnedSectionHeaders)
+	{
+		if (Header)
+		{
+			UMCore_ThemeLibrary::ApplyTextStyleFromTheme(
+				LocalPlayer, Header, NewTheme->HeadingTextStyle);
+		}
+	}
+}
+
+// ============================================================================
 // PANEL BUILD
 // ============================================================================
 
@@ -301,6 +327,7 @@ void UMCore_SettingsPanel::BuildPanel()
 	TabbedContainer_Main->ClearAllTabs();
 	TabIDToLeafTag.Reset();
 	AllSettingWidgets.Reset();
+	SpawnedSectionHeaders.Reset();
 	SubTabContainers.Reset();
 	MainTabToSubContainer.Reset();
 
@@ -463,22 +490,90 @@ UMCore_TabbedContainer* UMCore_SettingsPanel::BuildTabbedPage(
 void UMCore_SettingsPanel::PopulatePage(
 	UScrollBox* ScrollBox, const FGameplayTag& CategoryTag)
 {
-	TArray<UMCore_DA_SettingDefinition*> Definitions = UMCore_CoreSettings::Get()->GetSettingsForCategory(CategoryTag);
+	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 
-	for (const UMCore_DA_SettingDefinition* Definition : Definitions)
+	TArray<UMCore_DA_SettingDefinition*> Definitions =
+		CoreSettings->GetSettingsForCategory(CategoryTag);
+
+	/* Merge Sections from all loaded collections; first-seen-wins on SectionID.
+	 * The bucket-empty check below filters sections nobody references, so we
+	 * don't pre-filter by category here. */
+	TArray<FMCore_SettingsSection> MergedSections;
+	TSet<FName> SeenSectionIDs;
+	for (const UMCore_DA_SettingsCollection* Collection : CoreSettings->GetAllSettingsCollections())
 	{
-		if (!Definition)
+		if (!Collection) { continue; }
+		for (const FMCore_SettingsSection& Section : Collection->Sections)
 		{
-			continue;
+			if (Section.SectionID.IsNone()) { continue; }
+			bool bDup = false;
+			SeenSectionIDs.Add(Section.SectionID, &bDup);
+			if (!bDup) { MergedSections.Add(Section); }
 		}
+	}
 
-		if (UMCore_SettingsWidget_Base* Widget = CreateSettingWidget(Definition))
+	/* Bucket settings by SectionID; preserve in-array order within each bucket. */
+	TMap<FName, TArray<UMCore_DA_SettingDefinition*>> Buckets;
+	for (UMCore_DA_SettingDefinition* Def : Definitions)
+	{
+		if (!Def) { continue; }
+		Buckets.FindOrAdd(Def->SectionID).Add(Def);
+	}
+
+	auto AppendSetting = [&](const UMCore_DA_SettingDefinition* Def)
+	{
+		if (UMCore_SettingsWidget_Base* Widget = CreateSettingWidget(Def))
 		{
 			ScrollBox->AddChild(Widget);
 			AllSettingWidgets.Add(Widget);
-
 			Widget->OnSettingFocused.AddDynamic(this, &ThisClass::HandleSettingFocused);
 		}
+	};
+
+	auto AppendHeader = [&](const FText& HeaderText)
+	{
+		UCommonTextBlock* Header = NewObject<UCommonTextBlock>(this);
+		Header->SetText(HeaderText);
+		if (CachedTheme.IsValid())
+		{
+			UMCore_ThemeLibrary::ApplyTextStyleFromTheme(
+				GetOwningLocalPlayer(), Header, CachedTheme->HeadingTextStyle);
+		}
+		if (UScrollBoxSlot* Slot = Cast<UScrollBoxSlot>(ScrollBox->AddChild(Header)))
+		{
+			Slot->SetPadding(FMargin(16.0f, 0.0f, 0.0f, 4.0f));
+		}
+		SpawnedSectionHeaders.Add(Header);
+	};
+
+	/* 1. Unsectioned bucket (NAME_None) renders first, no header. */
+	if (TArray<UMCore_DA_SettingDefinition*>* NoneBucket = Buckets.Find(NAME_None))
+	{
+		for (const UMCore_DA_SettingDefinition* Def : *NoneBucket) { AppendSetting(Def); }
+		Buckets.Remove(NAME_None);
+	}
+
+	/* 2. Declared sections, in declaration order. */
+	TSet<FName> RenderedSectionIDs;
+	for (const FMCore_SettingsSection& Section : MergedSections)
+	{
+		TArray<UMCore_DA_SettingDefinition*>* Bucket = Buckets.Find(Section.SectionID);
+		if (!Bucket || Bucket->Num() == 0) { continue; }
+
+		AppendHeader(Section.SectionDisplayName);
+		for (const UMCore_DA_SettingDefinition* Def : *Bucket) { AppendSetting(Def); }
+		RenderedSectionIDs.Add(Section.SectionID);
+	}
+
+	/* 3. Orphan settings (SectionID set but undeclared) — append unheaded.
+	 *    Editor-time validation surfaces this as a warning. */
+	for (auto& Pair : Buckets)
+	{
+		if (Pair.Key.IsNone() || RenderedSectionIDs.Contains(Pair.Key)) { continue; }
+		UE_LOG(LogModulusSettings, Verbose,
+			TEXT("SettingsPanel::PopulatePage -- orphan SectionID '%s' for category '%s'"),
+			*Pair.Key.ToString(), *CategoryTag.ToString());
+		for (const UMCore_DA_SettingDefinition* Def : Pair.Value) { AppendSetting(Def); }
 	}
 }
 

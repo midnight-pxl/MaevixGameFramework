@@ -98,6 +98,7 @@ namespace MCore_SettingsTags
     UE_DEFINE_GAMEPLAY_TAG(MCore_Settings_Accessibility_ColorblindMode, "MCore.Settings.Accessibility.ColorblindMode");
     UE_DEFINE_GAMEPLAY_TAG(MCore_Settings_Accessibility_ColorblindStrength, "MCore.Settings.Accessibility.ColorblindStrength");
     UE_DEFINE_GAMEPLAY_TAG(MCore_Settings_Accessibility_TooltipDelay, "MCore.Settings.Accessibility.TooltipDelay");
+    UE_DEFINE_GAMEPLAY_TAG(MCore_Settings_Accessibility_ActiveTheme, "MCore.Settings.Accessibility.ActiveTheme");
 
     // ========================================================================
     // SETTING EVENTS

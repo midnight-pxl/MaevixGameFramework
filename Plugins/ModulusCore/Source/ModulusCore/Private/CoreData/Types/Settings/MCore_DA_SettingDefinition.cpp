@@ -15,7 +15,7 @@ FString UMCore_DA_SettingDefinition::GetSaveKey() const
 
 bool UMCore_DA_SettingDefinition::IsValid() const
 {
-	if (DisplayName.IsEmpty() || !SettingTag.IsValid()) { return false; }
+	if (SettingDisplayName.IsEmpty() || !SettingTag.IsValid()) { return false; }
 
 	switch (SettingType)
 	{
@@ -25,9 +25,12 @@ bool UMCore_DA_SettingDefinition::IsValid() const
 		&& DefaultValue <= MaxValue;
 
 	case EMCore_SettingType::Dropdown:
-		return DropdownOptions.Num() > 0
+	{
+		const int32 OptionCount = ThemeOptions.Num() > 0 ? ThemeOptions.Num() : DropdownOptions.Num();
+		return OptionCount > 0
 		&& DefaultDropdownIndex >= 0
-		&& DefaultDropdownIndex < DropdownOptions.Num();
+		&& DefaultDropdownIndex < OptionCount;
+	}
 
 	case EMCore_SettingType::Toggle:
 	default:
@@ -48,10 +51,10 @@ EDataValidationResult UMCore_DA_SettingDefinition::IsDataValid(FDataValidationCo
 		Result = EDataValidationResult::Invalid;
 	}
 
-	if (DisplayName.IsEmpty())
+	if (SettingDisplayName.IsEmpty())
 	{
 		Context.AddError(FText::FromString(
-			FString::Printf(TEXT("DisplayName: %s is empty"), *GetName())));
+			FString::Printf(TEXT("SettingDisplayName: %s is empty"), *GetName())));
 		Result = EDataValidationResult::Invalid;
 	}
 
@@ -74,20 +77,46 @@ EDataValidationResult UMCore_DA_SettingDefinition::IsDataValid(FDataValidationCo
 		break;
 
 	case EMCore_SettingType::Dropdown:
-		if (DropdownOptions.Num() == 0)
+	{
+		const bool bUsesThemeOptions = ThemeOptions.Num() > 0;
+		const int32 OptionCount = bUsesThemeOptions ? ThemeOptions.Num() : DropdownOptions.Num();
+
+		if (OptionCount == 0)
 		{
 			Context.AddError(FText::FromString(
 				FString::Printf(TEXT("%s: Dropdown has no options"), *GetName())));
 			Result = EDataValidationResult::Invalid;
 		}
-		else if (DefaultDropdownIndex < 0 || DefaultDropdownIndex >= DropdownOptions.Num())
+		else if (DefaultDropdownIndex < 0 || DefaultDropdownIndex >= OptionCount)
 		{
 			Context.AddError(FText::FromString(
 				FString::Printf(TEXT("%s: Dropdown index is out of range [0, %d]"),
-					*GetName(), DropdownOptions.Num()-1)));
+					*GetName(), OptionCount-1)));
 			Result = EDataValidationResult::Invalid;
 		}
+
+		if (bUsesThemeOptions)
+		{
+			for (int32 i = 0; i < ThemeOptions.Num(); ++i)
+			{
+				if (ThemeOptions[i].ThemeAsset.IsNull())
+				{
+					Context.AddError(FText::FromString(FString::Printf(
+						TEXT("%s: ThemeOptions[%d] has null ThemeAsset"),
+						*GetName(), i)));
+					Result = EDataValidationResult::Invalid;
+				}
+			}
+
+			if (NamedSetter != TEXT("MCore.SetActiveTheme"))
+			{
+				Context.AddWarning(FText::FromString(FString::Printf(
+					TEXT("%s: ThemeOptions is non-empty but NamedSetter is '%s' (expected 'MCore.SetActiveTheme')"),
+					*GetName(), *NamedSetter.ToString())));
+			}
+		}
 		break;
+	}
 
 	default:
 		break;

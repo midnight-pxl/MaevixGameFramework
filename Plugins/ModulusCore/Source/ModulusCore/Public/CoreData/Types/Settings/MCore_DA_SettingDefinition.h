@@ -13,6 +13,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "CoreData/Types/UI/MCore_ThemeTypes.h"
 #include "MCore_SettingsTypes.h"
 #include "MCore_DA_SettingDefinition.generated.h"
 
@@ -70,7 +71,7 @@ public:
 	FGameplayTag SettingTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
-	FText DisplayName;
+	FText SettingDisplayName;
 
 	/* Optional tooltip/description */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
@@ -131,6 +132,20 @@ public:
 				EditConditionHides, ClampMin = "0"))
 	int32 DefaultDropdownIndex{0};
 
+	/**
+	 * When SettingType == Dropdown and this array is non-empty, the dropdown
+	 * sources its options from these theme entries instead of DropdownOptions.
+	 * On apply, the selected index resolves to ThemeOptions[idx].ThemeAsset and
+	 * is handed to UISubsystem->SetActiveTheme().
+	 *
+	 * Pair with NamedSetter = "MCore.SetActiveTheme" so the dispatcher routes
+	 * to the theme-apply branch.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Dropdown",
+		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
+				EditConditionHides, TitleProperty = "DisplayName"))
+	TArray<FMCore_ThemeEntry> ThemeOptions;
+
 	// ============================================================================
 	// CATEGORIZATION
 	// ============================================================================
@@ -141,12 +156,12 @@ public:
 	FGameplayTag CategoryTag;
 
 	/**
-	 * Optional visual grouping label within a settings page.
-	 * Settings sharing the same SectionName under a sub-category are rendered
-	 * under a shared section header. Empty means no section header.
+	 * Optional section binding. Must match an FMCore_SettingsSection::SectionID
+	 * declared on the parent collection. NAME_None = unsectioned (renders at
+	 * top of page, no header).
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Setting|Category")
-	FText SectionName;
+	FName SectionID;
 
 	// ============================================================================
 	// APPLY CONFIGURATION
@@ -225,7 +240,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
 	FString GetSaveKey() const;
 
-	/** Validates this definition. Returns false if SettingTag/DisplayName is missing or values are out of range. */
+	/** Validates this definition. Returns false if SettingTag/SettingDisplayName is missing or values are out of range. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
 	bool IsValid() const;
 
