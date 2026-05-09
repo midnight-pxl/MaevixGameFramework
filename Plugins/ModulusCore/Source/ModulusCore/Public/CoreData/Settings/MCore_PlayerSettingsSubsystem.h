@@ -31,6 +31,8 @@ class MODULUSCORE_API UMCore_PlayerSettingsSubsystem : public ULocalPlayerSubsys
 	GENERATED_BODY()
 
 public:
+	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual void PlayerControllerChanged(APlayerController* NewPlayerController) override;
 

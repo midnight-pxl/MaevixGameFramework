@@ -100,7 +100,18 @@ protected:
 	// THEME
 	// ============================================================================
 
-	/** Apply theme styling to this widget. Override for custom theme handling. */
+	/**
+	 * Apply theme styling to this widget. Override for custom theme handling.
+	 *
+	 * The base implementation assigns NewTheme to CachedTheme as its first action,
+	 * so Blueprint K2_OnThemeApplied overrides may read CachedTheme to access
+	 * the current theme.
+	 *
+	 * Subclasses overriding ApplyTheme_Implementation in C++ must either call
+	 * Super::ApplyTheme_Implementation(NewTheme) or assign CachedTheme = NewTheme
+	 * themselves before performing any work. Otherwise CachedTheme will be stale
+	 * relative to the theme that was just applied.
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme);

@@ -136,7 +136,10 @@ void UMCore_ActivatableBase::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	/* Apply design-time theme for UMG editor preview. Runtime re-applies from UISubsystem. */
-	ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	if (IsDesignTime())
+	{
+		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	}
 }
 
 void UMCore_ActivatableBase::NativeOnInitialized()
@@ -257,6 +260,7 @@ bool UMCore_ActivatableBase::bShouldBlockActivation() const
 
 void UMCore_ActivatableBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme)
 {
+	CachedTheme = Theme;
 	K2_OnThemeApplied(Theme);
 }
 

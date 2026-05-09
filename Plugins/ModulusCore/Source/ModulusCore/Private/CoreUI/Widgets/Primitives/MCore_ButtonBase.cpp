@@ -22,7 +22,10 @@ void UMCore_ButtonBase::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	if (IsDesignTime())
+	{
+		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	}
 	SyncPropertiesToWidgets();
 }
 
@@ -43,6 +46,20 @@ void UMCore_ButtonBase::NativeOnInitialized()
 	}
 
 	SyncPropertiesToWidgets();
+
+	// TODO: Remove after button theme init diagnostic (2026-05-08)
+	{
+		const ULocalPlayer* LP = GetOwningLocalPlayer();
+		const UMCore_UISubsystem* UI =
+			LP ? LP->GetSubsystem<UMCore_UISubsystem>() : nullptr;
+		const UMCore_PDA_UITheme_Base* CurrentTheme =
+			UI ? UI->GetActiveTheme() : nullptr;
+		UE_LOG(LogModulusUI, Log,
+			TEXT("ButtonBase::NativeOnInitialized -- widget=%s ActiveTheme=%s CachedTheme=%s"),
+			*GetName(),
+			CurrentTheme ? *CurrentTheme->GetName() : TEXT("null"),
+			CachedTheme.IsValid() ? *CachedTheme->GetName() : TEXT("null/invalid"));
+	}
 }
 
 void UMCore_ButtonBase::NativeOnClicked()
@@ -160,6 +177,8 @@ void UMCore_ButtonBase::SetTextStyleOverride(TSubclassOf<UCommonTextStyle> InSty
 
 void UMCore_ButtonBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme)
 {
+	CachedTheme = Theme;
+
 	const TSubclassOf<UCommonButtonStyle> StyleToApply =
 		UMCore_ThemeLibrary::ResolveButtonStyle(
 			ButtonStyleOverride, Theme ? Theme->PrimaryButtonStyle : nullptr);
@@ -184,6 +203,12 @@ void UMCore_ButtonBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme
 
 void UMCore_ButtonBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
+	// TODO: Remove after button theme init diagnostic (2026-05-08)
+	UE_LOG(LogModulusUI, Log,
+		TEXT("ButtonBase::HandleThemeChanged -- widget=%s NewTheme=%s"),
+		*GetName(),
+		NewTheme ? *NewTheme->GetName() : TEXT("null"));
+
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
 }

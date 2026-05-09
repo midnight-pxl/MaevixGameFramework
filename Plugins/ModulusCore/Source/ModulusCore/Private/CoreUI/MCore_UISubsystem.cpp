@@ -24,7 +24,11 @@
 void UMCore_UISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
+
+	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+	UE_LOG(LogModulusUI, Log,
+		TEXT("UISubsystem::Initialize -- entered"));
+
 	if (IsRunningDedicatedServer())
 	{
 		UE_LOG(LogModulusUI, Log, TEXT("UISubsystem::Initialize -- skipping on dedicated server"));
@@ -776,6 +780,17 @@ void UMCore_UISubsystem::SetActiveTheme(UMCore_PDA_UITheme_Base* NewTheme)
 
 UMCore_PDA_UITheme_Base* UMCore_UISubsystem::LoadSavedActiveTheme() const
 {
+	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+	{
+		const ULocalPlayer* LP = GetLocalPlayer();
+		const UMCore_PlayerSettingsSubsystem* PSS =
+			LP ? LP->GetSubsystem<UMCore_PlayerSettingsSubsystem>() : nullptr;
+		UE_LOG(LogModulusUI, Log,
+			TEXT("LoadSavedActiveTheme -- entered; LocalPlayer=%s PlayerSettingsSubsystem=%s"),
+			LP ? TEXT("valid") : TEXT("null"),
+			PSS ? TEXT("valid") : TEXT("null"));
+	}
+
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
 	if (!LocalPlayer) { return nullptr; }
 
@@ -783,6 +798,16 @@ UMCore_PDA_UITheme_Base* UMCore_UISubsystem::LoadSavedActiveTheme() const
 	if (!SettingsSubsystem) { return nullptr; }
 
 	UMCore_PlayerSettingsSave* Save = SettingsSubsystem->GetPlayerSettings();
+
+	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+	if (Save)
+	{
+		UE_LOG(LogModulusUI, Log,
+			TEXT("LoadSavedActiveTheme -- ActiveThemePath='%s' IsEmpty=%s"),
+			*Save->ActiveThemePath.ToString(),
+			Save->ActiveThemePath.IsNull() ? TEXT("Y") : TEXT("N"));
+	}
+
 	if (!Save || !Save->ActiveThemePath.IsValid()) { return nullptr; }
 
 	return Cast<UMCore_PDA_UITheme_Base>(Save->ActiveThemePath.TryLoad());

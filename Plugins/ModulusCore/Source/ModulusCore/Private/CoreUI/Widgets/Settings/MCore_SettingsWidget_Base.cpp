@@ -116,6 +116,8 @@ void UMCore_SettingsWidget_Base::BroadcastValueChanged()
 
 void UMCore_SettingsWidget_Base::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme)
 {
+	CachedTheme = NewTheme;
+
 	if (NewTheme)
 	{
 		UMCore_ThemeLibrary::ApplyTextStyleFromTheme(
@@ -172,7 +174,10 @@ void UMCore_SettingsWidget_Base::UnbindThemeDelegate()
 void UMCore_SettingsWidget_Base::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-	ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	if (IsDesignTime())
+	{
+		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	}
 }
 
 void UMCore_SettingsWidget_Base::NativeOnInitialized()

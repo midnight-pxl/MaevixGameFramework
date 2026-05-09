@@ -15,6 +15,12 @@ void UMCore_ThemeLibrary::ApplyTextStyleFromTheme(const ULocalPlayer* LocalPlaye
 	const TArray<TSubclassOf<UCommonTextStyle>>& TextStyleArray)
 {
 	if (!TextBlock || TextStyleArray.IsEmpty()) { return; }
+	// TODO: Remove after Slate-timing diagnostics testing (2026-05-08)
+	UE_LOG(LogModulusUI, Log, 
+		TEXT("ApplyTextStyleFromTheme -- TextBlock=%s SlateBuilt=%s ArrayNum=%d"),
+		*GetNameSafe(TextBlock),
+		(TextBlock && TextBlock->GetCachedWidget().IsValid()) ? TEXT("Y") : TEXT("N"),
+		TextStyleArray.Num());
 	
 	int32 SizeIndex{0};
 	if (LocalPlayer)

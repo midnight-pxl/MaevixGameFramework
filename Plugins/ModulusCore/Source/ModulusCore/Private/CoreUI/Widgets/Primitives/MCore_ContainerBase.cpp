@@ -20,7 +20,10 @@ void UMCore_ContainerBase::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	if (IsDesignTime())
+	{
+		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	}
 }
 
 void UMCore_ContainerBase::NativeOnInitialized()
@@ -37,6 +40,20 @@ void UMCore_ContainerBase::NativeOnInitialized()
 		{
 			ApplyTheme(UI->GetActiveTheme());
 		}
+	}
+
+	// TODO: Remove after button theme init diagnostic (2026-05-08)
+	{
+		const ULocalPlayer* LP = GetOwningLocalPlayer();
+		const UMCore_UISubsystem* UI =
+			LP ? LP->GetSubsystem<UMCore_UISubsystem>() : nullptr;
+		const UMCore_PDA_UITheme_Base* CurrentTheme =
+			UI ? UI->GetActiveTheme() : nullptr;
+		UE_LOG(LogModulusUI, Log,
+			TEXT("ContainerBase::NativeOnInitialized -- widget=%s ActiveTheme=%s CachedTheme=%s"),
+			*GetName(),
+			CurrentTheme ? *CurrentTheme->GetName() : TEXT("null"),
+			CachedTheme.IsValid() ? *CachedTheme->GetName() : TEXT("null/invalid"));
 	}
 }
 
@@ -91,6 +108,8 @@ void UMCore_ContainerBase::SetContentPadding(FMargin InPadding)
 
 void UMCore_ContainerBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme)
 {
+	CachedTheme = Theme;
+
 	if (Theme)
 	{
 		UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::ApplyTheme -- theme applied, widget=%s"), *GetNameSafe(this));
@@ -101,6 +120,12 @@ void UMCore_ContainerBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Th
 
 void UMCore_ContainerBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
+	// TODO: Remove after button theme init diagnostic (2026-05-08)
+	UE_LOG(LogModulusUI, Log,
+		TEXT("ContainerBase::HandleThemeChanged -- widget=%s NewTheme=%s"),
+		*GetName(),
+		NewTheme ? *NewTheme->GetName() : TEXT("null"));
+
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
 }

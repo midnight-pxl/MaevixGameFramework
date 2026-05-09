@@ -33,7 +33,11 @@
 void UMCore_KeyBindingPanel_Base::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-	ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	
+	if (IsDesignTime())
+	{
+		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
+	}
 }
 
 void UMCore_KeyBindingPanel_Base::NativeOnInitialized()
@@ -754,6 +758,8 @@ void UMCore_KeyBindingPanel_Base::HandleCaptureDialogReadyForCapture()
 
 void UMCore_KeyBindingPanel_Base::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme)
 {
+	CachedTheme = NewTheme;
+
 	if (!NewTheme) { return; }
 
 	for (UCommonTextBlock* Header : SpawnedHeaders)

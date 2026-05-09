@@ -9,6 +9,16 @@
 
 #include "Engine/LocalPlayer.h"
 
+// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+void UMCore_PlayerSettingsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
+	UE_LOG(LogModulusSettings, Log,
+		TEXT("PlayerSettingsSubsystem::Initialize -- entered"));
+}
+
 void UMCore_PlayerSettingsSubsystem::Deinitialize()
 {
 	if (CachedPlayerSettings)
