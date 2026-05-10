@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_SettingsWidget_Slider.h
- *
- * Settings widget for float/slider-type settings with immediate-apply behavior.
- * Reads range, step, and display format from the bound DataAsset.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -21,8 +14,8 @@ class UMCore_ButtonBase;
  * Settings widget for float/slider-type settings with immediate-apply semantics.
  * Reads MinValue, MaxValue, StepSize, and display format from the bound definition.
  *
- * Requires BindWidget: Slider_Value (USlider), Txt_ValueDisplay (UCommonTextBlock).
- * Optional: Btn_StepLeft/Btn_StepRight (UMCore_ButtonBase) for gamepad navigation.
+ * Requires BindWidget: Slider_Value (USlider), Txt_ValueDisplay (UCommonTextBlock),
+ * Btn_StepLeft and Btn_StepRight (UMCore_ButtonBase) for gamepad navigation.
  */
 UCLASS(Abstract, Blueprintable, ClassGroup = "ModulusUI", meta = (DisableNativeTick))
 class MODULUSCORE_API UMCore_SettingsWidget_Slider : public UMCore_SettingsWidget_Base
@@ -97,6 +90,6 @@ private:
 	// STATE
 	// ====================================================================
 
-	/* Race condition guard -- prevents HandleSliderValueChanged from firing during programmatic sets */
+	/* Race condition guard; prevents HandleSliderValueChanged from firing during programmatic sets */
 	bool bIsUpdatingSlider{false};
 };

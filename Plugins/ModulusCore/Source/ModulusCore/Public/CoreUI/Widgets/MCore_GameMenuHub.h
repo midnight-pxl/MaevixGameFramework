@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_GameMenuHub.h
- *
- * In-game menu hub providing a tabbed interface for plugin menu pages.
- * Composes UMCore_TabbedContainer and rebuilds from UISubsystem's registered screens.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

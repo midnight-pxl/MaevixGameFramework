@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ConfirmationDialog.h
- *
- * Reusable confirmation dialog with Accept/Back input binding support.
- * Broadcasts OnDialogResult and auto-deactivates on resolution.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -21,6 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogResult, bool, bConfirmed);
 /**
  * Reusable confirmation dialog with Accept/Back input binding support.
  * Auto-wires button delegates and input bindings on activation, defaults focus to Cancel.
+ * Broadcasts OnDialogResult and auto-deactivates on resolution.
  *
  * Requires BindWidget: Txt_DialogMessage, Btn_Confirm, Btn_Cancel.
  */

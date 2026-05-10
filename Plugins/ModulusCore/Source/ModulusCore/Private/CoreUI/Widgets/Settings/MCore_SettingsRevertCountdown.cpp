@@ -39,7 +39,7 @@ void UMCore_SettingsRevertCountdown::NativeOnInitialized()
 
 void UMCore_SettingsRevertCountdown::NativeOnDeactivated()
 {
-	/** Always kill timer to prevent ticking after deactivation */
+	/* Always kill timer to prevent ticking after deactivation */
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -49,16 +49,16 @@ void UMCore_SettingsRevertCountdown::NativeOnDeactivated()
 	if (!bResolved)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("SettingsRevertCountdown::NativeOnDeactivated -- deactivated w/o resolution, auto-reverting"));
+			TEXT("SettingsRevertCountdown::NativeOnDeactivated: deactivated w/o resolution, auto-reverting"));
 		
 		ApplySettings(false);
 		OnCountdownResult.Broadcast(false);
 	}
 	
-	/** Clear external delegates to prevent stale references */
+	/* Clear external delegates to prevent stale references */
 	OnCountdownResult.Clear();
 	
-	/** Reset state */
+	/* Reset state */
 	PendingTags.Empty();
 	RemainingSeconds = 0.f;
 	TotalSeconds = 0.f;
@@ -68,7 +68,7 @@ void UMCore_SettingsRevertCountdown::NativeOnDeactivated()
 
 void UMCore_SettingsRevertCountdown::NativeDestruct()
 {
-	/**
+	/*
 	 * Defensive timer clear (NativeOnDeactivated should've handled this)
 	 * Just in case guarantee
 	 */
@@ -78,7 +78,7 @@ void UMCore_SettingsRevertCountdown::NativeDestruct()
 		World->GetTimerManager().ClearTimer(CountdownTimerHandle);
 	}
 	
-	/** Clear external delegate in case NativeOnDeactivated was skipped somehow */
+	/* Clear external delegate in case NativeOnDeactivated was skipped somehow */
 	OnCountdownResult.Clear();
 	
 	if (Btn_Confirm) { Btn_Confirm->OnButtonClicked.RemoveAll(this); }
@@ -122,7 +122,7 @@ void UMCore_SettingsRevertCountdown::StartCountdown(const TArray<FGameplayTag>& 
 	}
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("SettingsRevertCountdown::StartCountdown -- started: %.0fs, %d setting(s), widget=%s"),
+		TEXT("SettingsRevertCountdown::StartCountdown: started: %.0fs, %d setting(s), widget=%s"),
 		TotalSeconds, PendingTags.Num(), *GetNameSafe(this));
 }
 
@@ -169,7 +169,7 @@ void UMCore_SettingsRevertCountdown::ResolveCountdown(bool bConfirmed)
 	ApplySettings(bConfirmed);
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("SettingsRevertCountdown::ResolveCountdown -- resolved: %s, widget=%s"),
+		TEXT("SettingsRevertCountdown::ResolveCountdown: resolved: %s, widget=%s"),
 		bConfirmed ? TEXT("Confirmed") : TEXT("Reverted"),
 		*GetNameSafe(this));
 

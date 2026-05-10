@@ -19,7 +19,7 @@
 // PRIVATE HELPERS
 // ============================================================================
 
-/**
+/*
  * Resolve a UInputAction* to its profile MappingName by iterating rows
  * and matching on GetAssociatedInputAction(). Returns NAME_None on failure.
  */
@@ -47,7 +47,7 @@ UEnhancedInputLocalPlayerSubsystem* UMCore_InputDisplayLibrary::GetEnhancedInput
 	if (!OwningPlayer)
 	{
 		UE_LOG(LogModulusUI, Error,
-			TEXT("EnhancedInputDisplay::GetEnhancedInputSubsystem -- OwningPlayer is null"));
+			TEXT("EnhancedInputDisplay::GetEnhancedInputSubsystem: OwningPlayer is null"));
 		return nullptr;
 	}
 
@@ -55,7 +55,7 @@ UEnhancedInputLocalPlayerSubsystem* UMCore_InputDisplayLibrary::GetEnhancedInput
 	if (!LocalPlayer)
 	{
 		UE_LOG(LogModulusUI, Error,
-			TEXT("EnhancedInputDisplay::GetEnhancedInputSubsystem -- LocalPlayer is null"));
+			TEXT("EnhancedInputDisplay::GetEnhancedInputSubsystem: LocalPlayer is null"));
 		return nullptr;
 	}
 
@@ -196,10 +196,10 @@ bool UMCore_InputDisplayLibrary::IsActionRemappable(APlayerController* OwningPla
 // ============================================================================
 
 /**
- * @param InputAction   DataTable row reference to the action. Must have PlayerMappableKeySettings.
- * @param NewKey        Key to bind. Invalid key is rejected.
- * @param MappingSlot   Slot index (0 = primary, 1 = secondary, etc.).
- * @return              True if rebind succeeded, false if action is not remappable or key is invalid.
+ * @param InputAction  Must reference a remappable action with PlayerMappableKeySettings.
+ * @param NewKey       Must be a valid key.
+ * @param OutError     Populated with a description on failure.
+ * @return             True on successful rebind, false on validation or mapping failure.
  */
 bool UMCore_InputDisplayLibrary::RemapActionKey(APlayerController* OwningPlayer,
 	UInputAction* InputAction,
@@ -254,20 +254,22 @@ bool UMCore_InputDisplayLibrary::RemapActionKey(APlayerController* OwningPlayer,
 	{
 		UserSettings->SaveSettings();
 		UE_LOG(LogModulusUI, Log,
-			TEXT("EnhancedInputDisplay::RemapActionKey -- successfully remapped action %s to key %s"),
+			TEXT("EnhancedInputDisplay::RemapActionKey: successfully remapped action %s to key %s"),
 			*InputAction->GetName(), *NewKey.ToString());
 		return true;
 	}
 
 	OutError = FText::FromString(FailureReason.ToString());
 	UE_LOG(LogModulusUI, Warning,
-		TEXT("EnhancedInputDisplay::RemapActionKey -- failed to remap action %s to key %s: %s"),
+		TEXT("EnhancedInputDisplay::RemapActionKey: failed to remap action %s to key %s: %s"),
 		*InputAction->GetName(), *NewKey.ToString(), *FailureReason.ToString());
 	return false;
 }
 
 /**
- * @param MappingSlot  Slot index to reset (0 = primary, 1 = secondary).
+ * @param InputAction  Must reference a remappable action with PlayerMappableKeySettings.
+ * @param OutError     Populated with a description on failure.
+ * @return             True on successful reset, false on validation or mapping failure.
  */
 bool UMCore_InputDisplayLibrary::ResetActionToDefault(APlayerController* OwningPlayer,
 	UInputAction* InputAction,
@@ -319,7 +321,7 @@ TArray<FPlayerKeyMapping> UMCore_InputDisplayLibrary::GetAllRemappableActions(
 	if (!Profile)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("EnhancedInputDisplay::GetAllRemappableActions -- no active key profile"));
+			TEXT("EnhancedInputDisplay::GetAllRemappableActions: no active key profile"));
 		return Result;
 	}
 
@@ -344,7 +346,7 @@ TArray<FPlayerKeyMapping> UMCore_InputDisplayLibrary::GetRemappableActionsForDev
 	if (!Profile)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("EnhancedInputDisplay::GetRemappableActionsForDevice -- no active key profile"));
+			TEXT("EnhancedInputDisplay::GetRemappableActionsForDevice: no active key profile"));
 		return Result;
 	}
 
@@ -399,7 +401,7 @@ bool UMCore_InputDisplayLibrary::GetIconBrushForKey(const ULocalPlayer* LocalPla
 	if (!CommonInputSubsystem)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("EnhancedInputDisplay::GetIconBrushForKey -- CommonInputSubsystem unavailable"));
+			TEXT("EnhancedInputDisplay::GetIconBrushForKey: CommonInputSubsystem unavailable"));
 		return false;
 	}
 
@@ -462,9 +464,6 @@ TArray<FName> UMCore_InputDisplayLibrary::GetAvailableGamepadConfigs(
 	return Result;
 }
 
-/**
- * @param LocalPlayer  Used to access PlayerSettingsSave and CommonInputSubsystem.
- */
 FName UMCore_InputDisplayLibrary::GetEffectiveGamepadName(
 	const UObject* WorldContextObject, const ULocalPlayer* LocalPlayer)
 {
@@ -580,14 +579,14 @@ bool UMCore_InputDisplayLibrary::RemapActionKeyForSlot(APlayerController* Owning
 	{
 		UserSettings->SaveSettings();
 		UE_LOG(LogModulusUI, Log,
-			TEXT("EnhancedInputDisplay::RemapActionKeyForSlot -- remapped action %s (slot %d) to key %s"),
+			TEXT("EnhancedInputDisplay::RemapActionKeyForSlot: remapped action %s (slot %d) to key %s"),
 			*InputAction->GetName(), static_cast<int32>(Slot), *NewKey.ToString());
 		return true;
 	}
 
 	OutError = FText::FromString(FailureReason.ToString());
 	UE_LOG(LogModulusUI, Warning,
-		TEXT("EnhancedInputDisplay::RemapActionKeyForSlot -- failed to remap action %s (slot %d) to key %s: %s"),
+		TEXT("EnhancedInputDisplay::RemapActionKeyForSlot: failed to remap action %s (slot %d) to key %s: %s"),
 		*InputAction->GetName(), static_cast<int32>(Slot), *NewKey.ToString(),
 		*FailureReason.ToString());
 	return false;
@@ -645,7 +644,7 @@ TArray<FPlayerKeyMapping> UMCore_InputDisplayLibrary::GetRemappableActionsForCon
 	if (!MappingContext)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("InputDisplayLibrary::GetRemappableActionsForContext -- MappingContext is null"));
+			TEXT("InputDisplayLibrary::GetRemappableActionsForContext: MappingContext is null"));
 		return Result;
 	}
 
@@ -664,7 +663,7 @@ TArray<FPlayerKeyMapping> UMCore_InputDisplayLibrary::GetRemappableActionsForCon
 
 	if (ContextActions.IsEmpty()) { return Result; }
 
-	/* Iterate all profile rows -- include any whose associated action is in this IMC */
+	/* Iterate all profile rows; include any whose associated action is in this IMC */
 	const TMap<FName, FKeyMappingRow>& AllRows = Profile->GetPlayerMappingRows();
 
 	for (const auto& Pair : AllRows)
@@ -692,7 +691,7 @@ void UMCore_InputDisplayLibrary::ResetAllBindingsToDefault(APlayerController* Ow
 	if (!Profile)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("EnhancedInputDisplay::ResetAllBindingsToDefault -- no active key profile"));
+			TEXT("EnhancedInputDisplay::ResetAllBindingsToDefault: no active key profile"));
 		return;
 	}
 
@@ -724,7 +723,7 @@ void UMCore_InputDisplayLibrary::ResetAllBindingsToDefault(APlayerController* Ow
 	UserSettings->SaveSettings();
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("EnhancedInputDisplay::ResetAllBindingsToDefault -- reset %d bindings to defaults"),
+		TEXT("EnhancedInputDisplay::ResetAllBindingsToDefault: reset %d bindings to defaults"),
 		ResetCount);
 }
 
@@ -734,7 +733,7 @@ void UMCore_InputDisplayLibrary::ResetBindingsForContext(APlayerController* Owni
 	if (!MappingContext)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("EnhancedInputDisplay::ResetBindingsForContext -- MappingContext is null"));
+			TEXT("EnhancedInputDisplay::ResetBindingsForContext: MappingContext is null"));
 		return;
 	}
 
@@ -787,6 +786,6 @@ void UMCore_InputDisplayLibrary::ResetBindingsForContext(APlayerController* Owni
 	UserSettings->SaveSettings();
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("EnhancedInputDisplay::ResetBindingsForContext -- reset %d bindings for context '%s'"),
+		TEXT("EnhancedInputDisplay::ResetBindingsForContext: reset %d bindings for context '%s'"),
 		ResetCount, *MappingContext->GetName());
 }

@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_NetworkingComponent.h
- *
- * Base networking component providing authority validation, replication helpers,
- * and Iris detection. Derive from this for network-aware actor components.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,8 +7,9 @@
 #include "MCore_NetworkingComponent.generated.h"
 
 /**
- * Abstract base networking component providing authority validation and Iris detection.
- * Derive from this for actor components that need network-aware functionality.
+ * Abstract base networking component providing authority validation, replication
+ * helpers, and Iris detection. Derive from this for actor components that need
+ * network-aware functionality.
  */
 UCLASS(Abstract, BlueprintType, ClassGroup=(ModulusCore))
 class MODULUSCORE_API UMCore_NetworkingComponent : public UActorComponent, public IMCore_NetworkingInterface
@@ -30,18 +24,18 @@ public:
 		return GetOwner() ? GetOwner()->HasAuthority() : false;
 	};
 
-	/** Returns true if this component has network authority for server operations. */
+	/** Equivalent to HasNetworkAuthority. Provided as a separate intent-named API for caller readability. */
 	UFUNCTION(BlueprintPure, Category="Networking|Authority")
 	bool CanExecuteServerOperation() const { return HasNetworkAuthority(); }
 
-	/** Returns true if client operations are allowed. False on dedicated server. */
+	/** False on dedicated server (no local client to execute against), true everywhere else. */
 	UFUNCTION(BlueprintPure, Category="Networking|Authority")
 	bool CanExecuteClientOperation() const
 	{
 		return GetOwner() ? (GetOwner()->GetNetMode() != NM_DedicatedServer) : false;
 	}
 
-	/** Returns true if Iris replication system is detected. */
+	/** True if the owning actor uses Iris replication. Result is cached on BeginPlay via DetectNetworkingSystem. */
 	UFUNCTION(BlueprintPure, Category="Networking|Replication")
 	bool IsUsingIrisReplication() const;
 

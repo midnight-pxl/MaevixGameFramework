@@ -1,12 +1,5 @@
 ﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ThemeLibrary.h
- *
- * Stateless theme helpers shared across all Modulus widget classes.
- * Centralizes text style resolution, slider style construction, and button style logic.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -21,7 +14,8 @@ class ULocalPlayer;
 class UMCore_PDA_SliderStyle;
 
 /**
- * 
+ * Stateless theme helpers shared across all Modulus widget classes.
+ * Centralizes text style resolution, slider style construction, and button style logic.
  */
 UCLASS()
 class MODULUSCORE_API UMCore_ThemeLibrary : public UBlueprintFunctionLibrary
@@ -47,10 +41,7 @@ public:
 		const UMCore_PDA_SliderStyle* SliderStyleDA,
 		const FSliderStyle& BaseStyle);
 	
-	/**
-	 * Return style Override if valid, ActiveTheme's default otherwise.
-	 * For per-instance style overriding if used.
-	 */
+	/** Returns StyleOverride if valid, ThemeDefault otherwise. */
 	UFUNCTION(BlueprintPure, Category="ModulusCore|Theme")
 	static TSubclassOf<UCommonButtonStyle> ResolveButtonStyle(
 		TSubclassOf<UCommonButtonStyle> StyleOverride,

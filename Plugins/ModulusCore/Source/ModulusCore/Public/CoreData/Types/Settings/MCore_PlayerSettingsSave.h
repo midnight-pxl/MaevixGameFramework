@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PlayerSettingsSave.h
- *
- * Save game storing framework UI state and generic typed setting values.
- * Immediate-apply model: changes write to committed storage directly.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -35,15 +28,15 @@ class MODULUSCORE_API UMCore_PlayerSettingsSave : public USaveGame
 	// FRAMEWORK UI STATE
 	// ========================================================================
 
-    /* UI scale multiplier (0.5 to 3.0) */
+    /** UI scale multiplier (0.5 to 3.0) */
     UPROPERTY(SaveGame)
     float UIScale{1.0f};
 
-    /* Tooltip hover delay in milliseconds */
+    /** Tooltip hover delay in milliseconds */
     UPROPERTY(SaveGame)
     int32 TooltipDelayMs{500};
 
-    /* Last settings tab the player had open (restored on re-open) */
+    /** Last settings tab the player had open (restored on re-open) */
     UPROPERTY(SaveGame)
     FGameplayTag LastSelectedCategory;
 
@@ -57,17 +50,17 @@ class MODULUSCORE_API UMCore_PlayerSettingsSave : public USaveGame
     UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Settings")
     int32 GamepadIconSetIndex = 0;
 
-	/* Last value the user explicitly selected for the QualityPreset (OverallScalabilityLevel).
+	/** Last value the user explicitly selected for the QualityPreset (OverallScalabilityLevel).
 	   -1 means Custom (user has tweaked individual scalability settings). 0..3 are preset levels. */
 	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save|QualityPreset")
 	int32 LastSelectedQualityPreset{-1};
 
-	/* Disambiguates first-load (-1 = uninitialized, will be backfilled from engine state) from
+	/** Disambiguates first-load (-1 = uninitialized, will be backfilled from engine state) from
 	   explicitly-Custom (-1 chosen because user tweaked an individual scalability). */
 	UPROPERTY(SaveGame)
 	bool bQualityPresetInitialized{false};
 
-	/* Soft path to the user's active UMCore_PDA_UITheme_Base. Empty path =
+	/** Soft path to the user's active UMCore_PDA_UITheme_Base. Empty path =
 	   no override (UISubsystem falls back to project default). FSoftObjectPath
 	   survives asset moves/renames better than an FName ID. */
 	UPROPERTY(SaveGame)

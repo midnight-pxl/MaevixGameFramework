@@ -1,12 +1,5 @@
 ﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_GlobalEventReplicator.h
- *
- * Replicated ActorComponent for transporting global events across
- * the network via Server RPCs and Multicast.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

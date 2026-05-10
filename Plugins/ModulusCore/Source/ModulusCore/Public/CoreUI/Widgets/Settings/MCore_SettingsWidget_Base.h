@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_SettingsWidget_Base.h
- *
- * Abstract base for all setting input widgets (Slider, Toggle, Switcher).
- * Immediate-apply model with theme integration and a uniform value interface.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -26,6 +19,7 @@ struct FMCore_EventData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSettingValueChanged,
     FGameplayTag, SettingTag, const FString&, NewValueString);
 
+/** Fires when this widget gains hover or enters the focus path. Use to drive description/preview panes. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSettingFocused,
     FGameplayTag, SettingTag,
     FText, Description);
@@ -104,12 +98,13 @@ protected:
     // ====================================================================
 
     /**
-     * Called after InitFromDefinition -- subclass reads type-specific
+     * Called after InitFromDefinition; subclass reads type-specific
      * DataAsset properties and populates UI controls.
      */
     UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Settings")
     void OnDefinitionSet(const UMCore_DA_SettingDefinition* Definition);
 
+    /** Subclasses call this after applying a new value internally. Fires OnSettingValueChanged with the current GetValueAsString(). */
     UFUNCTION(BlueprintCallable, Category = "ModulusCore|Settings")
     void BroadcastValueChanged();
 
@@ -159,10 +154,10 @@ protected:
     virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
     //~ End UUserWidget interface
 
-    /** Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
+    /* Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
     void BroadcastFocusedIfValid();
 
-    /** Updates Highlight visibility based on current hover and focus-path state. Safe to call when Highlight is unbound. */
+    /* Updates Highlight visibility based on current hover and focus-path state. Safe to call when Highlight is unbound. */
     void UpdateHighlightState();
 
     bool bIsRowMouseOver = false;
@@ -175,7 +170,7 @@ private:
     void UnbindThemeDelegate();
     bool bThemeDelegateBound{false};
 
-    /** Filters local events for MCore.Settings.Event.ExternalValueChange and refreshes display. */
+    /* Filters local events for MCore.Settings.Event.ExternalValueChange and refreshes display. */
     void HandleLocalEvent(const FMCore_EventData& EventData);
     FDelegateHandle EventSubscriptionHandle;
 };

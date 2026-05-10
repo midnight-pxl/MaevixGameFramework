@@ -1,18 +1,11 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
-
-/**
- * MCore_EventListenerComp.h
- *
- * Drop-in ActorComponent for receiving Local and Global GameplayTag events
- * with automatic subsystem registration and tag-based filtering.
- */
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
-#include "MCore_EventListenerComp.generated.h"
+#include "MCore_EventListenerComponent.generated.h"
 
 class UMCore_LocalEventSubsystem;
 class UMCore_GlobalEventSubsystem;
@@ -26,12 +19,12 @@ struct FMCore_EventData;
  * Implement OnEventReceived in Blueprint to handle notifications.
  */
 UCLASS(ClassGroup=(ModulusCore), BlueprintType, meta=(BlueprintSpawnableComponent))
-class MODULUSCORE_API UMCore_EventListenerComp : public UActorComponent
+class MODULUSCORE_API UMCore_EventListenerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UMCore_EventListenerComp();
+	UMCore_EventListenerComponent();
 
 	/** Tags to filter events (e.g., MCore.Events.Player.*, MCore.Events.Quest.Completed). Leave empty to receive all events */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event Listening", meta = (Categories = "MCore.Events"))
@@ -54,10 +47,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Event Handling")
 	void OnEventReceived(const FMCore_EventData& EventData, bool bWasGlobalEvent);
 	
-	/* Called by subsystems to deliver events. Do not call directly. */
+	/** Called by subsystems to deliver events. Do not call directly. */
 	void DeliverEvent(const FMCore_EventData& EventData, bool bWasGlobalEvent);
 
-	/* Check if this component should receive a specific event based on tag filters */
+	/** Check if this component should receive a specific event based on tag filters */
 	bool ShouldReceiveEvent(const FMCore_EventData& EventData, bool bIsGlobalEvent) const;
 
 protected:
@@ -68,11 +61,11 @@ private:
 	/* Resolves the LocalPlayer from the owning actor's player connection chain. Falls back to first local player for non-player-owned actors. */
 	ULocalPlayer* ResolveOwningLocalPlayer() const;
 
-	/* Cached reference to local event subsystem */
+	/** Cached reference to local event subsystem */
 	UPROPERTY()
 	TWeakObjectPtr<UMCore_LocalEventSubsystem> CachedLocalSubsystem;
 
-	/* Cached reference to global event subsystem */
+	/** Cached reference to global event subsystem */
 	UPROPERTY()
 	TWeakObjectPtr<UMCore_GlobalEventSubsystem> CachedGlobalSubsystem;
 };

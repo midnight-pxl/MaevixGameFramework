@@ -30,36 +30,22 @@ void UMCore_ContainerBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::NativeOnInitialized -- initialized, widget=%s"), *GetNameSafe(this));
+	UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::NativeOnInitialized: initialized, widget=%s"), *GetNameSafe(this));
 
 	BindThemeDelegate();
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ApplyTheme(UISubsystem->GetActiveTheme());
 		}
-	}
-
-	// TODO: Remove after button theme init diagnostic (2026-05-08)
-	{
-		const ULocalPlayer* LP = GetOwningLocalPlayer();
-		const UMCore_UISubsystem* UI =
-			LP ? LP->GetSubsystem<UMCore_UISubsystem>() : nullptr;
-		const UMCore_PDA_UITheme_Base* CurrentTheme =
-			UI ? UI->GetActiveTheme() : nullptr;
-		UE_LOG(LogModulusUI, Log,
-			TEXT("ContainerBase::NativeOnInitialized -- widget=%s ActiveTheme=%s CachedTheme=%s"),
-			*GetName(),
-			CurrentTheme ? *CurrentTheme->GetName() : TEXT("null"),
-			CachedTheme.IsValid() ? *CachedTheme->GetName() : TEXT("null/invalid"));
 	}
 }
 
 void UMCore_ContainerBase::NativeDestruct()
 {
-	UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::NativeDestruct -- destructing, widget=%s"), *GetNameSafe(this));
+	UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::NativeDestruct: destructing, widget=%s"), *GetNameSafe(this));
 
 	UnbindThemeDelegate();
 
@@ -112,7 +98,7 @@ void UMCore_ContainerBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Th
 
 	if (Theme)
 	{
-		UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::ApplyTheme -- theme applied, widget=%s"), *GetNameSafe(this));
+		UE_LOG(LogModulusUI, Verbose, TEXT("ContainerBase::ApplyTheme: theme applied, widget=%s"), *GetNameSafe(this));
 	}
 
 	K2_OnThemeApplied(Theme);
@@ -120,12 +106,6 @@ void UMCore_ContainerBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Th
 
 void UMCore_ContainerBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
-	// TODO: Remove after button theme init diagnostic (2026-05-08)
-	UE_LOG(LogModulusUI, Log,
-		TEXT("ContainerBase::HandleThemeChanged -- widget=%s NewTheme=%s"),
-		*GetName(),
-		NewTheme ? *NewTheme->GetName() : TEXT("null"));
-
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
 }
@@ -137,10 +117,10 @@ void UMCore_ContainerBase::BindThemeDelegate()
 	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
 	if (!LocalPlayer) { return; }
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UI) { return; }
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (!UISubsystem) { return; }
 
-	UI->OnThemeChanged.AddDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
+	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
 	bThemeDelegateBound = true;
 }
 
@@ -155,10 +135,10 @@ void UMCore_ContainerBase::UnbindThemeDelegate()
 		return;
 	}
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UI)
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (UISubsystem)
 	{
-		UI->OnThemeChanged.RemoveDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
+		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
 	}
 
 	bThemeDelegateBound = false;

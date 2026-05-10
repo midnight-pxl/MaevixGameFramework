@@ -24,14 +24,14 @@ void UMCore_SettingsWidget_Base::InitFromDefinition(const UMCore_DA_SettingDefin
 	if (!InDefinition)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("SettingsWidget_Base::InitFromDefinition -- null definition passed, widget=%s"), *GetNameSafe(this));
+			TEXT("SettingsWidget_Base::InitFromDefinition: null definition passed, widget=%s"), *GetNameSafe(this));
 		return;
 	}
 
 	if (!InDefinition->IsValid())
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("SettingsWidget_Base::InitFromDefinition -- definition '%s' failed validation, widget=%s"),
+			TEXT("SettingsWidget_Base::InitFromDefinition: definition '%s' failed validation, widget=%s"),
 			*InDefinition->GetName(), *GetNameSafe(this));
 		return;
 	}
@@ -44,7 +44,7 @@ void UMCore_SettingsWidget_Base::InitFromDefinition(const UMCore_DA_SettingDefin
 	}
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsWidget_Base::InitFromDefinition -- initialized from definition: %s (%s), widget=%s"),
+		TEXT("SettingsWidget_Base::InitFromDefinition: initialized from definition: %s (%s), widget=%s"),
 		*InDefinition->SettingDisplayName.ToString(),
 		*InDefinition->SettingTag.ToString(),
 		*GetNameSafe(this));
@@ -64,7 +64,7 @@ FGameplayTag UMCore_SettingsWidget_Base::GetSettingTag() const
 void UMCore_SettingsWidget_Base::ResetToDefault_Implementation()
 {
 	UE_LOG(LogModulusSettings, Warning,
-		TEXT("SettingsWidget_Base::ResetToDefault -- not overridden, widget will not reset, widget=%s"),
+		TEXT("SettingsWidget_Base::ResetToDefault: not overridden, widget will not reset, widget=%s"),
 		*GetNameSafe(this));
 }
 
@@ -103,7 +103,7 @@ void UMCore_SettingsWidget_Base::BroadcastValueChanged()
 		OnSettingValueChanged.Broadcast(SettingDefinition->SettingTag, ValueStr);
 
 		UE_LOG(LogModulusSettings, Verbose,
-			TEXT("SettingsWidget_Base::BroadcastValueChanged -- value changed: %s = %s, widget=%s"),
+			TEXT("SettingsWidget_Base::BroadcastValueChanged: value changed: %s = %s, widget=%s"),
 			*SettingDefinition->SettingTag.ToString(),
 			*ValueStr,
 			*GetNameSafe(this));
@@ -140,10 +140,10 @@ void UMCore_SettingsWidget_Base::BindThemeDelegate()
 	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
 	if (!LocalPlayer) { return; }
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UI) { return; }
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (!UISubsystem) { return; }
 
-	UI->OnThemeChanged.AddDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
+	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
 	bThemeDelegateBound = true;
 }
 
@@ -158,10 +158,10 @@ void UMCore_SettingsWidget_Base::UnbindThemeDelegate()
 		return;
 	}
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UI)
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (UISubsystem)
 	{
-		UI->OnThemeChanged.RemoveDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
+		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
 	}
 
 	bThemeDelegateBound = false;
@@ -188,14 +188,14 @@ void UMCore_SettingsWidget_Base::NativeOnInitialized()
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ApplyTheme(UISubsystem->GetActiveTheme());
 		}
 
-		if (UMCore_LocalEventSubsystem* LES = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())
+		if (UMCore_LocalEventSubsystem* LocalEventSubsystem = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())
 		{
-			EventSubscriptionHandle = LES->OnLocalEventBroadcast.AddUObject(
+			EventSubscriptionHandle = LocalEventSubsystem->OnLocalEventBroadcast.AddUObject(
 				this, &UMCore_SettingsWidget_Base::HandleLocalEvent);
 		}
 	}
@@ -207,9 +207,9 @@ void UMCore_SettingsWidget_Base::NativeDestruct()
 	{
 		if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 		{
-			if (UMCore_LocalEventSubsystem* LES = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())
+			if (UMCore_LocalEventSubsystem* LocalEventSubsystem = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())
 			{
-				LES->OnLocalEventBroadcast.Remove(EventSubscriptionHandle);
+				LocalEventSubsystem->OnLocalEventBroadcast.Remove(EventSubscriptionHandle);
 			}
 		}
 		EventSubscriptionHandle.Reset();

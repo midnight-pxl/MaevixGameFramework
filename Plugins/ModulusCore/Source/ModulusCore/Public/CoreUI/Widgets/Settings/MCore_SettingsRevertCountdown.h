@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_SettingsRevertCountdown.h
- *
- * Countdown modal for confirmation-required settings (resolution, display mode, etc.).
- * Shows remaining seconds and auto-reverts to previous values on timeout.
- * Broadcasts OnCountdownResult and deactivates on resolution.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -39,7 +31,6 @@ public:
 	/**
 	 * Begin the countdown. Stores affected settings and starts a 1-second looping timer.
 	 * Duration is read from CoreSettings::ConfirmationRevertDelay.
-	 * @param AffectedTags    Setting tags that need confirmation.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UI|Settings")
 	void StartCountdown(const TArray<FGameplayTag>& AffectedTags);

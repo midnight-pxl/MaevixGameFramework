@@ -41,19 +41,6 @@ void AMCore_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void AMCore_PlayerController::OnPossess(APawn* aPawn)
-{
-	Super::OnPossess(aPawn);
-
-	ULocalPlayer* LocalPlayer = GetLocalPlayer();
-	if (!IsLocalController() || !LocalPlayer) { return; }
-}
-
-void AMCore_PlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-}
-
 void AMCore_PlayerController::InitializeUISystem()
 {
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
@@ -69,7 +56,7 @@ void AMCore_PlayerController::InitializeUISystem()
 	else
 	{
 		UISubsystem->OnPrimaryGameLayoutReady.AddDynamic(this, &ThisClass::OnPrimaryGameLayoutReady);
-		UE_LOG(LogModulusPlayer, Verbose, TEXT("PlayerController::InitializeUISystem -- waiting for PrimaryGameLayout"));
+		UE_LOG(LogModulusPlayer, Verbose, TEXT("PlayerController::InitializeUISystem: waiting for PrimaryGameLayout"));
 	}
 }
 
@@ -97,12 +84,12 @@ void AMCore_PlayerController::OnUISystemReady_Implementation(UMCore_UISubsystem*
 
 		if (PrimaryWidget)
 		{
-			UE_LOG(LogModulusPlayer, Log, TEXT("PlayerController::OnUISystemReady -- pushed '%s' to layer '%s'"),
+			UE_LOG(LogModulusPlayer, Log, TEXT("PlayerController::OnUISystemReady: pushed '%s' to layer '%s'"),
 				*PrimaryWidgetClass->GetName(), *PrimaryWidgetLayer.ToString());
 		}
 		else
 		{
-			UE_LOG(LogModulusPlayer, Error, TEXT("PlayerController::OnUISystemReady -- failed to push '%s' to layer '%s'"),
+			UE_LOG(LogModulusPlayer, Error, TEXT("PlayerController::OnUISystemReady: failed to push '%s' to layer '%s'"),
 				*PrimaryWidgetClass->GetName(), *PrimaryWidgetLayer.ToString());
 		}
 	}

@@ -19,7 +19,7 @@ void UMCore_NetworkingComponent::BeginPlay()
 	DetectNetworkingSystem();
 	OnNetworkInitialized();
 
-	UE_LOG(LogModulusNetworking, Verbose, TEXT("NetworkingComponent::BeginPlay -- initialized: %s "
+	UE_LOG(LogModulusNetworking, Verbose, TEXT("NetworkingComponent::BeginPlay: initialized: %s "
 		"(Authority: %s, Iris: %s)"), *GetClass()->GetName(),
 		HasNetworkAuthority() ? TEXT("Yes") : TEXT("No"),
 		bIrisDetected ? TEXT("Yes") : TEXT("No"));

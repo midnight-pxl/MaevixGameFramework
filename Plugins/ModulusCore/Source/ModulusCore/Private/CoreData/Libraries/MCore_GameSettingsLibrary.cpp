@@ -145,7 +145,7 @@ float UMCore_GameSettingsLibrary::GetSettingFloat(const UObject* WorldContextObj
 	if (Setting->SettingType != EMCore_SettingType::Slider)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::GetSettingFloat -- called on non-Slider setting '%s'"),
+			TEXT("GameSettingsLibrary::GetSettingFloat: called on non-Slider setting '%s'"),
 			*Setting->SettingTag.ToString());
 	}
 
@@ -169,7 +169,7 @@ int32 UMCore_GameSettingsLibrary::GetSettingInt(const UObject* WorldContextObjec
 	if (Setting->SettingType != EMCore_SettingType::Dropdown)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::GetSettingInt -- called on non-Dropdown setting '%s'"),
+			TEXT("GameSettingsLibrary::GetSettingInt: called on non-Dropdown setting '%s'"),
 			*Setting->SettingTag.ToString());
 	}
 
@@ -193,7 +193,7 @@ bool UMCore_GameSettingsLibrary::GetSettingBool(const UObject* WorldContextObjec
 	if (Setting->SettingType != EMCore_SettingType::Toggle)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::GetSettingBool -- called on non-Toggle setting '%s'"),
+			TEXT("GameSettingsLibrary::GetSettingBool: called on non-Toggle setting '%s'"),
 			*Setting->SettingTag.ToString());
 	}
 
@@ -210,7 +210,7 @@ bool UMCore_GameSettingsLibrary::GetSettingBool(const UObject* WorldContextObjec
 }
 
 // ============================================================================
-// TEMPLATE HELPERS (private static, defined here, declared in header)
+// TEMPLATE HELPERS
 // ============================================================================
 
 template<typename TChangeStruct, typename TValue>
@@ -228,7 +228,7 @@ void UMCore_GameSettingsLibrary::ApplySettingChanges_Internal(
 	if (!Save)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplySettingChanges -- failed to get PlayerSettingsSave"));
+			TEXT("GameSettingsLibrary::ApplySettingChanges: failed to get PlayerSettingsSave"));
 		return;
 	}
 
@@ -241,7 +241,7 @@ void UMCore_GameSettingsLibrary::ApplySettingChanges_Internal(
 		if (!Change.Setting)
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplySettingChanges -- null Setting in Changes, skipping"));
+				TEXT("GameSettingsLibrary::ApplySettingChanges: null Setting in Changes, skipping"));
 			continue;
 		}
 
@@ -262,9 +262,9 @@ void UMCore_GameSettingsLibrary::ApplySettingChanges_Internal(
 		}
 	}
 
-	if (UGameUserSettings* GUS = UGameUserSettings::GetGameUserSettings())
+	if (UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings())
 	{
-		GUS->ApplySettings(false);
+		GameUserSettings->ApplySettings(false);
 	}
 
 	if (bAnyRequiresConfirmation)
@@ -313,7 +313,7 @@ TValue UMCore_GameSettingsLibrary::GetSettingByTag_Internal(
 	if (!Setting)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::%s -- no definition found for tag '%s' in any collection"),
+			TEXT("GameSettingsLibrary::%s: no definition found for tag '%s' in any collection"),
 			FunctionName, *SettingTag.ToString());
 		return DefaultReturn;
 	}
@@ -436,7 +436,7 @@ void UMCore_GameSettingsLibrary::ResetAllSettingsToDefault(const UObject* WorldC
 	if (Collections.IsEmpty())
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ResetAllSettingsToDefault -- no settings collections configured in CoreSettings"));
+			TEXT("GameSettingsLibrary::ResetAllSettingsToDefault: no settings collections configured in CoreSettings"));
 		return;
 	}
 
@@ -512,7 +512,7 @@ void UMCore_GameSettingsLibrary::ReloadAndApplyFromDisk(const UObject* WorldCont
 	if (!CachedSave)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk -- no cached PlayerSettingsSave available"));
+			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk: no cached PlayerSettingsSave available"));
 		return;
 	}
 
@@ -520,7 +520,7 @@ void UMCore_GameSettingsLibrary::ReloadAndApplyFromDisk(const UObject* WorldCont
 	if (SlotName.IsEmpty())
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk -- cached save has no slot name"));
+			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk: cached save has no slot name"));
 		return;
 	}
 
@@ -528,7 +528,7 @@ void UMCore_GameSettingsLibrary::ReloadAndApplyFromDisk(const UObject* WorldCont
 	if (!FreshSave)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk -- failed to load from slot '%s'"), *SlotName);
+			TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk: failed to load from slot '%s'"), *SlotName);
 		return;
 	}
 
@@ -540,15 +540,15 @@ void UMCore_GameSettingsLibrary::ReloadAndApplyFromDisk(const UObject* WorldCont
 	ApplyAllSettingsToEngine(WorldContextObject);
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk -- restored from slot '%s', %d float / %d int / %d bool settings re-applied"),
+		TEXT("GameSettingsLibrary::ReloadAndApplyFromDisk: restored from slot '%s', %d float / %d int / %d bool settings re-applied"),
 		*SlotName, CachedSave->FloatSettings.Num(), CachedSave->IntSettings.Num(), CachedSave->BoolSettings.Num());
 }
 
 /* Engine-apply half of the load-then-apply pair extracted from ReloadAndApplyFromDisk.
  * Iterates every setting in CoreSettings::SettingsCollections and dispatches the persisted
  * value through ApplySettingToEngine, then flushes UGameUserSettings once at the end.
- * Idempotent — safe to call repeatedly. Early-outs on dedicated server (no audio device,
- * GUS is a no-op, and all dispatchers warn on missing world context). */
+ * Idempotent; safe to call repeatedly. Early-outs on dedicated server (no audio device,
+ * GameUserSettings is a no-op, and all dispatchers warn on missing world context). */
 void UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(const UObject* WorldContextObject)
 {
 	if (IsRunningDedicatedServer()) { return; }
@@ -557,7 +557,7 @@ void UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(const UObject* WorldCo
 	if (!CachedSave)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyAllSettingsToEngine -- no cached PlayerSettingsSave available"));
+			TEXT("GameSettingsLibrary::ApplyAllSettingsToEngine: no cached PlayerSettingsSave available"));
 		return;
 	}
 
@@ -565,12 +565,12 @@ void UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(const UObject* WorldCo
 	if (!CoreSettings)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyAllSettingsToEngine -- CoreSettings unavailable"));
+			TEXT("GameSettingsLibrary::ApplyAllSettingsToEngine: CoreSettings unavailable"));
 		return;
 	}
 
 	/* Snapshot the user's preset intent before iteration. State replay through
-	   ApplyViaNamedSetter is not user input — child-scalability writes flip the
+	   ApplyViaNamedSetter is not user input; child-scalability writes flip the
 	   save's LastSelectedQualityPreset to -1 (Custom) via MarkQualityPresetCustom.
 	   Caching here lets the OverallScalabilityLevel short-circuit below read the
 	   pre-iteration value, and lets the post-loop restore reverse any clobber. */
@@ -585,7 +585,7 @@ void UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(const UObject* WorldCo
 		{
 			if (!Definition) { continue; }
 
-			/* Custom intent — skip QualityPreset apply so individual scalability DAs drive engine state.
+			/* Custom intent; skip QualityPreset apply so individual scalability DAs drive engine state.
 			   Without this guard, the cascade in ApplyViaNamedSetter would overwrite just-loaded
 			   individual save values with engine state matching the saved preset value. The read uses
 			   the pre-iteration snapshot rather than the live save, because earlier iterations may
@@ -617,9 +617,9 @@ void UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(const UObject* WorldCo
 		}
 	}
 
-	if (UGameUserSettings* GUS = UGameUserSettings::GetGameUserSettings())
+	if (UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings())
 	{
-		GUS->ApplySettings(false);
+		GameUserSettings->ApplySettings(false);
 	}
 
 	/* Restore user intent if iteration mutated it. The dispatcher's MarkQualityPresetCustom
@@ -641,13 +641,13 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
 {
 	if (!Setting) { return; }
 
-	/* Phase 1 — GameUserSettings (three-bucket dispatcher) */
+	/* Phase 1; GameUserSettings (three-bucket dispatcher) */
 	if (!Setting->NamedSetter.IsNone())
 	{
 		ApplyViaNamedSetter(Setting->NamedSetter, FloatValue, IntValue, BoolValue, WorldContextObject, Setting);
 	}
 
-	/* Phase 2 — Console Variables */
+	/* Phase 2; Console Variables */
 	if (!Setting->ConsoleVariable.IsNone())
 	{
 		switch (Setting->SettingType)
@@ -666,21 +666,21 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
 		}
 	}
 
-	/* Phase 3 — Sound Class volume (Slider only) */
+	/* Phase 3; Sound Class volume (Slider only) */
 	if (!Setting->SoundClass.IsNull() && Setting->SettingType == EMCore_SettingType::Slider)
 	{
 		ApplyToSoundClass(WorldContextObject, Setting->SoundClass, FloatValue);
 	}
 
-	/* Phase 4 — SoundMix push/pop (Toggle only) */
+	/* Phase 4; SoundMix push/pop (Toggle only) */
 	if (!Setting->PushedSoundMix.IsNull() && Setting->SettingType == EMCore_SettingType::Toggle)
 	{
 		ApplyToSoundMix(WorldContextObject, Setting->PushedSoundMix,
 			Setting->GetSaveKey(), BoolValue);
 	}
 
-	/* Phase 5 — Color Vision Deficiency (Slate renderer, client-only) */
-	if (Setting->ColorVisionRole != EModulusColorVisionRole::None)
+	/* Phase 5; Color Vision Deficiency (Slate renderer, client-only) */
+	if (Setting->ColorVisionRole != EMCore_ColorVisionRole::None)
 	{
 		ApplyToColorVisionDeficiency(Setting, IntValue, FloatValue);
 	}
@@ -691,13 +691,13 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
 // ============================================================================
 
 /* Two-bucket dispatcher for engine setter targets. Resolution order is
- * Bucket 3 → Bucket 1 → not-found warning. Bucket 3 runs first so that
- * translation-key / paired-param / non-GUS targets take precedence over
- * blind reflection. The FName must be the literal engine name — do not
+ * Bucket 3 -> Bucket 1 -> not-found warning. Bucket 3 runs first so that
+ * translation-key / paired-param / non-GameUserSettings targets take precedence over
+ * blind reflection. The FName must be the literal engine name; do not
  * invent or translate keys.
  *
- * Bucket 3 — function-dispatch for irreducible operations: cascades, paired
- *            parameters, non-GUS targets, and ScalabilityQuality struct
+ * Bucket 3; function-dispatch for irreducible operations: cascades, paired
+ *            parameters, non-GameUserSettings targets, and ScalabilityQuality struct
  *            members. Each entry writes the engine state directly and (for
  *            scalability children) calls Scalability::SetQualityLevels to
  *            push struct values onto the live sg.* CVars. Examples:
@@ -706,7 +706,7 @@ void UMCore_GameSettingsLibrary::ApplySettingToEngine(const UObject* WorldContex
  *            (paired bool+int), DisplayGamma (GEngine target),
  *            ApplicationScale (UUserInterfaceSettings target).
  *
- * Bucket 1 — top-level UPROPERTY on UGameUserSettings, written via FProperty
+ * Bucket 1; top-level UPROPERTY on UGameUserSettings, written via FProperty
  *            reflection. Example: bUseVSync, AudioQualityLevel, FrameRateLimit.
  *
  * Why no struct-reflection bucket: FQualityLevels reflection via
@@ -726,16 +726,16 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	if (SetterName.IsNone()) { return false; }
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- dispatch '%s'"), *SetterName.ToString());
+		TEXT("GameSettingsLibrary::ApplyViaNamedSetter: dispatch '%s'"), *SetterName.ToString());
 
-	/* Theme apply — does not depend on UGameUserSettings; resolves the target
+	/* Theme apply; does not depend on UGameUserSettings; resolves the target
 	 * theme asset from Definition->ThemeOptions and hands off to UISubsystem. */
 	if (SetterName == TEXT("MCore.SetActiveTheme"))
 	{
 		if (!Definition || !Definition->ThemeOptions.IsValidIndex(IntValue))
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: invalid index %d or missing Definition"),
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: MCore.SetActiveTheme: invalid index %d or missing Definition"),
 				IntValue);
 			return false;
 		}
@@ -745,7 +745,7 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		if (!Theme)
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: asset failed to load at index %d"),
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: MCore.SetActiveTheme: asset failed to load at index %d"),
 				IntValue);
 			return false;
 		}
@@ -753,17 +753,17 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		ULocalPlayer* LocalPlayer = WorldContextObject
 			? GEngine->GetFirstGamePlayer(WorldContextObject->GetWorld())
 			: nullptr;
-		UMCore_UISubsystem* UI = LocalPlayer
+		UMCore_UISubsystem* UISubsystem = LocalPlayer
 			? LocalPlayer->GetSubsystem<UMCore_UISubsystem>()
 			: nullptr;
-		if (!UI)
+		if (!UISubsystem)
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- MCore.SetActiveTheme: no UISubsystem for context"));
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: MCore.SetActiveTheme: no UISubsystem for context"));
 			return false;
 		}
 
-		UI->SetActiveTheme(Theme);
+		UISubsystem->SetActiveTheme(Theme);
 		return true;
 	}
 
@@ -805,7 +805,7 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		if (CoreSettings && !CoreSettings->bApplyDisplaySettingsInPIE)
 		{
 			UE_LOG(LogModulusSettings, Verbose,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- skipping editor-unsafe key '%s' in PIE (set CoreSettings::bApplyDisplaySettingsInPIE=true to override)"),
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: skipping editor-unsafe key '%s' in PIE (set CoreSettings::bApplyDisplaySettingsInPIE=true to override)"),
 				*SetterName.ToString());
 			return true; // Treat as handled; save-path proceeds, engine call suppressed
 		}
@@ -817,7 +817,7 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		if (CoreSettings && !CoreSettings->bApplyScalabilitySettingsInPIE)
 		{
 			UE_LOG(LogModulusSettings, Verbose,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- skipping editor-unsafe scalability key '%s' in PIE (set CoreSettings::bApplyScalabilitySettingsInPIE=true to override)"),
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: skipping editor-unsafe scalability key '%s' in PIE (set CoreSettings::bApplyScalabilitySettingsInPIE=true to override)"),
 				*SetterName.ToString());
 			
 			if (SetterName != TEXT("OverallScalabilityLevel"))
@@ -832,17 +832,17 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		}
 	}
 
-	UGameUserSettings* GUS = GEngine ? GEngine->GetGameUserSettings() : nullptr;
+	UGameUserSettings* GameUserSettings = GEngine ? GEngine->GetGameUserSettings() : nullptr;
 
-	/* ============================================================
-	 * Bucket 3 — function-dispatch for irreducible operations.
-	 * ============================================================ */
+	// ============================================================
+	// Bucket 3; function-dispatch for irreducible operations.
+	// ============================================================
 	if (SetterName == TEXT("OverallScalabilityLevel"))
 	{
-		if (!GUS) { return false; }
+		if (!GameUserSettings) { return false; }
 		UMCore_PlayerSettingsSave* Save = GetPlayerSave(WorldContextObject);
 
-		GUS->SetOverallScalabilityLevel(IntValue);
+		GameUserSettings->SetOverallScalabilityLevel(IntValue);
 
 		/* Cascade engine values back to individual save keys so subsequent reloads
 		   and per-widget reads reflect what the preset just applied. */
@@ -865,9 +865,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	   QualityPreset widget refreshes. Listed alphabetically. */
 	if (SetterName == TEXT("AntiAliasingQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.AntiAliasingQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.AntiAliasingQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -878,9 +878,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("EffectsQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.EffectsQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.EffectsQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -891,9 +891,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("FoliageQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.FoliageQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.FoliageQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -904,9 +904,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("GlobalIlluminationQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.GlobalIlluminationQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.GlobalIlluminationQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -917,9 +917,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("LandscapeQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.LandscapeQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.LandscapeQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -930,9 +930,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("PostProcessQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.PostProcessQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.PostProcessQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -943,9 +943,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("ReflectionQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.ReflectionQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.ReflectionQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -956,9 +956,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("ShadingQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.ShadingQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.ShadingQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -969,9 +969,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("ShadowQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.ShadowQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.ShadowQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -982,9 +982,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("TextureQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.TextureQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.TextureQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -995,9 +995,9 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("ViewDistanceQuality"))
 	{
-		if (!GUS) { return false; }
-		GUS->ScalabilityQuality.ViewDistanceQuality = FMath::Clamp(IntValue, 0, 3);
-		Scalability::SetQualityLevels(GUS->ScalabilityQuality);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->ScalabilityQuality.ViewDistanceQuality = FMath::Clamp(IntValue, 0, 3);
+		Scalability::SetQualityLevels(GameUserSettings->ScalabilityQuality);
 
 		MarkQualityPresetCustom(GetPlayerSave(WorldContextObject));
 		UMCore_EventFunctionLibrary::BroadcastSimpleEvent(
@@ -1008,11 +1008,11 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	}
 	if (SetterName == TEXT("ScreenResolution"))
 	{
-		/* TODO: IntValue is currently the index into the descending-sorted
-		   supported-resolutions list. If a path supplying packed FIntPoint
-		   X/Y becomes available, decode here and call SetScreenResolution
-		   with the FIntPoint directly. */
-		if (!GUS) { return false; }
+		// TODO: IntValue is currently the index into the descending-sorted
+		// supported-resolutions list. If a path supplying packed FIntPoint
+		// X/Y becomes available, decode here and call SetScreenResolution
+		// with the FIntPoint directly.
+		if (!GameUserSettings) { return false; }
 
 		TArray<FIntPoint> Resolutions;
 		UKismetSystemLibrary::GetSupportedFullscreenResolutions(Resolutions);
@@ -1020,12 +1020,12 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 
 		if (Resolutions.IsValidIndex(IntValue))
 		{
-			GUS->SetScreenResolution(Resolutions[IntValue]);
+			GameUserSettings->SetScreenResolution(Resolutions[IntValue]);
 		}
 		else
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- resolution index %d out of range (%d available)"),
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: resolution index %d out of range (%d available)"),
 				IntValue, Resolutions.Num());
 		}
 		return true;
@@ -1033,22 +1033,22 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	if (SetterName == TEXT("bUseHDRDisplayOutput"))
 	{
 		/* Paired with HDRDisplayOutputNits. Read the other axis from current
-		   GUS state so EnableHDRDisplayOutput receives both params. */
-		if (!GUS) { return false; }
-		const int32 CurrentNits = GUS->GetCurrentHDRDisplayNits();
-		GUS->EnableHDRDisplayOutput(bBoolValue, CurrentNits > 0 ? CurrentNits : 1000);
+		   GameUserSettings state so EnableHDRDisplayOutput receives both params. */
+		if (!GameUserSettings) { return false; }
+		const int32 CurrentNits = GameUserSettings->GetCurrentHDRDisplayNits();
+		GameUserSettings->EnableHDRDisplayOutput(bBoolValue, CurrentNits > 0 ? CurrentNits : 1000);
 		return true;
 	}
 	if (SetterName == TEXT("HDRDisplayOutputNits"))
 	{
-		if (!GUS) { return false; }
-		GUS->EnableHDRDisplayOutput(GUS->IsHDREnabled(), IntValue);
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->EnableHDRDisplayOutput(GameUserSettings->IsHDREnabled(), IntValue);
 		return true;
 	}
 	if (SetterName == TEXT("FullscreenMode"))
 	{
-		if (!GUS) { return false; }
-		GUS->SetFullscreenMode(EWindowMode::ConvertIntToWindowMode(IntValue));
+		if (!GameUserSettings) { return false; }
+		GameUserSettings->SetFullscreenMode(EWindowMode::ConvertIntToWindowMode(IntValue));
 		return true;
 	}
 	if (SetterName == TEXT("DisplayGamma"))
@@ -1057,7 +1057,7 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 		{
 			GEngine->DisplayGamma = FloatValue;
 			UE_LOG(LogModulusSettings, Log,
-				TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- DisplayGamma=%.3f"), FloatValue);
+				TEXT("GameSettingsLibrary::ApplyViaNamedSetter: DisplayGamma=%.3f"), FloatValue);
 		}
 		return true;
 	}
@@ -1065,24 +1065,24 @@ bool UMCore_GameSettingsLibrary::ApplyViaNamedSetter(const FName& SetterName,
 	{
 		GetMutableDefault<UUserInterfaceSettings>()->ApplicationScale = FloatValue;
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- ApplicationScale=%.3f"), FloatValue);
+			TEXT("GameSettingsLibrary::ApplyViaNamedSetter: ApplicationScale=%.3f"), FloatValue);
 		return true;
 	}
 
-	if (!GUS) { return false; }
+	if (!GameUserSettings) { return false; }
 
-	/* ============================================================
-	 * Bucket 1 — top-level UPROPERTY on UGameUserSettings via reflection.
-	 * ============================================================ */
-	if (FProperty* Prop = GUS->GetClass()->FindPropertyByName(SetterName))
+	// ============================================================
+	// Bucket 1; top-level UPROPERTY on UGameUserSettings via reflection.
+	// ============================================================
+	if (FProperty* Prop = GameUserSettings->GetClass()->FindPropertyByName(SetterName))
 	{
-		return WriteReflectedProperty(Prop, GUS, FloatValue, IntValue, bBoolValue);
+		return WriteReflectedProperty(Prop, GameUserSettings, FloatValue, IntValue, bBoolValue);
 	}
 
 	UE_LOG(LogModulusSettings, Warning,
-		TEXT("GameSettingsLibrary::ApplyViaNamedSetter -- '%s' not found in any bucket "
+		TEXT("GameSettingsLibrary::ApplyViaNamedSetter: '%s' not found in any bucket "
 			 "(top-level UPROPERTY on %s or function-dispatch table)"),
-		*SetterName.ToString(), *GUS->GetClass()->GetName());
+		*SetterName.ToString(), *GameUserSettings->GetClass()->GetName());
 	return false;
 }
 
@@ -1118,7 +1118,7 @@ bool UMCore_GameSettingsLibrary::WriteReflectedProperty(FProperty* Prop, void* C
 	}
 
 	UE_LOG(LogModulusSettings, Warning,
-		TEXT("GameSettingsLibrary::WriteReflectedProperty -- '%s' has unsupported type '%s' "
+		TEXT("GameSettingsLibrary::WriteReflectedProperty: '%s' has unsupported type '%s' "
 			 "(attempted float=%.3f int=%d bool=%d)"),
 		*Prop->GetName(), *Prop->GetCPPType(),
 		FloatValue, IntValue, bBoolValue ? 1 : 0);
@@ -1133,8 +1133,8 @@ void UMCore_GameSettingsLibrary::CascadeScalabilityValuesToSave(UMCore_PlayerSet
 {
 	if (!Save) { return; }
 
-	UGameUserSettings* GUS = UGameUserSettings::GetGameUserSettings();
-	if (!GUS) { return; }
+	UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings();
+	if (!GameUserSettings) { return; }
 
 	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 	if (!CoreSettings) { return; }
@@ -1150,18 +1150,18 @@ void UMCore_GameSettingsLibrary::CascadeScalabilityValuesToSave(UMCore_PlayerSet
 	static const FName Name_GlobalIlluminationQuality(TEXT("GlobalIlluminationQuality"));
 	static const FName Name_ReflectionQuality(TEXT("ReflectionQuality"));
 
-	auto ReadMember = [GUS](const FName& Member, int32& OutValue) -> bool
+	auto ReadMember = [GameUserSettings](const FName& Member, int32& OutValue) -> bool
 	{
-		if      (Member == Name_TextureQuality)            { OutValue = GUS->ScalabilityQuality.TextureQuality;            return true; }
-		else if (Member == Name_ShadowQuality)             { OutValue = GUS->ScalabilityQuality.ShadowQuality;             return true; }
-		else if (Member == Name_AntiAliasingQuality)       { OutValue = GUS->ScalabilityQuality.AntiAliasingQuality;       return true; }
-		else if (Member == Name_PostProcessQuality)        { OutValue = GUS->ScalabilityQuality.PostProcessQuality;        return true; }
-		else if (Member == Name_ViewDistanceQuality)       { OutValue = GUS->ScalabilityQuality.ViewDistanceQuality;       return true; }
-		else if (Member == Name_FoliageQuality)            { OutValue = GUS->ScalabilityQuality.FoliageQuality;            return true; }
-		else if (Member == Name_EffectsQuality)            { OutValue = GUS->ScalabilityQuality.EffectsQuality;            return true; }
-		else if (Member == Name_ShadingQuality)            { OutValue = GUS->ScalabilityQuality.ShadingQuality;            return true; }
-		else if (Member == Name_GlobalIlluminationQuality) { OutValue = GUS->ScalabilityQuality.GlobalIlluminationQuality; return true; }
-		else if (Member == Name_ReflectionQuality)         { OutValue = GUS->ScalabilityQuality.ReflectionQuality;         return true; }
+		if      (Member == Name_TextureQuality)            { OutValue = GameUserSettings->ScalabilityQuality.TextureQuality;            return true; }
+		else if (Member == Name_ShadowQuality)             { OutValue = GameUserSettings->ScalabilityQuality.ShadowQuality;             return true; }
+		else if (Member == Name_AntiAliasingQuality)       { OutValue = GameUserSettings->ScalabilityQuality.AntiAliasingQuality;       return true; }
+		else if (Member == Name_PostProcessQuality)        { OutValue = GameUserSettings->ScalabilityQuality.PostProcessQuality;        return true; }
+		else if (Member == Name_ViewDistanceQuality)       { OutValue = GameUserSettings->ScalabilityQuality.ViewDistanceQuality;       return true; }
+		else if (Member == Name_FoliageQuality)            { OutValue = GameUserSettings->ScalabilityQuality.FoliageQuality;            return true; }
+		else if (Member == Name_EffectsQuality)            { OutValue = GameUserSettings->ScalabilityQuality.EffectsQuality;            return true; }
+		else if (Member == Name_ShadingQuality)            { OutValue = GameUserSettings->ScalabilityQuality.ShadingQuality;            return true; }
+		else if (Member == Name_GlobalIlluminationQuality) { OutValue = GameUserSettings->ScalabilityQuality.GlobalIlluminationQuality; return true; }
+		else if (Member == Name_ReflectionQuality)         { OutValue = GameUserSettings->ScalabilityQuality.ReflectionQuality;         return true; }
 		return false;
 	};
 
@@ -1200,7 +1200,7 @@ void UMCore_GameSettingsLibrary::ApplyToConsoleVariable(const FName& CVarName, f
 	else
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToConsoleVariable -- console variable '%s' not found"), *CVarName.ToString());
+			TEXT("GameSettingsLibrary::ApplyToConsoleVariable: console variable '%s' not found"), *CVarName.ToString());
 	}
 }
 
@@ -1214,7 +1214,7 @@ void UMCore_GameSettingsLibrary::ApplyToConsoleVariable(const FName& CVarName, i
 	else
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToConsoleVariable -- console variable '%s' not found"), *CVarName.ToString());
+			TEXT("GameSettingsLibrary::ApplyToConsoleVariable: console variable '%s' not found"), *CVarName.ToString());
 	}
 }
 
@@ -1228,7 +1228,7 @@ void UMCore_GameSettingsLibrary::ApplyToConsoleVariable(const FName& CVarName, b
 	else
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToConsoleVariable -- console variable '%s' not found"), *CVarName.ToString());
+			TEXT("GameSettingsLibrary::ApplyToConsoleVariable: console variable '%s' not found"), *CVarName.ToString());
 	}
 }
 
@@ -1239,8 +1239,8 @@ void UMCore_GameSettingsLibrary::ApplyToConsoleVariable(const FName& CVarName, b
 namespace
 {
 	/* File-scope cache of the most recent slider value committed per SoundClass.
-	 * Drives the parent-chain product cascade in ApplyToSoundClass — every commit
-	 * walks the cache and re-pushes Product(self × cached ancestors) for every
+	 * Drives the parent-chain product cascade in ApplyToSoundClass; every commit
+	 * walks the cache and re-pushes Product(self * cached ancestors) for every
 	 * tracked class, so a Master adjustment correctly propagates to all
 	 * descendant categories without clobbering their independently-set values.
 	 * Weak pointers so cache entries don't extend SoundClass lifetimes; stale
@@ -1264,10 +1264,10 @@ namespace
  * Parent-chain cascade: SetSoundMixClassOverride with bApplyToChildren=true
  * last-write-wins clobbers per-category overrides; with false, parent volumes
  * never propagate. We keep a per-class cache of the last committed value and,
- * on every commit, re-push Product(self × cached ancestors via ParentClass)
+ * on every commit, re-push Product(self * cached ancestors via ParentClass)
  * for every tracked class. Idempotent: classes whose product is unchanged
  * end up overriding to the same value they already had. Depth-bailed at 16
- * to defend against malformed (cyclic) ParentClass hierarchies — the engine
+ * to defend against malformed (cyclic) ParentClass hierarchies; the engine
  * has no cycle guard of its own. */
 void UMCore_GameSettingsLibrary::ApplyToSoundClass(
 	const UObject* WorldContextObject,
@@ -1278,7 +1278,7 @@ void UMCore_GameSettingsLibrary::ApplyToSoundClass(
 	if (!LoadedClass)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToSoundClass -- SoundClass failed to load (ref '%s')"),
+			TEXT("GameSettingsLibrary::ApplyToSoundClass: SoundClass failed to load (ref '%s')"),
 			*SoundClassRef.ToString());
 		return;
 	}
@@ -1288,7 +1288,7 @@ void UMCore_GameSettingsLibrary::ApplyToSoundClass(
 	if (!VolumeMix)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToSoundClass -- VolumeMix not configured in MCore_CoreSettings"));
+			TEXT("GameSettingsLibrary::ApplyToSoundClass: VolumeMix not configured in MCore_CoreSettings"));
 		return;
 	}
 
@@ -1326,7 +1326,7 @@ void UMCore_GameSettingsLibrary::ApplyToSoundClass(
 	}
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("GameSettingsLibrary::ApplyToSoundClass -- committed %s = %.3f, %d cached classes re-pushed"),
+		TEXT("GameSettingsLibrary::ApplyToSoundClass: committed %s = %.3f, %d cached classes re-pushed"),
 		*LoadedClass->GetName(), ClampedVolume, GMCore_VolumeCache.Num());
 }
 
@@ -1336,7 +1336,7 @@ void UMCore_GameSettingsLibrary::EnsureVolumeMixActive(
 	if (!VolumeMix || !WorldContextObject || !GEngine) { return; }
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("GameSettingsLibrary::EnsureVolumeMixActive -- pushing VolumeMix '%s'"),
+		TEXT("GameSettingsLibrary::EnsureVolumeMixActive: pushing VolumeMix '%s'"),
 		*VolumeMix->GetName());
 
 	UGameplayStatics::PushSoundMixModifier(WorldContextObject, VolumeMix);
@@ -1375,7 +1375,7 @@ void UMCore_GameSettingsLibrary::ApplyToSoundMix(const UObject* WorldContextObje
 	if (!Mix)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("GameSettingsLibrary::ApplyToSoundMix -- failed to load SoundMix '%s'"),
+			TEXT("GameSettingsLibrary::ApplyToSoundMix: failed to load SoundMix '%s'"),
 			*SoundMixRef.ToString());
 		return;
 	}
@@ -1392,7 +1392,7 @@ void UMCore_GameSettingsLibrary::ApplyToSoundMix(const UObject* WorldContextObje
 	PushedState.Add(SaveKey, bDesiredActive);
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("GameSettingsLibrary::ApplyToSoundMix -- SoundMix '%s' %s (key: %s)"),
+		TEXT("GameSettingsLibrary::ApplyToSoundMix: SoundMix '%s' %s (key: %s)"),
 		*Mix->GetName(), bDesiredActive ? TEXT("pushed") : TEXT("popped"), *SaveKey);
 }
 
@@ -1403,23 +1403,23 @@ void UMCore_GameSettingsLibrary::ApplyToSoundMix(const UObject* WorldContextObje
 bool UMCore_GameSettingsLibrary::ApplyToColorVisionDeficiency(
 	const UMCore_DA_SettingDefinition* Definition, int32 IntValue, float FloatValue)
 {
-	if (!Definition || Definition->ColorVisionRole == EModulusColorVisionRole::None)
+	if (!Definition || Definition->ColorVisionRole == EMCore_ColorVisionRole::None)
 	{
 		return false;
 	}
 
-	/* One Slate-wide (Type, Severity) slot — bare statics, no save-key keying.
+	/* One Slate-wide (Type, Severity) slot; bare statics, no save-key keying.
 	   ReloadAndApplyFromDisk fires both role DAs at init so both caches converge. */
 	static int32 CachedType = 0;       /* 0 == NormalVision */
 	static float CachedSeverity = 0.f;
 
 	switch (Definition->ColorVisionRole)
 	{
-	case EModulusColorVisionRole::DeficiencyType:
+	case EMCore_ColorVisionRole::DeficiencyType:
 		if (Definition->SettingType != EMCore_SettingType::Dropdown)
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency -- "
+				TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency: "
 					 "DeficiencyType role requires Dropdown SettingType (setting: %s)"),
 				*Definition->GetName());
 			return false;
@@ -1427,11 +1427,11 @@ bool UMCore_GameSettingsLibrary::ApplyToColorVisionDeficiency(
 		CachedType = FMath::Clamp(IntValue, 0, 3);
 		break;
 
-	case EModulusColorVisionRole::DeficiencySeverity:
+	case EMCore_ColorVisionRole::DeficiencySeverity:
 		if (Definition->SettingType != EMCore_SettingType::Slider)
 		{
 			UE_LOG(LogModulusSettings, Warning,
-				TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency -- "
+				TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency: "
 					 "DeficiencySeverity role requires Slider SettingType (setting: %s)"),
 				*Definition->GetName());
 			return false;
@@ -1450,7 +1450,7 @@ bool UMCore_GameSettingsLibrary::ApplyToColorVisionDeficiency(
 		/*bShowCorrectionWithDeficiency=*/false);
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency -- Type=%d Severity=%.2f"),
+		TEXT("GameSettingsLibrary::ApplyToColorVisionDeficiency: Type=%d Severity=%.2f"),
 		CachedType, CachedSeverity);
 
 	return true;

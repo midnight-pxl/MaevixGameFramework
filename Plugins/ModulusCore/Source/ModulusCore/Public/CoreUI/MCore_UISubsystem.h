@@ -1,11 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
-
-/**
- * MCore_UISubsystem.h
- *
- * Per-player UI subsystem managing widget lifecycle, layer stacks,
- * menu hub orchestration, and theme distribution.
- */
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
@@ -85,7 +78,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MCore|UI")
 	int32 GetWidgetCountInLayer(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
-	/** Check if a layer has any active widget. */
+	/** Returns true if the layer's stack has any tracked, valid widget. */
 	UFUNCTION(BlueprintPure, Category = "MCore|UI")
 	bool IsLayerActive(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
@@ -148,11 +141,9 @@ public:
 	bool SetActiveThemeByIndex(int32 ThemeIndex);
 
 	/**
-	 * Apply NewTheme as the active theme. Broadcasts OnThemeChanged delegate
-	 * AND the MCore.Theme.Changed local event tag, then persists the choice
-	 * to UMCore_PlayerSettingsSave. No-op if NewTheme is null or already
-	 * active. ActiveThemeIndex is set to INDEX_NONE because the asset may
-	 * not be registered in CoreSettings::AvailableThemes.
+	 * Apply NewTheme as the active theme. Broadcasts OnThemeChanged and the
+	 * MCore.Theme.Changed local event tag, then persists to UMCore_PlayerSettingsSave.
+	 * No-op if NewTheme is null or already active.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
 	void SetActiveTheme(UMCore_PDA_UITheme_Base* NewTheme);
@@ -162,15 +153,15 @@ public:
 	void NotifyTextSizeChanged();
 
 protected:
-	/* Widget class for PrimaryGameLayout. Set in project defaults or override in Blueprint. */
+	/** Widget class for PrimaryGameLayout. Set in project defaults or override in Blueprint. */
 	UPROPERTY(EditDefaultsOnly, Category = "Modulus|UI")
 	TSubclassOf<UMCore_PrimaryGameLayout> PrimaryGameLayoutClass;
 	
-	/* Widget class for MenuHub (loaded from settings or defaults) */
+	/** Widget class for MenuHub (loaded from settings or defaults) */
 	UPROPERTY()
 	TSubclassOf<UMCore_GameMenuHub> MenuHubClass;
 
-	/* Z-order for layout when added to viewport */
+	/** Z-order for layout when added to viewport */
 	UPROPERTY(EditDefaultsOnly, Category = "Modulus|UI", meta = (ClampMin = "-100", ClampMax = "100"))
 	int32 PrimaryGameLayoutZOrder = 0;
 	
@@ -214,7 +205,7 @@ private:
 	FDelegateHandle PlayerControllerReadyHandle;
 	FDelegateHandle LocalEventHandle;
 	
-	/* Strong reference; UISubsystem owns the layout lifecycle */
+	/** Strong reference; UISubsystem owns the layout lifecycle */
 	UPROPERTY(Transient)
 	TObjectPtr<UMCore_PrimaryGameLayout> PrimaryGameLayout;
 	
@@ -229,7 +220,7 @@ private:
 	/* Widgets pushed via PushWidgetToLayer, tracked per-layer with weak refs */
 	TMap<FGameplayTag, TArray<TWeakObjectPtr<UCommonActivatableWidget>>> TrackedWidgets;
 
-	/* Registered menu screens for this local player */
+	/** Registered menu screens for this local player */
 	UPROPERTY(Transient)
 	TArray<FMCore_MenuTab> RegisteredMenuScreens;
 };

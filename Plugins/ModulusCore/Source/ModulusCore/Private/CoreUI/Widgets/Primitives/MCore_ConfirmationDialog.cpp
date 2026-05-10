@@ -78,7 +78,7 @@ void UMCore_ConfirmationDialog::NativeOnActivated()
 		RegisterBinding(BackInputAction, CancelDelegate, BackBindingHandle);
 	}
 
-	UE_LOG(LogModulusUI, Log, TEXT("ConfirmationDialog::NativeOnActivated -- dialog activated, widget=%s"), *GetNameSafe(this));
+	UE_LOG(LogModulusUI, Log, TEXT("ConfirmationDialog::NativeOnActivated: dialog activated, widget=%s"), *GetNameSafe(this));
 }
 
 void UMCore_ConfirmationDialog::NativeOnDeactivated()
@@ -115,7 +115,7 @@ void UMCore_ConfirmationDialog::ResolveDialog(bool bConfirmed)
 	bResolved = true;
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("ConfirmationDialog::ResolveDialog -- resolved: %s, widget=%s"),
+		TEXT("ConfirmationDialog::ResolveDialog: resolved: %s, widget=%s"),
 		bConfirmed ? TEXT("Confirmed") : TEXT("Cancelled"),
 		*GetNameSafe(this));
 

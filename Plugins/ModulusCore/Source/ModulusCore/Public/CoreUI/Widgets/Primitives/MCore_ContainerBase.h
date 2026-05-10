@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ContainerBase.h
- *
- * Base container widget with theme system integration.
- * Use as themed background/border for UI panels and sections.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

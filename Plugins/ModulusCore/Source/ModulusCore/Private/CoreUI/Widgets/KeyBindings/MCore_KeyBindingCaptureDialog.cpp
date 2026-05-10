@@ -48,7 +48,7 @@ void UMCore_KeyBindingCaptureDialog::ShowCaptureError(const FText& ErrorMessage)
 	}
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("KeyBindingCaptureDialog::ShowCaptureError -- displaying error for %.1fs [%s]"),
+		TEXT("KeyBindingCaptureDialog::ShowCaptureError: displaying error for %.1fs [%s]"),
 		ErrorDisplayDuration, *GetNameSafe(this));
 }
 
@@ -86,7 +86,7 @@ void UMCore_KeyBindingCaptureDialog::NativeOnActivated()
 	}
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("KeyBindingCaptureDialog::NativeOnActivated -- dialog activated [%s]"),
+		TEXT("KeyBindingCaptureDialog::NativeOnActivated: dialog activated [%s]"),
 		*GetNameSafe(this));
 }
 
@@ -129,6 +129,8 @@ UWidget* UMCore_KeyBindingCaptureDialog::NativeGetDesiredFocusTarget() const
 
 void UMCore_KeyBindingCaptureDialog::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme)
 {
+	CachedTheme = NewTheme;
+
 	if (!NewTheme) { return; }
 
 	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();

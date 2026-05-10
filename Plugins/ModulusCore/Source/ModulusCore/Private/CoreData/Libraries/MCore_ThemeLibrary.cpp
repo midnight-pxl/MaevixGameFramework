@@ -1,4 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 
 #include "CoreData/Libraries/MCore_ThemeLibrary.h"
@@ -15,13 +15,7 @@ void UMCore_ThemeLibrary::ApplyTextStyleFromTheme(const ULocalPlayer* LocalPlaye
 	const TArray<TSubclassOf<UCommonTextStyle>>& TextStyleArray)
 {
 	if (!TextBlock || TextStyleArray.IsEmpty()) { return; }
-	// TODO: Remove after Slate-timing diagnostics testing (2026-05-08)
-	UE_LOG(LogModulusUI, Log, 
-		TEXT("ApplyTextStyleFromTheme -- TextBlock=%s SlateBuilt=%s ArrayNum=%d"),
-		*GetNameSafe(TextBlock),
-		(TextBlock && TextBlock->GetCachedWidget().IsValid()) ? TEXT("Y") : TEXT("N"),
-		TextStyleArray.Num());
-	
+
 	int32 SizeIndex{0};
 	if (LocalPlayer)
 	{
@@ -37,7 +31,7 @@ void UMCore_ThemeLibrary::ApplyTextStyleFromTheme(const ULocalPlayer* LocalPlaye
 		: TextStyleArray[0];
 	
 	if (ResolvedStyle) { TextBlock->SetStyle(ResolvedStyle); }
-	UE_LOG(LogModulusUI, VeryVerbose, TEXT("ThemeLibrary::ApplyTextStyleFromTheme -- applied style at size index %d"), SizeIndex);
+	UE_LOG(LogModulusUI, VeryVerbose, TEXT("ThemeLibrary::ApplyTextStyleFromTheme: applied style at size index %d"), SizeIndex);
 }
 
 FSliderStyle UMCore_ThemeLibrary::BuildSliderStyle(const UMCore_PDA_SliderStyle* SliderStyleDA,
@@ -81,7 +75,7 @@ FSliderStyle UMCore_ThemeLibrary::BuildSliderStyle(const UMCore_PDA_SliderStyle*
 	
 	NewStyle.BarThickness = SliderStyleDA->BarThickness;
 	
-	UE_LOG(LogModulusUI, VeryVerbose, TEXT("ThemeLibrary::BuildSliderStyle -- slider style built from DataAsset"));
+	UE_LOG(LogModulusUI, VeryVerbose, TEXT("ThemeLibrary::BuildSliderStyle: slider style built from DataAsset"));
 	return NewStyle;
 }
 

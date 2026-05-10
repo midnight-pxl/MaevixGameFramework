@@ -177,7 +177,7 @@ void UMCore_CoreSettings::InvalidateCollectionCache()
 	{
 		Subsystem->InvalidateCollectionCache();
 	}
-	/* Silent no-op if no subsystem — editor-time edit before any PIE has run. The next
+	/* Silent no-op if no subsystem; editor-time edit before any PIE has run. The next
 	   PIE start gets a fresh subsystem with empty cache. */
 }
 

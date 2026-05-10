@@ -1,4 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #include "CoreData/Libraries/MCore_EventFunctionLibrary.h"
 
@@ -87,7 +87,7 @@ void UMCore_EventFunctionLibrary::BroadcastSimpleEvent(const UObject* WorldConte
 	if (!WorldContext || !EventTag.IsValid())
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("EventFunctionLibrary::BroadcastSimpleEvent -- invalid parameters (WorldContext: %s, Tag: %s)"),
+			TEXT("EventFunctionLibrary::BroadcastSimpleEvent: invalid parameters (WorldContext: %s, Tag: %s)"),
 			WorldContext ? TEXT("Valid") : TEXT("NULL"), *EventTag.ToString());
 		return;
 	}
@@ -107,7 +107,7 @@ void UMCore_EventFunctionLibrary::BroadcastEventWithContext(const UObject* World
 	if (!WorldContext || !EventTag.IsValid())
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("EventFunctionLibrary::BroadcastEventWithContext -- invalid parameters (WorldContext: %s, Tag: %s)"),
+			TEXT("EventFunctionLibrary::BroadcastEventWithContext: invalid parameters (WorldContext: %s, Tag: %s)"),
 			WorldContext ? TEXT("Valid") : TEXT("NULL"), *EventTag.ToString());
 		return;
 	}
@@ -127,7 +127,7 @@ void UMCore_EventFunctionLibrary::BroadcastEvent(const UObject* WorldContext,
 	if (!WorldContext || !EventTag.IsValid())
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("EventFunctionLibrary::BroadcastEvent -- invalid parameters (WorldContext: %s, Tag: %s)"),
+			TEXT("EventFunctionLibrary::BroadcastEvent: invalid parameters (WorldContext: %s, Tag: %s)"),
 			WorldContext ? TEXT("Valid") : TEXT("NULL"), *EventTag.ToString());
 		return;
 	}
@@ -196,7 +196,7 @@ void UMCore_EventFunctionLibrary::BroadcastTypedEvent(const UObject* WorldContex
 	if (!WorldContext || !EventTag.IsValid())
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("EventFunctionLibrary::BroadcastTypedEvent -- invalid parameters (WorldContext: %s, Tag: %s)"),
+			TEXT("EventFunctionLibrary::BroadcastTypedEvent: invalid parameters (WorldContext: %s, Tag: %s)"),
 			WorldContext ? TEXT("Valid") : TEXT("NULL"), *EventTag.ToString());
 		return;
 	}
@@ -226,11 +226,11 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 	const UWorld* World = WorldContext->GetWorld();
 	if (!World)
 	{
-		UE_LOG(LogModulusEvent, Warning, TEXT("EventFunctionLibrary::RouteEventToSubsystem -- no valid world context"));
+		UE_LOG(LogModulusEvent, Warning, TEXT("EventFunctionLibrary::RouteEventToSubsystem: no valid world context"));
 		return;
 	}
 
-	UE_LOG(LogModulusEvent, Verbose, TEXT("EventFunctionLibrary::RouteEventToSubsystem -- routing event: %s (Scope: %s)"),
+	UE_LOG(LogModulusEvent, Verbose, TEXT("EventFunctionLibrary::RouteEventToSubsystem: routing event: %s (Scope: %s)"),
 		   *EventData.EventTag.ToString(),
 		   EventScope == EMCore_EventScope::Global ? TEXT("Global") : TEXT("Local"));
 
@@ -239,7 +239,7 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 		UGameInstance* GameInstance = World->GetGameInstance();
 		if (!GameInstance)
 		{
-			UE_LOG(LogModulusEvent, Warning, TEXT("EventFunctionLibrary::RouteEventToSubsystem -- no valid game instance"));
+			UE_LOG(LogModulusEvent, Warning, TEXT("EventFunctionLibrary::RouteEventToSubsystem: no valid game instance"));
 			return;
 		}
 
@@ -250,7 +250,7 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 		else
 		{
 			UE_LOG(LogModulusEvent, Error,
-				TEXT("EventFunctionLibrary::RouteEventToSubsystem -- failed to get GlobalEventSubsystem"));
+				TEXT("EventFunctionLibrary::RouteEventToSubsystem: failed to get GlobalEventSubsystem"));
 		}
 	}
 	else
@@ -260,7 +260,7 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 		if (!LocalPlayer)
 		{
 			UE_LOG(LogModulusEvent, Warning,
-				TEXT("EventFunctionLibrary::RouteEventToSubsystem -- could not resolve LocalPlayer for event '%s'"),
+				TEXT("EventFunctionLibrary::RouteEventToSubsystem: could not resolve LocalPlayer for event '%s'"),
 				*EventData.EventTag.ToString());
 			return;
 		}
@@ -272,7 +272,7 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 		else
 		{
 			UE_LOG(LogModulusEvent, Error,
-				TEXT("EventFunctionLibrary::RouteEventToSubsystem -- failed to get LocalEventSubsystem"));
+				TEXT("EventFunctionLibrary::RouteEventToSubsystem: failed to get LocalEventSubsystem"));
 		}
 	}
 }

@@ -1,19 +1,12 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_NetworkingLibrary.h
- *
- * Static network helper functions for UObjects that cannot use UMCore_NetworkingComponent
- * (widgets, subsystems, data assets). Provides authority checks and network mode queries.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MCore_NetworkingLibrary.generated.h"
 
-/* Network mode types for UE multiplayer */
+/** Network mode types for UE multiplayer */
 UENUM(BlueprintType)
 enum class EMCore_NetMode : uint8
 {
@@ -107,7 +100,7 @@ public:
 		meta = (DefaultToSelf = "Subsystem", DisplayName = "Is Server (Subsystem)"))
 	static bool Subsystem_IsServer(const USubsystem* Subsystem);
 
-	/** Returns true if subsystem can execute server operations. */
+	/** Currently equivalent to Subsystem_IsServer. Provided as a separate intent-named API for caller readability. */
 	UFUNCTION(BlueprintPure, Category = "Modulus|Network|Subsystem",
 		meta = (DefaultToSelf = "Subsystem", DisplayName = "Can Execute Server Operation (Subsystem)"))
 	static bool Subsystem_CanExecuteServerOperation(const USubsystem* Subsystem);

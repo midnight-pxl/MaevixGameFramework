@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ButtonBase.h
- *
- * Base button class with theme system integration and optional text/icon bindings.
- * Automatically binds to UISubsystem::OnThemeChanged for runtime theme switching.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -144,11 +137,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Icon")
 	TObjectPtr<UTexture2D> ButtonIcon;
 
-	/* Override takes precedence over theme's PrimaryButtonStyle. Leave None for theme default. */
+	/** Override takes precedence over theme's PrimaryButtonStyle. Leave None for theme default. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Style")
 	TSubclassOf<UCommonButtonStyle> ButtonStyleOverride;
 
-	/* Override takes precedence over theme's BodyTextStyle. Leave None for theme default. */
+	/** Override takes precedence over theme's BodyTextStyle. Leave None for theme default. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Style")
 	TSubclassOf<UCommonTextStyle> TextStyleOverride;
 

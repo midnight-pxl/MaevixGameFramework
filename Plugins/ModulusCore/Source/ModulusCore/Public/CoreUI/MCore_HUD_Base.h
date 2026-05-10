@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_HUD_Base.h
- *
- * Base HUD class bridging AHUD with the CommonUI-based
- * PrimaryGameLayout and UISubsystem.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -30,11 +23,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UI|HUD")
 	bool HasValidPrimaryGameLayout() const;
 
-	/** Caches the result for subsequent calls. */
+	/** Returns nullptr if the owning PlayerController has no LocalPlayer. */
 	UFUNCTION(BlueprintPure, Category = "UI|HUD")
 	UMCore_UISubsystem* GetUISubsystem() const;
-
-protected:
-	/* Override for canvas-based drawing (debug viz, crosshairs, etc.) */
-	virtual void DrawHUD() override;
 };

@@ -69,7 +69,7 @@ void UMCore_PlayerSettingsSave::SetBoolSetting(const FString& Key, bool Value)
 void UMCore_PlayerSettingsSave::SaveSettings()
 {
 	UGameplayStatics::SaveGameToSlot(this, CachedSlotName, 0);
-	UE_LOG(LogModulusSettings, Log, TEXT("PlayerSettingsSave::SaveSettings -- saved to slot '%s'"), *CachedSlotName);
+	UE_LOG(LogModulusSettings, Log, TEXT("PlayerSettingsSave::SaveSettings: saved to slot '%s'"), *CachedSlotName);
 }
 
 UMCore_PlayerSettingsSave* UMCore_PlayerSettingsSave::LoadPlayerSettings(const FString& SlotName)
@@ -86,7 +86,7 @@ UMCore_PlayerSettingsSave* UMCore_PlayerSettingsSave::LoadPlayerSettings(const F
 			if (!Settings)
 			{
 				UE_LOG(LogModulusSettings, Warning,
-					TEXT("PlayerSettingsSave::LoadPlayerSettings -- save existed in slot '%s' but cast to UMCore_PlayerSettingsSave failed"),
+					TEXT("PlayerSettingsSave::LoadPlayerSettings: save existed in slot '%s' but cast to UMCore_PlayerSettingsSave failed"),
 					*SlotName);
 			}
 			else
@@ -101,13 +101,13 @@ UMCore_PlayerSettingsSave* UMCore_PlayerSettingsSave::LoadPlayerSettings(const F
 		Settings = Cast<UMCore_PlayerSettingsSave>(
 			UGameplayStatics::CreateSaveGameObject(UMCore_PlayerSettingsSave::StaticClass()));
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("PlayerSettingsSave::LoadPlayerSettings -- created fresh settings for slot '%s'"),
+			TEXT("PlayerSettingsSave::LoadPlayerSettings: created fresh settings for slot '%s'"),
 			*SlotName);
 	}
 	else
 	{
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("PlayerSettingsSave::LoadPlayerSettings -- loaded existing settings from slot '%s'"),
+			TEXT("PlayerSettingsSave::LoadPlayerSettings: loaded existing settings from slot '%s'"),
 			*SlotName);
 	}
 
@@ -115,7 +115,7 @@ UMCore_PlayerSettingsSave* UMCore_PlayerSettingsSave::LoadPlayerSettings(const F
 	Settings->ValidateSettings();
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("PlayerSettingsSave::LoadPlayerSettings -- loaded from slot '%s' (existing=%s)"),
+		TEXT("PlayerSettingsSave::LoadPlayerSettings: loaded from slot '%s' (existing=%s)"),
 		*SlotName, bExistingSave ? TEXT("true") : TEXT("false"));
 	return Settings;
 }
@@ -142,7 +142,7 @@ void UMCore_PlayerSettingsSave::LoadPlayerSettingsAsync(const FString& SlotName,
 			if (!Settings)
 			{
 				UE_LOG(LogModulusSettings, Warning,
-					TEXT("PlayerSettingsSave::LoadPlayerSettingsAsync -- save existed in slot '%s' but cast to UMCore_PlayerSettingsSave failed"),
+					TEXT("PlayerSettingsSave::LoadPlayerSettingsAsync: save existed in slot '%s' but cast to UMCore_PlayerSettingsSave failed"),
 					*SlotName);
 			}
 		}
@@ -219,9 +219,9 @@ void UMCore_PlayerSettingsSave::ValidateSettings()
 	{
 		if (GEngine)
 		{
-			if (UGameUserSettings* GUS = GEngine->GetGameUserSettings())
+			if (UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings())
 			{
-				const int32 Single = GUS->ScalabilityQuality.GetSingleQualityLevel();
+				const int32 Single = GameUserSettings->ScalabilityQuality.GetSingleQualityLevel();
 				if (Single >= 0 && Single <= 3)
 				{
 					LastSelectedQualityPreset = Single;

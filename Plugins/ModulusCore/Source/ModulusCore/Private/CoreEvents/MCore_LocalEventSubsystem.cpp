@@ -1,10 +1,10 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #include "CoreEvents/MCore_LocalEventSubsystem.h"
 
 #include "CoreData/Logging/LogModulusEvent.h"
 #include "CoreData/DevSettings/MCore_CoreSettings.h"
-#include "CoreEvents/MCore_EventListenerComp.h"
+#include "CoreEvents/MCore_EventListenerComponent.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
 
 /* Conditional logging macro. Only logs when Event System Logging is enabled in Project Settings. */
@@ -22,38 +22,38 @@
 void UMCore_LocalEventSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Initialize -- initialized"));
+	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Initialize: initialized"));
 }
 
 void UMCore_LocalEventSubsystem::Deinitialize()
 {
-	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Deinitialize -- cleaning up, %d listener(s)"), LocalListeners.Num());
+	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Deinitialize: cleaning up, %d listener(s)"), LocalListeners.Num());
 	LocalListeners.Empty();
 
 	Super::Deinitialize();
 }
 
-void UMCore_LocalEventSubsystem::RegisterLocalListener(UMCore_EventListenerComp* ListenerComponent)
+void UMCore_LocalEventSubsystem::RegisterLocalListener(UMCore_EventListenerComponent* ListenerComponent)
 {
 	if (IsValid(ListenerComponent))
 	{
 		LocalListeners.AddUnique(ListenerComponent);
-		MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::RegisterLocalListener -- registered: %s"),
+		MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::RegisterLocalListener: registered: %s"),
 			*ListenerComponent->GetName());
 	}
 }
 
-void UMCore_LocalEventSubsystem::UnregisterLocalListener(UMCore_EventListenerComp* ListenerComponent)
+void UMCore_LocalEventSubsystem::UnregisterLocalListener(UMCore_EventListenerComponent* ListenerComponent)
 {
 	int32 RemovedCount = LocalListeners.RemoveAll([ListenerComponent](
-		const TWeakObjectPtr<UMCore_EventListenerComp>& WeakListener)
+		const TWeakObjectPtr<UMCore_EventListenerComponent>& WeakListener)
 	{
 		return !WeakListener.IsValid() || WeakListener.Get() == ListenerComponent;
 	});
 	
 	if (RemovedCount > 0)
 	{
-		MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::UnregisterLocalListener -- unregistered: %s"),
+		MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::UnregisterLocalListener: unregistered: %s"),
 			ListenerComponent ? *ListenerComponent->GetName() : TEXT("Unknown"));
 	}
 }
@@ -64,17 +64,17 @@ void UMCore_LocalEventSubsystem::BroadcastLocalEvent(const FMCore_EventData& Eve
 
 	OnLocalEventBroadcast.Broadcast(EventData);
 
-	MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::BroadcastLocalEvent -- broadcasting: %s"),
+	MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::BroadcastLocalEvent: broadcasting: %s"),
 		*EventData.EventTag.ToString());
 	
 	for (int32 i = LocalListeners.Num() - 1; i >= 0; --i)
 	{
-		TWeakObjectPtr<UMCore_EventListenerComp>& WeakListener = LocalListeners[i];
+		TWeakObjectPtr<UMCore_EventListenerComponent>& WeakListener = LocalListeners[i];
 
 		
 		if (WeakListener.IsValid())
 		{
-			UMCore_EventListenerComp* CurrentListener = WeakListener.Get();
+			UMCore_EventListenerComponent* CurrentListener = WeakListener.Get();
 		
 			if (CurrentListener->ShouldReceiveEvent(EventData, false))
 			{

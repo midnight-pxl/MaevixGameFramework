@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_NetworkingInterface.h
- *
- * Networking interface providing authority validation and network lifecycle hooks.
- * Implemented by UMCore_NetworkingComponent for actor components.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

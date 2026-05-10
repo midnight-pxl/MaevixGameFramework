@@ -1,11 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_UILayerTags.h
- *
- * Native gameplay tags for the 4-layer CommonUI widget stack.
- */
-
 #pragma once
 
 #include "NativeGameplayTags.h"

@@ -1,11 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PDA_SliderStyle.h
- *
- * Slider styling DataAsset for UI themes. Referenced by UMCore_PDA_UITheme_Base.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -34,7 +28,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Slider|Colors")
 	FSlateColor BarNormalTint = FLinearColor{ 0.3f, 0.3f, 0.3f, 1.0f };
 
-	/* Tint for the filled portion of the bar */
+	/** Tint for the filled portion of the bar */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Slider|Colors")
 	FSlateColor BarFilledTint = FLinearColor{ 0.8f, 0.8f, 0.8f, 1.0f };
 

@@ -1,8 +1,6 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 /**
- * MCore_ThemeTags.h
- *
  * Theme-system event tags. Lives outside MCore_SettingsTags because a theme
  * change is a UI-system event, not a settings-internal event. Future
  * cross-plugin triggers (debug commands, programmatic accessibility

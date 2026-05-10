@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_MenuTabTags.h
- *
- * Native gameplay tag declarations for the in-game GameMenuHub system.
- * Allows for categorizing and sorting of in-menu tabs by GameplayTag
- */
-
 #pragma once
 
 #include "NativeGameplayTags.h"

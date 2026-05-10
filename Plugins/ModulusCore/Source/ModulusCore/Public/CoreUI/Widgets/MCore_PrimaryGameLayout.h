@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PrimaryGameLayout.h
- *
- * Primary game layout providing 4-layer CommonUI stack architecture.
- * Visual container managed by UISubsystem for layer-based widget display.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -36,26 +29,25 @@ public:
 
 protected:
 	virtual void NativeOnInitialized() override;
-	virtual void NativeDestruct() override;
 
 private:
 	// ============================================================================
-	// LAYER STACKS -- accessed by UISubsystem via friend
+	// LAYER STACKS: accessed by UISubsystem via friend
 	// ============================================================================
 
-	/* HUD and persistent gameplay UI */
+	/** HUD and persistent gameplay UI */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_GameLayer;
 
-	/* In-game menus (inventory, map, crafting) */
+	/** In-game menus (inventory, map, crafting) */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_GameMenuLayer;
 
-	/* Full-screen menus (main menu, settings, pause) */
+	/** Full-screen menus (main menu, settings, pause) */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_MenuLayer;
 
-	/* Dialogs and confirmation popups */
+	/** Dialogs and confirmation popups */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_ModalLayer;
 };

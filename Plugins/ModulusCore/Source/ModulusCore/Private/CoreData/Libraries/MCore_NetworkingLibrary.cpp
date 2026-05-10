@@ -53,24 +53,24 @@ bool UMCore_NetworkingLibrary::Widget_HasNetworkAuthority(const UUserWidget* Wid
 {
 	if (!Widget) { return false; }
 
-	APawn* OwnPawn = Widget_GetOwningPawn(Widget);
-	return OwnPawn ? OwnPawn->HasAuthority() : false;
+	APawn* OwningPawn = Widget_GetOwningPawn(Widget);
+	return OwningPawn ? OwningPawn->HasAuthority() : false;
 }
 
 bool UMCore_NetworkingLibrary::Widget_CanExecuteServerOperation(const UUserWidget* Widget)
 {
 	if (!Widget) { return false; }
 
-	APlayerController* OwnPlayer = Widget_GetOwningPlayerController(Widget);
-	return OwnPlayer != nullptr;
+	APlayerController* OwningPlayerController = Widget_GetOwningPlayerController(Widget);
+	return OwningPlayerController != nullptr;
 }
 
 bool UMCore_NetworkingLibrary::Widget_CanExecuteClientOperation(const UUserWidget* Widget)
 {
 	if (!Widget) { return false; }
 
-	APlayerController* OwnPlayer = Widget_GetOwningPlayerController(Widget);
-	if (!OwnPlayer) { return false; }
+	APlayerController* OwningPlayerController = Widget_GetOwningPlayerController(Widget);
+	if (!OwningPlayerController) { return false; }
 
 	UWorld* World = Widget->GetWorld();
 	if (!World) { return false; }
@@ -85,8 +85,8 @@ APlayerController* UMCore_NetworkingLibrary::Widget_GetOwningPlayerController(co
 
 APawn* UMCore_NetworkingLibrary::Widget_GetOwningPawn(const UUserWidget* Widget)
 {
-	APlayerController* OwnPlayer = Widget_GetOwningPlayerController(Widget);
-	return OwnPlayer ? OwnPlayer->GetPawn() : nullptr;
+	APlayerController* OwningPlayerController = Widget_GetOwningPlayerController(Widget);
+	return OwningPlayerController ? OwningPlayerController->GetPawn() : nullptr;
 }
 
 bool UMCore_NetworkingLibrary::Subsystem_IsServer(const USubsystem* Subsystem)

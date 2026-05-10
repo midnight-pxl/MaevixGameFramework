@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_DA_SettingDefinition.h
- *
- * DataAsset defining a single game setting: type, value range, defaults,
- * category, and how it applies to engine systems (GameUserSettings, CVars,
- * SoundClasses).
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -23,7 +15,7 @@ class USoundClass;
 class USoundMix;
 class UMCore_SettingsWidget_Base;
 
-/* How slider values display in the UI */
+/** How slider values display in the UI */
 UENUM(BlueprintType)
 enum class EMCore_SliderDisplayFormat : uint8
 {
@@ -35,13 +27,13 @@ enum class EMCore_SliderDisplayFormat : uint8
 	WholeNumber
 };
 
-/* Role this setting plays in driving the Slate color-vision-deficiency filter.
-   Author two DAs — a Dropdown for Type and a Slider for Severity — both with
+/** Role this setting plays in driving the Slate color-vision-deficiency filter.
+   Author two DAs; a Dropdown for Type and a Slider for Severity; both with
    this field non-None. The library caches Type + Severity across invocations
    so either DA's apply re-issues a SetColorVisionDeficiencyType call with the
    current value of both axes. */
 UENUM(BlueprintType)
-enum class EModulusColorVisionRole : uint8
+enum class EMCore_ColorVisionRole : uint8
 {
 	None               UMETA(DisplayName = "None"),
 	DeficiencyType     UMETA(DisplayName = "Deficiency Type (Dropdown)"),
@@ -49,8 +41,9 @@ enum class EModulusColorVisionRole : uint8
 };
 
 /**
- * DataAsset defining a single game setting with type, value range, defaults, and engine apply targets.
- * Supports Toggle, Slider, and Dropdown types with optional confirmation countdown.
+ * DataAsset defining a single game setting with type, value range, defaults, and
+ * engine apply targets (GameUserSettings, CVars, SoundClasses). Supports Toggle,
+ * Slider, and Dropdown types with optional confirmation countdown.
  *
  * Create in Content Browser; reference from UMCore_DA_SettingsCollection.
  */
@@ -65,7 +58,7 @@ public:
 	// IDENTITY
 	// ============================================================================
 
-	/* Unique gameplay tag identifying this setting (e.g. Settings.Graphics.ShadowQuality) */
+	/** Unique gameplay tag identifying this setting (e.g. Settings.Graphics.ShadowQuality) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity",
 		meta = (Categories = "Settings"))
 	FGameplayTag SettingTag;
@@ -73,7 +66,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
 	FText SettingDisplayName;
 
-	/* Optional tooltip/description */
+	/** Optional tooltip/description */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
 	FText Description;
 
@@ -84,7 +77,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Type")
 	EMCore_SettingType SettingType = EMCore_SettingType::Toggle;
 
-	/* How this slider value displays in the UI */
+	/** How this slider value displays in the UI */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides))
@@ -150,7 +143,7 @@ public:
 	// CATEGORIZATION
 	// ============================================================================
 
-	/* Category tag for grouping (e.g. Settings.Category.Graphics) */
+	/** Category tag for grouping (e.g. Settings.Category.Graphics) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Category",
 		meta = (Categories = "Settings.Category"))
 	FGameplayTag CategoryTag;
@@ -167,7 +160,7 @@ public:
 	// APPLY CONFIGURATION
 	// ============================================================================
 
-	/* Engine setter target. Routes via the three-bucket dispatcher in
+	/** Engine setter target. Routes via the three-bucket dispatcher in
 	 * MCore_GameSettingsLibrary::ApplyViaNamedSetter:
 	 *   Bucket 1: Top-level UPROPERTY on UGameUserSettings (e.g. bUseVSync,
 	 *             FullscreenMode, AudioQualityLevel, FrameRateLimit).
@@ -188,31 +181,31 @@ public:
 		meta = (DisplayName = "Widget Class Override"))
 	TSubclassOf<UMCore_SettingsWidget_Base> WidgetClassOverride;
 
-	/* Console variable to write to (empty = none) */
+	/** Console variable to write to (empty = none) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply")
 	FName ConsoleVariable;
 
-	/* Sound class to adjust volume on (Audio settings) */
+	/** Sound class to adjust volume on (Audio settings) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 		        EditConditionHides))
 	TSoftObjectPtr<USoundClass> SoundClass;
 
-	/* When true, widget queries UKismetSystemLibrary::GetSupportedFullscreenResolutions
+	/** When true, widget queries UKismetSystemLibrary::GetSupportedFullscreenResolutions
 	   at runtime instead of using DA-authored DropdownOptions */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 		        EditConditionHides))
 	bool bPopulateFromSupportedResolutions = false;
 
-	/* Drives UWidgetBlueprintLibrary::SetColorVisionDeficiencyType at the Slate
+	/** Drives UWidgetBlueprintLibrary::SetColorVisionDeficiencyType at the Slate
 	   renderer layer. Default None = inert. Pair two DAs: a Dropdown for Type
 	   (values 0-3 = Normal/Deuteranope/Protanope/Tritanope) and a Slider for
 	   Severity (0.0-10.0). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply")
-	EModulusColorVisionRole ColorVisionRole = EModulusColorVisionRole::None;
+	EMCore_ColorVisionRole ColorVisionRole = EMCore_ColorVisionRole::None;
 
-	/* SoundMix pushed when toggle is ON, popped when OFF.
+	/** SoundMix pushed when toggle is ON, popped when OFF.
 	   Library tracks matched push/pop pairs per setting save key */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Toggle",

@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_EnhancedInputDisplay.h
- *
- * Blueprint function library for querying and remapping Enhanced Input key bindings.
- * Wraps UE's EnhancedInputUserSettings and PlayerMappableKeyProfile systems.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -25,8 +18,8 @@ class ULocalPlayer;
 
 /**
  * Enhanced Input display and rebinding helpers.
- * Query current key bindings, retrieve display names, and remap keys through
- * Enhanced Input's native PlayerMappableKeySettings system.
+ * Query current key bindings, retrieve display names, and remap keys via
+ * UE's EnhancedInputUserSettings and PlayerMappableKeyProfile systems.
  */
 UCLASS()
 class MODULUSCORE_API UMCore_InputDisplayLibrary : public UBlueprintFunctionLibrary

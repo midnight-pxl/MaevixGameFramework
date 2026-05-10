@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ActivatableBase.h
- *
- * Base activatable widget with theme integration, input binding management,
- * and BlockTag support. Automatically cleans up input bindings on deactivation.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,10 +10,7 @@
 
 class UMCore_PDA_UITheme_Base;
 
-/**
- * Blueprint-friendly wrapper for CommonUI's FUIActionBindingHandle.
- * Allows Blueprint code to receive and store binding handles for manual unregistration if needed.
- */
+/** Blueprint-friendly wrapper for CommonUI's FUIActionBindingHandle. */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_InputActionBindingHandle
 {
@@ -51,7 +41,7 @@ class MODULUSCORE_API UMCore_ActivatableBase : public UCommonActivatableWidget
 public:
 	UMCore_ActivatableBase(const FObjectInitializer& ObjectInitializer);
 
-	/* GameplayTags that block this widget from activating when present on OwningPlayer */
+	/** GameplayTags that block this widget from activating when present on OwningPlayer */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI|Activation", meta=(Categories = "State"))
 	FGameplayTagContainer BlockTags;
 
@@ -100,18 +90,7 @@ protected:
 	// THEME
 	// ============================================================================
 
-	/**
-	 * Apply theme styling to this widget. Override for custom theme handling.
-	 *
-	 * The base implementation assigns NewTheme to CachedTheme as its first action,
-	 * so Blueprint K2_OnThemeApplied overrides may read CachedTheme to access
-	 * the current theme.
-	 *
-	 * Subclasses overriding ApplyTheme_Implementation in C++ must either call
-	 * Super::ApplyTheme_Implementation(NewTheme) or assign CachedTheme = NewTheme
-	 * themselves before performing any work. Otherwise CachedTheme will be stale
-	 * relative to the theme that was just applied.
-	 */
+	/** Apply theme styling to this widget. Override for custom theme handling. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme);

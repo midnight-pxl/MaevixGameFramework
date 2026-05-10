@@ -1,14 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PlayerSettingsSubsystem.h
- *
- * Per-player settings persistence subsystem. Owns the PlayerSettingsSave cache
- * and provides typed accessors for player preferences (text size, gamepad icons, etc.).
- *
- * Access via GetLocalPlayer()->GetSubsystem<UMCore_PlayerSettingsSubsystem>().
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -19,8 +10,11 @@ class APlayerController;
 class UMCore_PlayerSettingsSave;
 
 /**
- * Manages per-player settings persistence.
- * Lazy-loads PlayerSettingsSave from disk on first access and saves on Deinitialize.
+ * Manages per-player settings persistence. Owns the PlayerSettingsSave cache and
+ * provides typed accessors for player preferences (text size, gamepad icons, etc.).
+ * Lazy-loads from disk on first access and saves on Deinitialize.
+ *
+ * Access via GetLocalPlayer()->GetSubsystem<UMCore_PlayerSettingsSubsystem>().
  *
  * Override GetSettingsSaveSlotName() in Blueprint or C++ subclass
  * for platform-specific identity (Steam ID, Epic Account, etc.).
@@ -31,8 +25,6 @@ class MODULUSCORE_API UMCore_PlayerSettingsSubsystem : public ULocalPlayerSubsys
 	GENERATED_BODY()
 
 public:
-	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual void PlayerControllerChanged(APlayerController* NewPlayerController) override;
 

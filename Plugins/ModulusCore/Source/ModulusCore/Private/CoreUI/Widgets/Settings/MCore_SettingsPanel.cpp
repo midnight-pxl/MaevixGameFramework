@@ -1,4 +1,4 @@
-﻿// Copyright Midnight Pixel Studio LLC. All Rights Reserved.
+// Copyright Midnight Pixel Studio LLC. All Rights Reserved.
 
 #include "CoreUI/Widgets/Settings/MCore_SettingsPanel.h"
 
@@ -76,7 +76,7 @@ void UMCore_SettingsPanel::NativeOnActivated()
 	Super::NativeOnActivated();
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsPanel::NativeOnActivated -- this=%p, IsActivated()=%s, TabbedContainer_Main=%s, bNeedsFullRebuild=%s"),
+		TEXT("SettingsPanel::NativeOnActivated: this=%p, IsActivated()=%s, TabbedContainer_Main=%s, bNeedsFullRebuild=%s"),
 		this,
 		IsActivated() ? TEXT("true") : TEXT("false"),
 		TabbedContainer_Main ? TEXT("valid") : TEXT("NULL"),
@@ -84,7 +84,7 @@ void UMCore_SettingsPanel::NativeOnActivated()
 
 	if (!IsActivated())
 	{
-		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated -- early exit, not activated (BlockTags?)"));
+		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated: early exit, not activated (BlockTags?)"));
 		return;
 	}
 
@@ -137,11 +137,11 @@ void UMCore_SettingsPanel::NativeOnActivated()
 
 	if (bNeedsFullRebuild)
 	{
-		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated -- post-destruct rebuild, rebinding child delegates + full BuildPanel"));
+		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated: post-destruct rebuild, rebinding child delegates + full BuildPanel"));
 		bNeedsFullRebuild = false;
 
 		/* Rebind the 4 child delegates that NativeOnInitialized originally bound.
-		 * NativeDestruct unbound all of these -- AddDynamic on clean delegates, no double-bind risk */
+		 * NativeDestruct unbound all of these; AddDynamic on clean delegates, no double-bind risk */
 		TabbedContainer_Main->OnTabSelected.AddDynamic(this, &ThisClass::HandleMainTabSelected);
 		Btn_ResetAll->OnButtonClicked.AddDynamic(this, &ThisClass::HandleResetAllClicked);
 		Btn_ResetCategory->OnButtonClicked.AddDynamic(this, &ThisClass::HandleResetCategoryClicked);
@@ -157,13 +157,13 @@ void UMCore_SettingsPanel::NativeOnActivated()
 	}
 	else if (TabbedContainer_Main->GetTabCount() == 0)
 	{
-		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated -- calling BuildPanel (first activation)"));
+		UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnActivated: calling BuildPanel (first activation)"));
 		BuildPanel();
 	}
 	else
 	{
 		UE_LOG(LogModulusSettings, Verbose,
-			TEXT("SettingsPanel::NativeOnActivated -- calling RefreshAllWidgets (re-activation, %d tabs exist)"),
+			TEXT("SettingsPanel::NativeOnActivated: calling RefreshAllWidgets (re-activation, %d tabs exist)"),
 			TabbedContainer_Main->GetTabCount());
 		RefreshAllWidgets();
 	}
@@ -188,7 +188,7 @@ UWidget* UMCore_SettingsPanel::NativeGetDesiredFocusTarget() const
 
 void UMCore_SettingsPanel::NativeOnDeactivated()
 {
-	UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnDeactivated -- this=%p, TabCount=%d"),
+	UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::NativeOnDeactivated: this=%p, TabCount=%d"),
 		this,
 		TabbedContainer_Main ? TabbedContainer_Main->GetTabCount() : -1);
 
@@ -218,7 +218,7 @@ void UMCore_SettingsPanel::NativeDestruct()
 	bNeedsFullRebuild = true;
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsPanel::NativeDestruct -- this=%p, TabbedContainer_Main=%s, TabCount=%d"),
+		TEXT("SettingsPanel::NativeDestruct: this=%p, TabbedContainer_Main=%s, TabCount=%d"),
 		this,
 		TabbedContainer_Main ? TEXT("valid") : TEXT("NULL"),
 		TabbedContainer_Main ? TabbedContainer_Main->GetTabCount() : -1);
@@ -312,14 +312,14 @@ void UMCore_SettingsPanel::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Ne
 
 void UMCore_SettingsPanel::BuildPanel()
 {
-	UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::BuildPanel -- TabbedContainer has %d tabs"),
+	UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::BuildPanel: TabbedContainer has %d tabs"),
 	TabbedContainer_Main->GetTabCount());
 	
 	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 	if (!CoreSettings || !CoreSettings->HasValidSettingsCollections())
 	{
 		UE_LOG(LogModulusSettings, Error,
-			TEXT("SettingsPanel::BuildPanel -- CoreSettings is null or no SettingsCollections configured, "
+			TEXT("SettingsPanel::BuildPanel: CoreSettings is null or no SettingsCollections configured, "
 			     "ensure CoreSettings has at least one valid SettingsCollection assigned"));
 		return;
 	}
@@ -372,7 +372,7 @@ void UMCore_SettingsPanel::BuildPanel()
 			if (!PageWidget)
 			{
 				UE_LOG(LogModulusSettings, Warning,
-				TEXT("SettingsPanel::BuildPanel -- KeyBindingPanelClass not set in CoreSettings"));
+				TEXT("SettingsPanel::BuildPanel: KeyBindingPanelClass not set in CoreSettings"));
 				PageWidget = NewObject<USizeBox>(this);
 			}
 		}
@@ -400,7 +400,7 @@ void UMCore_SettingsPanel::BuildPanel()
 		}
 
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("SettingsPanel::BuildPanel -- adding tab [%s] order index %d"),
+			TEXT("SettingsPanel::BuildPanel: adding tab [%s] order index %d"),
 			*TabID.ToString(), MainTabOrder.IndexOfByKey(ParentTag));
 		if (PageWidget && TabbedContainer_Main->AddTab(TabID, PageWidget))
 		{
@@ -441,7 +441,7 @@ UMCore_TabbedContainer* UMCore_SettingsPanel::BuildTabbedPage(
 	if (!SubContainer)
 	{
 		UE_LOG(LogModulusSettings, Error,
-			TEXT("SettingsPanel::BuildTabbedPage -- failed to create SubTabContainer, SubTabContainerClass may be null or invalid"));
+			TEXT("SettingsPanel::BuildTabbedPage: failed to create SubTabContainer, SubTabContainerClass may be null or invalid"));
 		return nullptr;
 	}
 
@@ -565,13 +565,13 @@ void UMCore_SettingsPanel::PopulatePage(
 		RenderedSectionIDs.Add(Section.SectionID);
 	}
 
-	/* 3. Orphan settings (SectionID set but undeclared) — append unheaded.
+	/* 3. Orphan settings (SectionID set but undeclared); append unheaded.
 	 *    Editor-time validation surfaces this as a warning. */
 	for (auto& Pair : Buckets)
 	{
 		if (Pair.Key.IsNone() || RenderedSectionIDs.Contains(Pair.Key)) { continue; }
 		UE_LOG(LogModulusSettings, Verbose,
-			TEXT("SettingsPanel::PopulatePage -- orphan SectionID '%s' for category '%s'"),
+			TEXT("SettingsPanel::PopulatePage: orphan SectionID '%s' for category '%s'"),
 			*Pair.Key.ToString(), *CategoryTag.ToString());
 		for (const UMCore_DA_SettingDefinition* Def : Pair.Value) { AppendSetting(Def); }
 	}
@@ -626,7 +626,7 @@ UMCore_SettingsWidget_Base* UMCore_SettingsPanel::CreateSettingWidget(
 	else
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("SettingsPanel::CreateSettingWidget -- no widget class configured for SettingType %d, setting='%s'"),
+			TEXT("SettingsPanel::CreateSettingWidget: no widget class configured for SettingType %d, setting='%s'"),
 			(int32)Definition->SettingType, *Definition->SettingTag.ToString());
 	}
 
@@ -700,19 +700,19 @@ void UMCore_SettingsPanel::FocusFirstWidgetInActivePage()
 
 void UMCore_SettingsPanel::HandleResetAllClicked()
 {
-	/** Resolve dialog class: per-widget override w/ CoreSettings fallback */
+	/* Resolve dialog class: per-widget override w/ CoreSettings fallback */
 	TSubclassOf<UMCore_ConfirmationDialog> DialogClass = ResetConfirmationDialogClass;
 	if (!DialogClass)
 	{
 		const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 		if (CoreSettings) { DialogClass = CoreSettings->DefaultConfirmationDialogClass; }
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("SettingsPanel::ResetAllClicked -- No local Dialog set, falling back to CoreSettings."));
+			TEXT("SettingsPanel::ResetAllClicked: No local Dialog set, falling back to CoreSettings."));
 	}
 	
 	if (!DialogClass)
 	{
-		/** No dialog configured, reset directly as safety net */
+		/* No dialog configured, reset directly as safety net */
 		UMCore_GameSettingsLibrary::ResetAllSettingsToDefault(GetOwningLocalPlayer());
 		RefreshAllWidgets();
 		return;
@@ -752,19 +752,19 @@ void UMCore_SettingsPanel::HandleResetCategoryClicked()
 {
 	if (!ActiveLeafCategory.IsValid()) { return; }
 
-	/** Resolve dialog class: per-widget override w/ CoreSettings fallback */
+	/* Resolve dialog class: per-widget override w/ CoreSettings fallback */
 	TSubclassOf<UMCore_ConfirmationDialog> DialogClass = ResetConfirmationDialogClass;
 	if (!DialogClass)
 	{
 		const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 		if (CoreSettings) { DialogClass = CoreSettings->DefaultConfirmationDialogClass; }
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("SettingsPanel::ResetCategoryClicked -- No local Dialog set, falling back to CoreSettings."));
+			TEXT("SettingsPanel::ResetCategoryClicked: No local Dialog set, falling back to CoreSettings."));
 	}
 	
 	if (!DialogClass)
 	{
-		/** No dialog configured, reset directly as safety net */
+		/* No dialog configured, reset directly as safety net */
 		UMCore_GameSettingsLibrary::ResetCategoryToDefault(
 			GetOwningLocalPlayer(), ActiveLeafCategory);
 		RefreshAllWidgets();
@@ -809,7 +809,7 @@ void UMCore_SettingsPanel::SpawnRevertCountdown()
 	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 	if (!CoreSettings || !CoreSettings->SettingsRevertCountdownClass)
 	{
-		/** No countdown class configured. Save + clear pending */
+		/* No countdown class configured. Save + clear pending */
 		UMCore_GameSettingsLibrary::SavePlayerSettings(this);
 		PendingConfirmationTags.Empty();
 		return;
@@ -849,10 +849,10 @@ void UMCore_SettingsPanel::HandleConfirmationRequired(const TArray<FGameplayTag>
 	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 	if (!CoreSettings) { return; }
 
-	/** Merge incoming tags into pending set */
+	/* Merge incoming tags into pending set */
 	for (const FGameplayTag& Tag : AffectedTags) { PendingConfirmationTags.AddUnique(Tag); }
 
-	/** Teardown active countdown if one exists */
+	/* Teardown active countdown if one exists */
 	if (ActiveRevertCountdown.IsValid())
 	{
 		ActiveRevertCountdown->OnCountdownResult.Clear();

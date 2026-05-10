@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ThemeTypes.h
- *
- * Data types for the theme system. FMCore_ThemeEntry maps a display name
- * and description to a soft-referenced theme DataAsset.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,6 +7,7 @@
 
 class UMCore_PDA_UITheme_Base;
 
+/** Maps a display name and description to a soft-referenced theme DataAsset. */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_ThemeEntry
 {

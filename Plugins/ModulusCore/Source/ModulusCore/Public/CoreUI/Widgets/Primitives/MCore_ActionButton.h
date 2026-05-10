@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ActionButton.h
- *
- * Theme-integrated button that auto-resolves its icon from a CommonUI input action
- * DataTable row. Swaps between gamepad/KBM glyphs when the input method changes.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

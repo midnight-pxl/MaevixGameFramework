@@ -10,7 +10,7 @@
  * Switcher subclass for the QualityPreset (OverallScalabilityLevel) setting.
  *
  * Display index diverges from the setting's saved int value when the user has
- * tweaked an individual scalability — the save's LastSelectedQualityPreset
+ * tweaked an individual scalability; the save's LastSelectedQualityPreset
  * intent (-1 = Custom, 0..3 = preset) drives the displayed dropdown index
  * (4 = Custom, 0..3 = preset row).
  */

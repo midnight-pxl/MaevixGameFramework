@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_KeyBindingPanel_Base.h
- *
- * Key binding panel that queries remappable actions per InputMappingContext
- * and builds grouped rows inside a tabbed container.
- * Displayed inline in the Settings Panel's KeyBinding category tab.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -31,6 +23,7 @@ class APlayerController;
  * Key binding panel that populates a TabbedContainer with one tab per InputMappingContext.
  * Each tab contains category headers and binding rows in a ScrollBox.
  * Falls back to a single flat page if no KeyBindingContexts are configured in CoreSettings.
+ * Designed to be hosted inline in the Settings Panel's KeyBinding category tab.
  *
  * Requires BindWidget: TabbedContainer_Contexts.
  */
@@ -81,9 +74,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_TabbedContainer> TabbedContainer_Bindings;
 
+	/** Optional. When bound, drives the reset-all-bindings confirmation flow. Absent = no reset-all UI. */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_ButtonBase> Btn_ResetAllBindings;
 
+	/** Optional. When bound, drives the reset-category confirmation flow for the active IMC tab. Absent = no per-category reset UI. */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_ButtonBase> Btn_ResetCategory;
 
@@ -106,10 +101,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
 	FText CapturePromptGamepadText;
 	
-	/** 
-	 * Confirmation dialog class for reset operations. falls back to
-	 * DefaultConfirmationDialogClass in CoreSettings if null
-	 */
+	/** Confirmation dialog class for reset operations. Falls back to CoreSettings::DefaultConfirmationDialogClass if null. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
 	TSubclassOf<UMCore_ConfirmationDialog> ResetConfirmationDialogClass;
 
@@ -117,6 +109,7 @@ protected:
 	// THEME
 	// ====================================================================
 
+	/** Apply theme styling to this widget. Override for custom theme handling. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
 

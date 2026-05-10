@@ -49,7 +49,7 @@ UMCore_SettingsCollectionSubsystem::GetAllSettingsCollections()
 				else
 				{
 					UE_LOG(LogModulusSettings, Warning,
-						TEXT("SettingsCollectionSubsystem::GetAllSettingsCollections -- failed to load collection '%s'"),
+						TEXT("SettingsCollectionSubsystem::GetAllSettingsCollections: failed to load collection '%s'"),
 						*SoftRef.ToString());
 				}
 			}
@@ -57,7 +57,7 @@ UMCore_SettingsCollectionSubsystem::GetAllSettingsCollections()
 
 		bCollectionsCacheValid = true;
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("SettingsCollectionSubsystem::GetAllSettingsCollections -- loaded %d collection(s)"),
+			TEXT("SettingsCollectionSubsystem::GetAllSettingsCollections: loaded %d collection(s)"),
 			ResolvedCollections.Num());
 	}
 
@@ -134,5 +134,5 @@ void UMCore_SettingsCollectionSubsystem::InvalidateCollectionCache()
 	ResolvedCollections.Reset();
 	bCollectionsCacheValid = false;
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("SettingsCollectionSubsystem::InvalidateCollectionCache -- collection cache invalidated"));
+		TEXT("SettingsCollectionSubsystem::InvalidateCollectionCache: collection cache invalidated"));
 }

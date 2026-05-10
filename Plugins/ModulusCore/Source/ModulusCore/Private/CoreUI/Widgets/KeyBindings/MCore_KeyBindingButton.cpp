@@ -192,13 +192,13 @@ void UMCore_KeyBindingButton::EnterCaptureMode()
 	if (CurrentState == EMCore_KeyBindingButtonState::Capturing)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("KeyBindingButton::EnterCaptureMode -- %s is already in capture mode"),
+			TEXT("KeyBindingButton::EnterCaptureMode: %s is already in capture mode"),
 			*GetNameSafe(this));
 		return;
 	}
 
 	UE_LOG(LogModulusUI, Verbose,
-		TEXT("KeyBindingButton::EnterCaptureMode -- %s entering capture mode"),
+		TEXT("KeyBindingButton::EnterCaptureMode: %s entering capture mode"),
 		*GetNameSafe(this));
 
 	CurrentState = EMCore_KeyBindingButtonState::Capturing;
@@ -214,7 +214,7 @@ void UMCore_KeyBindingButton::EnterCaptureMode()
 void UMCore_KeyBindingButton::ExitCaptureMode()
 {
 	UE_LOG(LogModulusUI, Verbose,
-		TEXT("KeyBindingButton::ExitCaptureMode -- %s exiting capture mode"),
+		TEXT("KeyBindingButton::ExitCaptureMode: %s exiting capture mode"),
 		*GetNameSafe(this));
 
 	if (KeyCaptureProcessor.IsValid() && FSlateApplication::IsInitialized())
@@ -245,7 +245,7 @@ void UMCore_KeyBindingButton::AttemptRebind(FKey NewKey)
 	if (!Player || !BoundAction)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("KeyBindingButton::AttemptRebind -- %s rebind failed, invalid state (OwningPlayer=%s, Action=%s)"),
+			TEXT("KeyBindingButton::AttemptRebind: %s rebind failed, invalid state (OwningPlayer=%s, Action=%s)"),
 			*GetNameSafe(this), *GetNameSafe(Player), *GetNameSafe(BoundAction.Get()));
 		ExitCaptureMode();
 		OnRebindComplete.Broadcast(false, FText::FromString(TEXT("Invalid state")));
@@ -253,7 +253,7 @@ void UMCore_KeyBindingButton::AttemptRebind(FKey NewKey)
 	}
 
 	UE_LOG(LogModulusUI, Verbose,
-		TEXT("KeyBindingButton::AttemptRebind -- %s attempting rebind to [%s]"),
+		TEXT("KeyBindingButton::AttemptRebind: %s attempting rebind to [%s]"),
 		*GetNameSafe(this), *NewKey.ToString());
 
 	FText OutError;
@@ -262,7 +262,7 @@ void UMCore_KeyBindingButton::AttemptRebind(FKey NewKey)
 
 	if (!bSuccess)
 	{
-		UE_LOG(LogModulusUI, Warning, TEXT("KeyBindingButton::AttemptRebind -- %s rebind to [%s] failed: %s"),
+		UE_LOG(LogModulusUI, Warning, TEXT("KeyBindingButton::AttemptRebind: %s rebind to [%s] failed: %s"),
 			*GetNameSafe(this), *NewKey.ToString(), *OutError.ToString());
 	}
 
@@ -273,7 +273,7 @@ void UMCore_KeyBindingButton::AttemptRebind(FKey NewKey)
 void UMCore_KeyBindingButton::OnKeyCaptured(FKey NewKey)
 {
 	UE_LOG(LogModulusUI, Verbose,
-		TEXT("KeyBindingButton::OnKeyCaptured -- %s captured key [%s]"),
+		TEXT("KeyBindingButton::OnKeyCaptured: %s captured key [%s]"),
 		*GetNameSafe(this), *NewKey.ToString());
 	AttemptRebind(NewKey);
 }

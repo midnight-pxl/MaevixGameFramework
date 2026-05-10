@@ -1,11 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_MenuTabTypes.h
- *
- * Menu tab registration data for plugin screen injection into the game menu hub.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -31,14 +25,14 @@ public:
   	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Tab")
   	TSubclassOf<UCommonActivatableWidget> ScreenWidgetClass;
 
-  	/* Sort order (lower = left, higher = right) */
+  	/** Sort order (lower = left, higher = right) */
   	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Tab")
   	int32 Priority{0};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Tab")
 	TObjectPtr<UTexture2D> TabIcon{nullptr};
 
-	/* Extracts display name from the last segment of TabID (e.g. "Inventory" from "MVault.UI.Categories.Inventory") */
+	/** Extracts display name from the last segment of TabID (e.g. "Inventory" from "MVault.UI.Categories.Inventory") */
 	FText GetDisplayName() const
 	{
 		if (!TabID.IsValid())

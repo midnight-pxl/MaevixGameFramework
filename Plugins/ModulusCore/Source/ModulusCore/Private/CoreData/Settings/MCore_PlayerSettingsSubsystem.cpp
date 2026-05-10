@@ -9,16 +9,6 @@
 
 #include "Engine/LocalPlayer.h"
 
-// TODO: Remove after subsystem init order diagnostic (2026-05-08)
-void UMCore_PlayerSettingsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-
-	// TODO: Remove after subsystem init order diagnostic (2026-05-08)
-	UE_LOG(LogModulusSettings, Log,
-		TEXT("PlayerSettingsSubsystem::Initialize -- entered"));
-}
-
 void UMCore_PlayerSettingsSubsystem::Deinitialize()
 {
 	if (CachedPlayerSettings)
@@ -40,7 +30,7 @@ void UMCore_PlayerSettingsSubsystem::PlayerControllerChanged(APlayerController* 
 	UMCore_GameSettingsLibrary::ApplyAllSettingsToEngine(this);
 
 	UE_LOG(LogModulusSettings, Log,
-		TEXT("PlayerSettingsSubsystem::PlayerControllerChanged -- boot-time apply complete"));
+		TEXT("PlayerSettingsSubsystem::PlayerControllerChanged: boot-time apply complete"));
 }
 
 FString UMCore_PlayerSettingsSubsystem::GetSettingsSaveSlotName_Implementation() const
@@ -57,7 +47,7 @@ UMCore_PlayerSettingsSave* UMCore_PlayerSettingsSubsystem::GetPlayerSettings()
 		CachedPlayerSettings = UMCore_PlayerSettingsSave::LoadPlayerSettings(GetSettingsSaveSlotName());
 
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("PlayerSettingsSubsystem::GetPlayerSettings -- loaded from slot '%s'"),
+			TEXT("PlayerSettingsSubsystem::GetPlayerSettings: loaded from slot '%s'"),
 			*CachedPlayerSettings->GetCachedSlotName());
 	}
 

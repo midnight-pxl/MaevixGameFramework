@@ -141,7 +141,7 @@ void UMCore_KeyBindingRow::InitFromAction(APlayerController* OwningPlayer, UInpu
 			bShowSecondary ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	}
 
-	UE_LOG(LogModulusUI, Verbose, TEXT("KeyBindingRow::InitFromAction -- %s initialized for action [%s]"),
+	UE_LOG(LogModulusUI, Verbose, TEXT("KeyBindingRow::InitFromAction: %s initialized for action [%s]"),
 		*GetNameSafe(this), *GetNameSafe(BoundAction));
 }
 
@@ -161,12 +161,12 @@ void UMCore_KeyBindingRow::HandleRebindComplete(bool bSuccess, FText ErrorMessag
 {
 	if (!bSuccess && !ErrorMessage.IsEmpty())
 	{
-		UE_LOG(LogModulusUI, Warning, TEXT("KeyBindingRow::HandleRebindComplete -- %s rebind rejected: %s"),
+		UE_LOG(LogModulusUI, Warning, TEXT("KeyBindingRow::HandleRebindComplete: %s rebind rejected: %s"),
 			*GetNameSafe(this), *ErrorMessage.ToString());
 	}
 	else if (bSuccess)
 	{
-		UE_LOG(LogModulusUI, Log, TEXT("KeyBindingRow::HandleRebindComplete -- %s rebind succeeded"),
+		UE_LOG(LogModulusUI, Log, TEXT("KeyBindingRow::HandleRebindComplete: %s rebind succeeded"),
 			*GetNameSafe(this));
 	}
 

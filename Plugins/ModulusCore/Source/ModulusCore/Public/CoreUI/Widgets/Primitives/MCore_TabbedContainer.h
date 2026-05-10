@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_TabbedContainer.h
- *
- * Domain-agnostic tabbed container primitive providing a tab bar + page switcher pattern.
- * Wraps CommonUI's UCommonTabListWidgetBase and UCommonAnimatedSwitcher as a coordinated unit.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

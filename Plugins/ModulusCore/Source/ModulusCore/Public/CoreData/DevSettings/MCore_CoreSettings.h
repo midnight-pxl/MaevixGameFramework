@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_CoreSettings.h
- *
- * Developer settings for the Modulus Game Framework, accessible via
- * Project Settings > Game > Modulus Core. Configures themes, UI layout,
- * settings collections, and editor-only debug options.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -69,7 +61,7 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="UI", meta=(DisplayName="Primary Game Layout Class"))
 	TSoftClassPtr<UMCore_PrimaryGameLayout> PrimaryGameLayoutClass;
 
-	/* Z-Order for PrimaryGameLayout in viewport. Higher values render on top. */
+	/** Z-Order for PrimaryGameLayout in viewport. Higher values render on top. */
 	UPROPERTY(Config, EditAnywhere, Category="UI", meta=(DisplayName="Layout Z-Order", ClampMin="-100", ClampMax="100"))
 	int32 PrimaryGameLayoutZOrder{0};
 
@@ -107,7 +99,7 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="Theme", meta=(DisplayName="Available Themes"))
 	TArray<FMCore_ThemeEntry> AvailableThemes;
 
-	/* Index into AvailableThemes for the default theme. Loads automatically on UI init. */
+	/** Index into AvailableThemes for the default theme. Loads automatically on UI init. */
 	UPROPERTY(Config, EditAnywhere, Category="Theme", meta=(DisplayName="Default Theme", ClampMin="0"))
 	int32 DefaultThemeIndex{0};
 
@@ -176,7 +168,7 @@ public:
 	// AUDIO
 	// ============================================================================
 
-	/* SoundMix routing volume slider commits via SetSoundMixClassOverride.
+	/** SoundMix routing volume slider commits via SetSoundMixClassOverride.
 	 * Defaults to MCore_VolumeMix shipped with the plugin. To customize,
 	 * author your own SoundMix with class adjusters for every SoundClass
 	 * referenced by your audio settings DAs. The SoundClass hierarchy must
@@ -211,7 +203,7 @@ public:
 	// ============================================================================
 
 	/**
-	 * Whether GUS-driven setting changes that mutate the host process's
+	 * Whether GameUserSettings-driven setting changes that mutate the host process's
 	 * window/display state (Resolution, Window Mode, HDR toggle, HDR nits)
 	 * should apply when running in PIE.
 	 *
@@ -219,7 +211,7 @@ public:
 	 * window and disrupts the editor process. Set to true if you specifically
 	 * need PIE to behave like a packaged build for these settings.
 	 *
-	 * Has no effect outside PIE — packaged builds (Development, Test,
+	 * Has no effect outside PIE; packaged builds (Development, Test,
 	 * Shipping) always apply these settings normally.
 	 *
 	 * Mirrors Lyra's bApplyFrameRateSettingsInPIE / bApplyFrontEndPerformanceOptionsInPIE
@@ -230,7 +222,7 @@ public:
 	bool bApplyDisplaySettingsInPIE = false;
 
 	/**
-	 * Whether GUS-driven setting changes that mutate process-global
+	 * Whether GameUserSettings-driven setting changes that mutate process-global
 	 * renderer state (scalability quality groups, resolution scale,
 	 * dynamic resolution toggle) should apply when running in PIE.
 	 *

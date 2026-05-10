@@ -1,11 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC.
-
-/**
- * MCore_EventData.h
- *
- * Event data structures for the Modulus tag-based event system,
- * including scope enumeration, parameter storage, and RPC-safe payload.
- */
+// Copyright 2025, Midnight Pixel Studio LLC.
 
 #pragma once
 
@@ -21,7 +14,7 @@ enum class EMCore_EventScope : uint8
 	Global	UMETA(DisplayName="Global (All Players)", ToolTip = "All players - Player actions, gameplay state, multiplayer events, etc.")
 };
 
-/* Single key-value parameter entry, RPC-safe */
+/** Single key-value parameter entry, RPC-safe */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_EventParameter
 {

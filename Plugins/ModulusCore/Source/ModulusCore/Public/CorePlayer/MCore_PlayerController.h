@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PlayerController.h
- *
- * Base PlayerController handling HUD widget creation, deferred UI setup
- * when PrimaryGameLayout is not immediately ready, and input context management.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -45,15 +38,13 @@ protected:
 	// PLAYERCONTROLLER OVERRIDES
 	// ============================================================================
 
-	virtual void SetupInputComponent() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void OnPossess(APawn* aPawn) override;
 
-	/* Widget to push when UI system ready (HUD, MainMenu, etc.) */
+	/** Widget to push when UI system ready (HUD, MainMenu, etc.) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UCommonActivatableWidget> PrimaryWidgetClass;
 
-	/* Layer to push PrimaryWidgetClass onto. Default: MCore_UI_Layer_Game */
+	/** Layer to push PrimaryWidgetClass onto. Default: MCore_UI_Layer_Game */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta = (Categories = "MCore.UI.Layer"))
 	FGameplayTag PrimaryWidgetLayer;
 

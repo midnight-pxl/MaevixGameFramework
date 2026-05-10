@@ -1,6 +1,6 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-#include "CoreEvents/MCore_EventListenerComp.h"
+#include "CoreEvents/MCore_EventListenerComponent.h"
 
 #include "CoreData/Logging/LogModulusEvent.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
@@ -10,7 +10,7 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
-UMCore_EventListenerComp::UMCore_EventListenerComp()
+UMCore_EventListenerComponent::UMCore_EventListenerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = false;
@@ -19,14 +19,14 @@ UMCore_EventListenerComp::UMCore_EventListenerComp()
 	bReceiveGlobalEvents = true;
 }
 
-void UMCore_EventListenerComp::BeginPlay()
+void UMCore_EventListenerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	const UWorld* World = GetWorld();
 	if (!World)
 	{
-		UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay -- no valid world"));
+		UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay: no valid world"));
 		return;
 	}
 
@@ -42,7 +42,7 @@ void UMCore_EventListenerComp::BeginPlay()
 			}
 			else
 			{
-				UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay -- failed to get LocalEventSubsystem for %s"), *GetNameSafe(this));
+				UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay: failed to get LocalEventSubsystem for %s"), *GetNameSafe(this));
 			}
 		}
 	}
@@ -59,18 +59,18 @@ void UMCore_EventListenerComp::BeginPlay()
 			}
 			else
 			{
-				UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay -- failed to get GlobalEventSubsystem for %s"), *GetNameSafe(this));
+				UE_LOG(LogModulusEvent, Warning, TEXT("EventListenerComp::BeginPlay: failed to get GlobalEventSubsystem for %s"), *GetNameSafe(this));
 			}
 		}
 	}
 
-	UE_LOG(LogModulusEvent, Verbose, TEXT("EventListenerComp::BeginPlay -- initialized %s (Local: %s, Global: %s)"),
+	UE_LOG(LogModulusEvent, Verbose, TEXT("EventListenerComp::BeginPlay: initialized %s (Local: %s, Global: %s)"),
 		   *GetNameSafe(this),
 		   bReceiveLocalEvents ? TEXT("Yes") : TEXT("No"),
 		   bReceiveGlobalEvents ? TEXT("Yes") : TEXT("No"));
 }
 
-ULocalPlayer* UMCore_EventListenerComp::ResolveOwningLocalPlayer() const
+ULocalPlayer* UMCore_EventListenerComponent::ResolveOwningLocalPlayer() const
 {
 	if (AActor* Owner = GetOwner())
 	{
@@ -119,7 +119,7 @@ ULocalPlayer* UMCore_EventListenerComp::ResolveOwningLocalPlayer() const
 	return nullptr;
 }
 
-void UMCore_EventListenerComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void UMCore_EventListenerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	/* Unregister from both subsystems */
 	if (UMCore_LocalEventSubsystem* LocalEventSys = CachedLocalSubsystem.Get())
@@ -134,20 +134,20 @@ void UMCore_EventListenerComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 	CachedGlobalSubsystem.Reset();
 
-	UE_LOG(LogModulusEvent, Verbose, TEXT("EventListenerComp::EndPlay -- cleanup %s"), *GetNameSafe(this));
+	UE_LOG(LogModulusEvent, Verbose, TEXT("EventListenerComp::EndPlay: cleanup %s"), *GetNameSafe(this));
 
 	Super::EndPlay(EndPlayReason);
 }
 
-void UMCore_EventListenerComp::DeliverEvent(const FMCore_EventData& EventData, bool bWasGlobalEvent)
+void UMCore_EventListenerComponent::DeliverEvent(const FMCore_EventData& EventData, bool bWasGlobalEvent)
 {
-	UE_LOG(LogModulusEvent, VeryVerbose, TEXT("EventListenerComp::DeliverEvent -- delivering to %s: %s (Global: %s)"),
+	UE_LOG(LogModulusEvent, VeryVerbose, TEXT("EventListenerComp::DeliverEvent: delivering to %s: %s (Global: %s)"),
 	   *GetNameSafe(this), *EventData.EventTag.ToString(), bWasGlobalEvent ? TEXT("Yes") : TEXT("No"));
 
 	OnEventReceived(EventData, bWasGlobalEvent);
 }
 
-bool UMCore_EventListenerComp::ShouldReceiveEvent(const FMCore_EventData& EventData, bool bIsGlobalEvent) const
+bool UMCore_EventListenerComponent::ShouldReceiveEvent(const FMCore_EventData& EventData, bool bIsGlobalEvent) const
 {
 	if (bIsGlobalEvent && !bReceiveGlobalEvents) { return false; }
 	if (!bIsGlobalEvent && !bReceiveLocalEvents) { return false; }

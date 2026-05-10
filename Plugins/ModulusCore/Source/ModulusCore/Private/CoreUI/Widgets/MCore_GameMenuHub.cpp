@@ -41,21 +41,21 @@ void UMCore_GameMenuHub::RebuildTabBar()
     if (!TabbedContainer)
     {
         UE_LOG(LogModulusUI, Error,
-            TEXT("GameMenuHub::RebuildTabBar -- TabbedContainer not bound, verify BindWidget in Blueprint"));
+            TEXT("GameMenuHub::RebuildTabBar: TabbedContainer not bound, verify BindWidget in Blueprint"));
         return;
     }
 
     ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
     if (!LocalPlayer)
     {
-        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar -- no owning LocalPlayer"));
+        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar: no owning LocalPlayer"));
         return;
     }
 
     UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
     if (!UISubsystem)
     {
-        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar -- no UISubsystem found"));
+        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar: no UISubsystem found"));
         return;
     }
 
@@ -78,12 +78,12 @@ void UMCore_GameMenuHub::RebuildTabBar()
                     Switcher->AddChild(EmptyWidget);
                     Switcher->SetActiveWidget(EmptyWidget);
                 }
-                UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::RebuildTabBar -- showing empty state (no screens registered)"));
+                UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::RebuildTabBar: showing empty state (no screens registered)"));
             }
         }
         else
         {
-            UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar -- no screens registered and EmptyStateWidgetClass not set"));
+            UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::RebuildTabBar: no screens registered and EmptyStateWidgetClass not set"));
         }
         return;
     }
@@ -99,7 +99,7 @@ void UMCore_GameMenuHub::RebuildTabBar()
         if (!ScreenWidget)
         {
             UE_LOG(LogModulusUI, Error,
-                TEXT("GameMenuHub::RebuildTabBar -- failed to create widget for '%s'"),
+                TEXT("GameMenuHub::RebuildTabBar: failed to create widget for '%s'"),
                 *Tab.TabID.ToString());
             continue;
         }
@@ -114,7 +114,7 @@ void UMCore_GameMenuHub::RebuildTabBar()
         TabbedContainer->SelectTab(FirstTabID);
 
         UE_LOG(LogModulusUI, Log,
-            TEXT("GameMenuHub::RebuildTabBar -- rebuilt tab bar with %d tabs"),
+            TEXT("GameMenuHub::RebuildTabBar: rebuilt tab bar with %d tabs"),
             RegisteredScreens.Num());
     }
 }
@@ -128,13 +128,13 @@ bool UMCore_GameMenuHub::SetTabEnabled(FGameplayTag TabID, bool bEnabled)
 
     if (bSuccess)
     {
-        UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::SetTabEnabled -- tab '%s' is %s"),
+        UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::SetTabEnabled: tab '%s' is %s"),
             *TabID.ToString(),
             bEnabled ? TEXT("ENABLED") : TEXT("DISABLED"));
     }
     else
     {
-        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::SetTabEnabled -- tab '%s' not found"),
+        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::SetTabEnabled: tab '%s' not found"),
             *TabID.ToString());
     }
 
@@ -150,13 +150,13 @@ bool UMCore_GameMenuHub::SetTabHidden(FGameplayTag TabID, bool bIsHidden)
 
     if (bSuccess)
     {
-        UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::SetTabHidden -- tab '%s' is %s"),
+        UE_LOG(LogModulusUI, Log, TEXT("GameMenuHub::SetTabHidden: tab '%s' is %s"),
             *TabID.ToString(),
             bIsHidden ? TEXT("HIDDEN") : TEXT("VISIBLE"));
     }
     else
     {
-        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::SetTabHidden -- tab '%s' not found"),
+        UE_LOG(LogModulusUI, Warning, TEXT("GameMenuHub::SetTabHidden: tab '%s' not found"),
             *TabID.ToString());
     }
 

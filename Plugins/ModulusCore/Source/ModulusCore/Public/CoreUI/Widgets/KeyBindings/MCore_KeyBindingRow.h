@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_KeyBindingRow.h
- *
- * Single action row in the key binding panel with KBM and Gamepad binding buttons.
- * Each row owns 4 buttons: primary/secondary for KBM and Gamepad.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

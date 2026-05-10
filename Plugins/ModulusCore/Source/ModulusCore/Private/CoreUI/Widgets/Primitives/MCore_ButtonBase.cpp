@@ -33,33 +33,19 @@ void UMCore_ButtonBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	UE_LOG(LogModulusUI, Verbose, TEXT("ButtonBase::NativeOnInitialized -- initialized, widget=%s"), *GetNameSafe(this));
+	UE_LOG(LogModulusUI, Verbose, TEXT("ButtonBase::NativeOnInitialized: initialized, widget=%s"), *GetNameSafe(this));
 
 	BindThemeDelegate();
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ApplyTheme(UISubsystem->GetActiveTheme());
 		}
 	}
 
 	SyncPropertiesToWidgets();
-
-	// TODO: Remove after button theme init diagnostic (2026-05-08)
-	{
-		const ULocalPlayer* LP = GetOwningLocalPlayer();
-		const UMCore_UISubsystem* UI =
-			LP ? LP->GetSubsystem<UMCore_UISubsystem>() : nullptr;
-		const UMCore_PDA_UITheme_Base* CurrentTheme =
-			UI ? UI->GetActiveTheme() : nullptr;
-		UE_LOG(LogModulusUI, Log,
-			TEXT("ButtonBase::NativeOnInitialized -- widget=%s ActiveTheme=%s CachedTheme=%s"),
-			*GetName(),
-			CurrentTheme ? *CurrentTheme->GetName() : TEXT("null"),
-			CachedTheme.IsValid() ? *CachedTheme->GetName() : TEXT("null/invalid"));
-	}
 }
 
 void UMCore_ButtonBase::NativeOnClicked()
@@ -75,7 +61,7 @@ void UMCore_ButtonBase::SimulateClick()
 
 void UMCore_ButtonBase::NativeDestruct()
 {
-	UE_LOG(LogModulusUI, Verbose, TEXT("ButtonBase::NativeDestruct -- destructing, widget=%s"), *GetNameSafe(this));
+	UE_LOG(LogModulusUI, Verbose, TEXT("ButtonBase::NativeDestruct: destructing, widget=%s"), *GetNameSafe(this));
 
 	UnbindThemeDelegate();
 
@@ -155,9 +141,9 @@ void UMCore_ButtonBase::SetButtonStyleOverride(TSubclassOf<UCommonButtonStyle> I
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ApplyTheme(UISubsystem->GetActiveTheme());
 		}
 	}
 }
@@ -168,9 +154,9 @@ void UMCore_ButtonBase::SetTextStyleOverride(TSubclassOf<UCommonTextStyle> InSty
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ApplyTheme(UISubsystem->GetActiveTheme());
 		}
 	}
 }
@@ -203,12 +189,6 @@ void UMCore_ButtonBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme
 
 void UMCore_ButtonBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
-	// TODO: Remove after button theme init diagnostic (2026-05-08)
-	UE_LOG(LogModulusUI, Log,
-		TEXT("ButtonBase::HandleThemeChanged -- widget=%s NewTheme=%s"),
-		*GetName(),
-		NewTheme ? *NewTheme->GetName() : TEXT("null"));
-
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
 }
@@ -220,10 +200,10 @@ void UMCore_ButtonBase::BindThemeDelegate()
 	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
 	if (!LocalPlayer) { return; }
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UI) { return; }
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (!UISubsystem) { return; }
 
-	UI->OnThemeChanged.AddDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
+	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
 	bThemeDelegateBound = true;
 }
 
@@ -238,10 +218,10 @@ void UMCore_ButtonBase::UnbindThemeDelegate()
 		return;
 	}
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UI)
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (UISubsystem)
 	{
-		UI->OnThemeChanged.RemoveDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
+		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
 	}
 
 	bThemeDelegateBound = false;

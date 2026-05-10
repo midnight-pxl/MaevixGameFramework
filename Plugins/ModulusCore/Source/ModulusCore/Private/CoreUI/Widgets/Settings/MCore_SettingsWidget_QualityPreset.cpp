@@ -24,7 +24,7 @@ int32 UMCore_SettingsWidget_QualityPreset::ResolveDisplayedIndex_Implementation(
 	if (!Save->bQualityPresetInitialized)
 	{
 		UE_LOG(LogModulusSettings, Warning,
-			TEXT("SettingsWidget_QualityPreset::ResolveDisplayedIndex -- "
+			TEXT("SettingsWidget_QualityPreset::ResolveDisplayedIndex: "
 				 "save not yet initialized, falling back to base resolution"));
 		return Super::ResolveDisplayedIndex_Implementation();
 	}
@@ -38,12 +38,12 @@ int32 UMCore_SettingsWidget_QualityPreset::ResolveDisplayedIndex_Implementation(
 
 	if (Intent == -1)
 	{
-		/* Custom — display index 4 (assumes DA's DropdownOptions has 5 entries). */
+		/* Custom; display index 4 (assumes DA's DropdownOptions has 5 entries). */
 		return 4;
 	}
 
 	UE_LOG(LogModulusSettings, Warning,
-		TEXT("SettingsWidget_QualityPreset::ResolveDisplayedIndex -- "
+		TEXT("SettingsWidget_QualityPreset::ResolveDisplayedIndex: "
 			 "unexpected LastSelectedQualityPreset value %d, clamping to [0, 3]"),
 		Intent);
 	return FMath::Clamp(Intent, 0, 3);

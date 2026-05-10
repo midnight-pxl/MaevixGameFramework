@@ -1,11 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
-
-/**
- * MCore_LocalEventSubsystem.h
- *
- * Per-LocalPlayer subsystem for broadcasting and receiving client-only
- * GameplayTag events with zero network overhead.
- */
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
@@ -13,7 +6,7 @@
 #include "Subsystems/LocalPlayerSubsystem.h"
 #include "MCore_LocalEventSubsystem.generated.h"
 
-class UMCore_EventListenerComp;
+class UMCore_EventListenerComponent;
 struct FMCore_EventData;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnLocalEventBroadcast, const FMCore_EventData& /*EventData*/);
@@ -31,11 +24,11 @@ class MODULUSCORE_API UMCore_LocalEventSubsystem : public ULocalPlayerSubsystem
 	GENERATED_BODY()
 
 public:
-	/** Register listener component. Called automatically by UMCore_EventListenerComp::BeginPlay() */
-	void RegisterLocalListener(UMCore_EventListenerComp* ListenerComponent);
+	/** Register listener component. Called automatically by UMCore_EventListenerComponent::BeginPlay() */
+	void RegisterLocalListener(UMCore_EventListenerComponent* ListenerComponent);
 
-	/** Unregister listener component. Called automatically by UMCore_EventListenerComp::EndPlay() */
-	void UnregisterLocalListener(UMCore_EventListenerComp* ListenerComponent);
+	/** Unregister listener component. Called automatically by UMCore_EventListenerComponent::EndPlay() */
+	void UnregisterLocalListener(UMCore_EventListenerComponent* ListenerComponent);
 
 	/**
 	 * Broadcast event to all registered local listeners.
@@ -52,7 +45,7 @@ protected:
 	virtual void Deinitialize() override;
 	
 private:
-	/* Registered local listener components */
+	/** Registered local listener components */
 	UPROPERTY()
-	TArray<TWeakObjectPtr<UMCore_EventListenerComp>> LocalListeners;
+	TArray<TWeakObjectPtr<UMCore_EventListenerComponent>> LocalListeners;
 };

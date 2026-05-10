@@ -1,11 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_KeyBindingTypes.h
- *
- * Data types for the key binding panel configuration.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

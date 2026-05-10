@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_GameStateBase.h
- *
- * Optional GameState base class with built-in network event support via
- * UMCore_GlobalEventReplicator. Alternative: add the component to your own GameState.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

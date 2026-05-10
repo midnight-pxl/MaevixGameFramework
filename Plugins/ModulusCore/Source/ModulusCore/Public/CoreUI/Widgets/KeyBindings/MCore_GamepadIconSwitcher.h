@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_GamepadIconSwitcher.h
- *
- * Cycling selector for manual gamepad icon set override.
- * Lets PC players pick which controller icons to display when auto-detection
- * is incorrect (common with Steam input translation).
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -18,9 +10,12 @@ class UMCore_ButtonBase;
 class UCommonTextBlock;
 
 /**
- * Cycling selector that overrides which gamepad icon set is displayed.
- * Option 0 is always "Auto-Detect"; remaining options are pulled from
- * registered CommonInput controller data assets at runtime.
+ * Cycling selector that overrides which gamepad icon set is displayed. Lets PC
+ * players pick which controller icons to display when auto-detection is wrong
+ * (common with Steam input translation).
+ *
+ * Option 0 is always "Auto-Detect"; remaining options are pulled from registered
+ * CommonInput controller data assets at runtime.
  *
  * Requires BindWidget: Btn_Previous, Btn_Next, Txt_PlatformName.
  */

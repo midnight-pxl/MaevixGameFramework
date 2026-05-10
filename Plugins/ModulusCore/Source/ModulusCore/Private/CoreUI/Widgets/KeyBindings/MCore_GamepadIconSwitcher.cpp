@@ -143,7 +143,7 @@ void UMCore_GamepadIconSwitcher::ApplySelection()
 		EMCore_EventScope::Local);
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("GamepadIconSwitcher::ApplySelection -- gamepad icon set changed to index %d, widget=%s"),
+		TEXT("GamepadIconSwitcher::ApplySelection: gamepad icon set changed to index %d, widget=%s"),
 		CurrentIndex, *GetNameSafe(this));
 }
 

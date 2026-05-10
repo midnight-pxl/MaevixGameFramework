@@ -1,17 +1,17 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #include "CoreEvents/MCore_GlobalEventSubsystem.h"
 
 #include "CoreEvents/MCore_GlobalEventReplicator.h"
 #include "CoreData/Logging/LogModulusEvent.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
-#include "CoreEvents/MCore_EventListenerComp.h"
+#include "CoreEvents/MCore_EventListenerComponent.h"
 #include "Serialization/BufferArchive.h"
 
 void UMCore_GlobalEventSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::Initialize -- initializing"));
+	UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::Initialize: initializing"));
 }
 
 void UMCore_GlobalEventSubsystem::Deinitialize()
@@ -27,12 +27,12 @@ void UMCore_GlobalEventSubsystem::BroadcastGlobalEvent(const FMCore_EventData& E
 	if (!EventData.IsValid())
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- attempted to broadcast invalid event"));
+			TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: attempted to broadcast invalid event"));
 		return;
 	}
 	
 	UE_LOG(LogModulusEvent, Verbose,
-		TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- broadcasting: %s"),
+		TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: broadcasting: %s"),
 		*EventData.EventTag.ToString());
 	
 	/* Route through event replicator if available */
@@ -51,7 +51,7 @@ void UMCore_GlobalEventSubsystem::BroadcastGlobalEvent(const FMCore_EventData& E
 			if (IsNetworkedGame())
 			{
 				UE_LOG(LogModulusEvent, Warning,
-					TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- delivered locally only, no replicator found; "
+					TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: delivered locally only, no replicator found; "
 						 "add GlobalEventReplicator to GameState for network support."));
 				return;
 			}
@@ -60,14 +60,14 @@ void UMCore_GlobalEventSubsystem::BroadcastGlobalEvent(const FMCore_EventData& E
 		{
 			/* Client w/o replicator: cannot request broadcast */
 			UE_LOG(LogModulusEvent, Warning,
-				TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- not authority and no replicator found; "
+				TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: not authority and no replicator found; "
 					 "add GlobalEventReplicator to GameState for network support."))
 			return;
 		}
 	}
 
 	UE_LOG(LogModulusEvent, Log,
-		TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- broadcast complete: %s"),
+		TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: broadcast complete: %s"),
 		*EventData.EventTag.ToString());
 }
 
@@ -76,7 +76,7 @@ void UMCore_GlobalEventSubsystem::RegisterEventReplicator(UMCore_GlobalEventRepl
 	if (IsValid(Replicator))
 	{
 		EventReplicator = Replicator;
-		UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::RegisterEventReplicator -- registered: %s"),
+		UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::RegisterEventReplicator: registered: %s"),
 			Replicator->GetOwner() ? *Replicator->GetOwner()->GetName() : TEXT("Unknown"));
 	}
 }
@@ -86,30 +86,30 @@ void UMCore_GlobalEventSubsystem::UnregisterEventReplicator(UMCore_GlobalEventRe
 	if (EventReplicator.Get() == Replicator)
 	{
 		EventReplicator.Reset();
-		UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::UnregisterEventReplicator -- unregistered"));
+		UE_LOG(LogModulusEvent, Log, TEXT("GlobalEventSubsystem::UnregisterEventReplicator: unregistered"));
 	}
 }
 
-void UMCore_GlobalEventSubsystem::RegisterGlobalListener(UMCore_EventListenerComp* ListenerComponent)
+void UMCore_GlobalEventSubsystem::RegisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent)
 {
 	if (IsValid(ListenerComponent))
 	{
 		GlobalListeners.AddUnique(ListenerComponent);
-		UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::RegisterGlobalListener -- registered: %s"),
+		UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::RegisterGlobalListener: registered: %s"),
 			*ListenerComponent->GetName());
 	}
 }
 
-void UMCore_GlobalEventSubsystem::UnregisterGlobalListener(UMCore_EventListenerComp* ListenerComponent)
+void UMCore_GlobalEventSubsystem::UnregisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent)
 {
-	int32 RemoveCount = GlobalListeners.RemoveAll([ListenerComponent](const TWeakObjectPtr<UMCore_EventListenerComp>& RemovePtr)
+	int32 RemoveCount = GlobalListeners.RemoveAll([ListenerComponent](const TWeakObjectPtr<UMCore_EventListenerComponent>& RemovePtr)
 	{
 		return !RemovePtr.IsValid() || RemovePtr.Get() == ListenerComponent;
 	});
 
 	if (RemoveCount > 0)
 	{
-		UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::UnregisterGlobalListener -- unregistered: %s"),
+		UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::UnregisterGlobalListener: unregistered: %s"),
 			ListenerComponent ? *ListenerComponent->GetName() : TEXT("Unknown"));
 	}
 }
@@ -118,17 +118,17 @@ void UMCore_GlobalEventSubsystem::DeliverToLocalListeners(const FMCore_EventData
 {
 	if (GlobalListeners.IsEmpty()) { return; }
 	
-	UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::DeliverToLocalListeners -- delivering '%s' to %d listeners"),
+	UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::DeliverToLocalListeners: delivering '%s' to %d listeners"),
 		*EventData.EventTag.ToString(), GlobalListeners.Num());
 	
 	/* Reverse traverse to remove stale entries */
 	for (int32 i = GlobalListeners.Num() - 1; i >= 0; --i)
 	{
-		TWeakObjectPtr<UMCore_EventListenerComp>& CurListener = GlobalListeners[i];
+		TWeakObjectPtr<UMCore_EventListenerComponent>& CurListener = GlobalListeners[i];
 		
 		if (CurListener.IsValid())
 		{
-			UMCore_EventListenerComp* ListenerComp = CurListener.Get();
+			UMCore_EventListenerComponent* ListenerComp = CurListener.Get();
 			if (ListenerComp && CurListener->ShouldReceiveEvent(EventData, /*bIsGlobalEvent*/ true))
 			{
 				CurListener->DeliverEvent(EventData, /*bIsGlobalEvent*/ true);
@@ -169,7 +169,7 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 {
 	if (!EventData.IsValid())
 	{
-		UE_LOG(LogModulusEvent, Warning, TEXT("GlobalEventSubsystem::ValidateEventRequest -- invalid event data"));
+		UE_LOG(LogModulusEvent, Warning, TEXT("GlobalEventSubsystem::ValidateEventRequest: invalid event data"));
 		return false;
 	}
 	
@@ -180,7 +180,7 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 	if (EventData.EventParams.Num() > MaxParams)
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("GlobalEventSubsystem::ValidateEventRequest -- rejected '%s': %d params exceeds cap of %d. "
+			TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': %d params exceeds cap of %d. "
 				 "Override ValidateEventRequest() for custom limits."),
 				 *EventData.EventTag.ToString(), EventData.EventParams.Num(), MaxParams);
 		return false;
@@ -189,24 +189,24 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 	if (EventData.ContextID.Len() > MaxContextIDLength)
 	{
 		UE_LOG(LogModulusEvent, Warning,
-			TEXT("GlobalEventSubsystem::ValidateEventRequest -- rejected '%s': ContextID length of %d exceeds cap of %d. "
+			TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': ContextID length of %d exceeds cap of %d. "
 				 "Override ValidateEventRequest() for custom limits."),
 				 *EventData.EventTag.ToString(), EventData.ContextID.Len(), MaxContextIDLength);
 		return false;
 	}
 	
-	/* Typed payload validation — global events cross the network */
+	/* Typed payload validation; global events cross the network */
 	if (EventData.TypedPayload.IsValid())
 	{
 		const UScriptStruct* PayloadStruct = EventData.TypedPayload.GetScriptStruct();
 		if (PayloadStruct)
 		{
-			/* Fast reject — GetStructureSize() is the C++ sizeof, zero runtime cost */
+			/* Fast reject; GetStructureSize() is the C++ sizeof, zero runtime cost */
 			constexpr int32 MaxStructSizeBytes = 2048;
 			if (PayloadStruct->GetStructureSize() > MaxStructSizeBytes)
 			{
 				UE_LOG(LogModulusEvent, Warning,
-					TEXT("GlobalEventSubsystem::ValidateEventRequest -- rejected '%s': typed payload struct '%s' "
+					TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': typed payload struct '%s' "
 						 "sizeof %d exceeds cap of %d"),
 					*EventData.EventTag.ToString(),
 					*PayloadStruct->GetName(),
@@ -215,7 +215,7 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 				return false;
 			}
 
-			/* Serialized size check — catches dynamic content (TArrays, FStrings, maps)
+			/* Serialized size check; catches dynamic content (TArrays, FStrings, maps)
 			 * where sizeof is small but serialized form can be arbitrarily large */
 			constexpr int32 MaxSerializedPayloadBytes = 4096;
 			FBufferArchive SizeCounter;
@@ -224,7 +224,7 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 			if (SizeCounter.Num() > MaxSerializedPayloadBytes)
 			{
 				UE_LOG(LogModulusEvent, Warning,
-					TEXT("GlobalEventSubsystem::ValidateEventRequest -- rejected '%s': typed payload struct '%s' "
+					TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': typed payload struct '%s' "
 						 "serialized size %d exceeds cap of %d"),
 					*EventData.EventTag.ToString(),
 					*PayloadStruct->GetName(),
@@ -239,7 +239,7 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 	if (EventData.TypedPayload.IsValid() && EventData.EventParams.Num() > 0)
 	{
 		UE_LOG(LogModulusEvent, Verbose,
-			TEXT("GlobalEventSubsystem::ValidateEventRequest -- event '%s' has both string params (%d) and typed payload '%s'. "
+			TEXT("GlobalEventSubsystem::ValidateEventRequest: event '%s' has both string params (%d) and typed payload '%s'. "
 				 "This is valid but may indicate redundant data during migration."),
 			*EventData.EventTag.ToString(),
 			EventData.EventParams.Num(),

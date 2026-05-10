@@ -1,4 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
@@ -240,7 +240,7 @@ private:
 	/** Tags accumulated during the debounce window. Merged into the countdown when it spawns. */
 	TArray<FGameplayTag> PendingConfirmationTags;
 	
-	/** Debounce timer — resets on each new confirmation-required change. */
+	/** Debounce timer; resets on each new confirmation-required change. */
 	FTimerHandle ConfirmationDebounceTimer;
 	
 	/** Spawns the countdown modal with all accumulated PendingConfirmationTags. */

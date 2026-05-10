@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_ThemeableInterface.h
- *
- * Interface for widgets that respond to theme changes. Implement OnThemeChanged
- * to apply theme properties, and call RefreshTheme in NativeOnInitialized.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -21,6 +14,11 @@ class UMCore_ThemeableInterface : public UInterface
 	GENERATED_BODY()
 };
 
+/**
+ * Interface for widgets that respond to theme changes.
+ * Implement OnThemeChanged to apply theme properties, and call RefreshTheme
+ * in NativeOnInitialized.
+ */
 class MODULUSCORE_API IMCore_ThemeableInterface
 {
 	GENERATED_BODY()

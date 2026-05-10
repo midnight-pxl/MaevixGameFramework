@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_KeyBindingCaptureDialog.h
- *
- * Modal dialog for key binding capture. Shows action name, slot context,
- * capture prompt, and error feedback with a cooldown before re-enabling capture.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

@@ -1,11 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
-
-/**
- * MCore_GlobalEventSubsystem.h
- *
- * GameInstance subsystem for server-authoritative event broadcasting
- * across all connected clients via the GlobalEventReplicator.
- */
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
@@ -14,7 +7,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "MCore_GlobalEventSubsystem.generated.h"
 
-class UMCore_EventListenerComp;
+class UMCore_EventListenerComponent;
 class UMCore_GlobalEventReplicator;
 
 /**
@@ -31,17 +24,10 @@ class MODULUSCORE_API UMCore_GlobalEventSubsystem : public UGameInstanceSubsyste
 
 public:
 	/**
-	 * Broadcast global event to all clients
-	 *
-	 * With Replicator (networked):
-	 * - Server: Delivers locally + multicasts to all clients
-	 * - Client: Sends server RPC for validation and broadcast
-	 *
-	 * Without Replicator (standalone or not configured):
-	 * - Server/Standalone: Delivers to local listeners only
-	 * - Client: Logs warning, event not broadcast
-	 *
-	 * Use UMCore_EventFunctionLibrary::BroadcastGlobalEvent() instead of calling this directly.
+	 * Broadcast a GameplayTag event to all clients via the active
+	 * GlobalEventReplicator (server multicasts; clients send a server RPC).
+	 * Falls back to local-listeners-only with a warning when no replicator
+	 * is configured. Prefer UMCore_EventFunctionLibrary::BroadcastGlobalEvent().
 	 */
 	void BroadcastGlobalEvent(const FMCore_EventData& EventData);
 	
@@ -59,15 +45,15 @@ public:
 
 	/** 
 	 * Register listener for global events.
-	 * Called by UMCore_EventListenerComp::BeginPlay()
+	 * Called by UMCore_EventListenerComponent::BeginPlay()
 	 */
-	void RegisterGlobalListener(UMCore_EventListenerComp* ListenerComponent);
+	void RegisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent);
 
 	/**
 	 * Unregister listener from global events.
-	 * Called by UMCore_EventListenerComp::EndPlay()
+	 * Called by UMCore_EventListenerComponent::EndPlay()
 	 */
-	void UnregisterGlobalListener(UMCore_EventListenerComp* ListenerComponent);
+	void UnregisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent);
 	
 	/**
 	 * Deliver event to all registered local listeners.
@@ -87,13 +73,12 @@ protected:
 	virtual void Deinitialize() override;
 
 private:
-	/* Registered global listener components */
+	/** Registered global listener components */
 	UPROPERTY()
-	TArray<TWeakObjectPtr<UMCore_EventListenerComp>> GlobalListeners;
+	TArray<TWeakObjectPtr<UMCore_EventListenerComponent>> GlobalListeners;
 	
 	/* Cached reference to the network replicator on GameState */
 	TWeakObjectPtr<UMCore_GlobalEventReplicator> EventReplicator;
 
-	/* Check if we're in a networked game (not standalone) */
 	bool IsNetworkedGame() const;
 };

@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PDA_UITheme_Base.h
- *
- * Master UI Theme DataAsset referencing CommonUI styles and modular style DataAssets.
- * Create child DataAssets for each theme (Minimal, Fantasy, Sci-Fi).
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -40,19 +33,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonBorderStyle> PanelBorderStyle;
 
-	/* Main actions: play, confirm, submit */
+	/** Main actions: play, confirm, submit */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonButtonStyle> PrimaryButtonStyle;
 
-	/* Cancel, back, navigation, settings controls */
+	/** Cancel, back, navigation, settings controls */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonButtonStyle> SecondaryButtonStyle;
 
-	/* No background fill, text/icon only with subtle hover. Used for arrow buttons and de-emphasized actions. */
+	/** No background fill, text/icon only with subtle hover. Used for arrow buttons and de-emphasized actions. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonButtonStyle> GhostButtonStyle;
 	
-	/* 	*/
+	/** 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TArray<TSubclassOf<UCommonTextStyle>> HeadingTextStyle;
 

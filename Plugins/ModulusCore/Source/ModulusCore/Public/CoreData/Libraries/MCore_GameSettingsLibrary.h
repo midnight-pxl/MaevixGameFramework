@@ -1,13 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_GameSettingsLibrary.h
- *
- * Blueprint function library orchestrating the DataAsset-driven settings system.
- * Provides typed getters/setters, tag-based lookup, batch operations,
- * and engine-apply logic (GameUserSettings, CVars, SoundClasses).
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -32,7 +24,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(
 );
 
 /**
- * Game settings library providing typed getters/setters with immediate-apply semantics.
+ * Game settings library orchestrating the DataAsset-driven settings system.
+ * Provides typed getters/setters, tag-based lookup, batch operations, and
+ * immediate-apply semantics.
  *
  * Each setter writes to committed storage, applies to engine systems (GameUserSettings,
  * CVars, SoundClasses), and saves to disk. Settings with bRequiresConfirmation defer
@@ -103,7 +97,7 @@ public:
 
 	/**
 	 * Set one or more float settings, apply to engine, and save.
-	 * All changes are applied in a single pass with one GUS flush at the end.
+	 * All changes are applied in a single pass with one GameUserSettings flush at the end.
 	 * If any setting has bRequiresConfirmation and bBypassConfirmation is false,
 	 * the values are applied but not saved; a confirmation event is broadcast instead.
 	 */
@@ -145,7 +139,7 @@ public:
 
 	/**
 	 * Reset all settings across all SettingsCollections to their DataAsset defaults.
-	 * Batched with a single GUS flush per type.
+	 * Batched with a single GameUserSettings flush per type.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Settings",
 		meta = (WorldContext = "WorldContextObject"))
@@ -153,7 +147,7 @@ public:
 
 	/**
 	 * Reset all settings in a specific category to their DataAsset defaults.
-	 * Batched with a single GUS flush per type.
+	 * Batched with a single GameUserSettings flush per type.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Settings",
 		meta = (WorldContext = "WorldContextObject"))
@@ -228,11 +222,11 @@ private:
 	static bool WriteReflectedProperty(FProperty* Prop, void* Container,
 		float FloatValue, int32 IntValue, bool bBoolValue);
 
-	/** Reads each ScalabilityQuality member from GUS and writes its value to the matching
-	 *  DA's save key (Definition->NamedSetter matched against 10 known names). */
+	/* Reads each ScalabilityQuality member from GameUserSettings and writes its value to the matching
+	 * DA's save key (Definition->NamedSetter matched against 10 known names). */
 	static void CascadeScalabilityValuesToSave(UMCore_PlayerSettingsSave* Save);
 
-	/** Sets LastSelectedQualityPreset to -1 (Custom) on the given save. No-op if Save is null. */
+	/* Sets LastSelectedQualityPreset to -1 (Custom) on the given save. No-op if Save is null. */
 	static void MarkQualityPresetCustom(UMCore_PlayerSettingsSave* Save);
 
 	static void ApplyToConsoleVariable(const FName& CVarName, float Value);

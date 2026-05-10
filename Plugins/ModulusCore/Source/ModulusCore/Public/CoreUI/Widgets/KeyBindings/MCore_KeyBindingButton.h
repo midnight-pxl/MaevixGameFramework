@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_KeyBindingButton.h
- *
- * Single key binding slot button with icon display via ButtonBase and key capture via IInputProcessor.
- * Registers a Slate input preprocessor during capture to intercept keys before CommonUI.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

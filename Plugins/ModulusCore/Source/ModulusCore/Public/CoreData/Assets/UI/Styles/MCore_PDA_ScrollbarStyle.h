@@ -1,11 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_PDA_ScrollbarStyle.h
- *
- * Scrollbar styling DataAsset for UI themes. Referenced by UMCore_PDA_UITheme_Base.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

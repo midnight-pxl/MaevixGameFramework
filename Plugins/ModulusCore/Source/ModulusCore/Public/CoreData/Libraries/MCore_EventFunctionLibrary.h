@@ -1,12 +1,5 @@
 ﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_EventFunctionLibrary.h
- *
- * Blueprint function library for broadcasting and receiving GameplayTag-based
- * events through Local and Global event subsystems.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

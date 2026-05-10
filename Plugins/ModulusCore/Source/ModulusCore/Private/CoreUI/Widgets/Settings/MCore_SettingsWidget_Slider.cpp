@@ -68,7 +68,7 @@ void UMCore_SettingsWidget_Slider::OnDefinitionSet_Implementation(
 	bIsUpdatingSlider = false;
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsWidget_Slider::OnDefinitionSet -- configured range [%.2f, %.2f] step=%.2f, current=%.2f, widget=%s"),
+		TEXT("SettingsWidget_Slider::OnDefinitionSet: configured range [%.2f, %.2f] step=%.2f, current=%.2f, widget=%s"),
 		Definition->MinValue, Definition->MaxValue, Definition->StepSize, ClampedValue, *GetNameSafe(this));
 
 	if (Txt_ValueDisplay)
@@ -236,7 +236,7 @@ void UMCore_SettingsWidget_Slider::ResetToDefault_Implementation()
 	SyncSliderAndDisplay(DefaultVal);
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsWidget_Slider::ResetToDefault -- reset to %.2f, widget=%s"),
+		TEXT("SettingsWidget_Slider::ResetToDefault: reset to %.2f, widget=%s"),
 		DefaultVal, *GetNameSafe(this));
 }
 

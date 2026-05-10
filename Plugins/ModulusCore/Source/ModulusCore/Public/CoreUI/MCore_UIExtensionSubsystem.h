@@ -1,12 +1,5 @@
 ﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_UIExtensionSubsystem.h
- *
- * World subsystem enabling tag-based widget injection into UI extension
- * points, allowing plugins to extend the HUD and menus without coupling.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"

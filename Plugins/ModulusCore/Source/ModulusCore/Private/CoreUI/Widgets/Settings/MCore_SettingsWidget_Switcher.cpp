@@ -86,7 +86,7 @@ void UMCore_SettingsWidget_Switcher::OnDefinitionSet_Implementation(
 	UpdateDisplay();
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsWidget_Switcher::OnDefinitionSet -- configured %d options, toggle=%s, current=%d, widget=%s"),
+		TEXT("SettingsWidget_Switcher::OnDefinitionSet: configured %d options, toggle=%s, current=%d, widget=%s"),
 		Options.Num(), bIsToggleMode ? TEXT("true") : TEXT("false"), CurrentIndex, *GetNameSafe(this));
 }
 
@@ -240,7 +240,7 @@ void UMCore_SettingsWidget_Switcher::ResetToDefault_Implementation()
 	UpdateDisplay();
 
 	UE_LOG(LogModulusSettings, Verbose,
-		TEXT("SettingsWidget_Switcher::ResetToDefault -- reset to index %d, widget=%s"),
+		TEXT("SettingsWidget_Switcher::ResetToDefault: reset to index %d, widget=%s"),
 		CurrentIndex, *GetNameSafe(this));
 }
 

@@ -56,14 +56,19 @@ void UMCore_KeyBindingPanel_Base::NativeOnInitialized()
 
 	BindThemeDelegate();
 
-	/* Apply initial theme */
+	/* Resolve active theme once for both pre- and post-populate apply */
+	UMCore_PDA_UITheme_Base* ActiveTheme = nullptr;
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UI->GetActiveTheme());
+			ActiveTheme = UISubsystem->GetActiveTheme();
 		}
 	}
+
+	/* Pre-populate apply: writes CachedTheme so CreateThemedCategoryHeader
+	 * styles each header as it spawns. */
+	ApplyTheme(ActiveTheme);
 
 	/* Bind tab selection */
 	if (TabbedContainer_Bindings)
@@ -82,6 +87,10 @@ void UMCore_KeyBindingPanel_Base::NativeOnInitialized()
 	}
 
 	PopulateBindings(GetOwningPlayer());
+
+	/* Post-populate apply: SpawnedHeaders is now populated, so the
+	 * iteration inside ApplyTheme_Implementation runs against real headers. */
+	ApplyTheme(ActiveTheme);
 }
 
 void UMCore_KeyBindingPanel_Base::NativeDestruct()
@@ -157,7 +166,7 @@ void UMCore_KeyBindingPanel_Base::PopulateBindings(APlayerController* OwningPlay
     if (!OwningPlayer || !TabbedContainer_Bindings || !KeyBindingRowClass)
     {
        UE_LOG(LogModulusUI, Warning,
-          TEXT("KeyBindingPanel_Base::PopulateBindings -- missing PC, TabbedContainer, or KeyBindingRowClass [%s]"),
+          TEXT("KeyBindingPanel_Base::PopulateBindings: missing PC, TabbedContainer, or KeyBindingRowClass [%s]"),
           *GetNameSafe(this));
        return;
     }
@@ -188,7 +197,7 @@ void UMCore_KeyBindingPanel_Base::PopulateBindings(APlayerController* OwningPlay
     {
        /* Register all configured IMCs with EnhancedInputUserSettings so
         * profile rows exist before BuildContextPage queries them.
-        * Idempotent -- safe on repeated calls. */
+        * Idempotent; safe on repeated calls. */
        if (const ULocalPlayer* LocalPlayer = OwningPlayer->GetLocalPlayer())
        {
           if (UEnhancedInputLocalPlayerSubsystem* EISubsystem =
@@ -252,7 +261,7 @@ void UMCore_KeyBindingPanel_Base::PopulateBindings(APlayerController* OwningPlay
     }
 
     UE_LOG(LogModulusUI, Log,
-       TEXT("KeyBindingPanel_Base::PopulateBindings -- populated %d binding rows across %d context tabs [%s]"),
+       TEXT("KeyBindingPanel_Base::PopulateBindings: populated %d binding rows across %d context tabs [%s]"),
        AllRows.Num(), ContextCount, *GetNameSafe(this));
 }
 
@@ -339,7 +348,7 @@ UScrollBox* UMCore_KeyBindingPanel_Base::BuildContextPage(APlayerController* Own
           if (!Action)
           {
              UE_LOG(LogModulusUI, Warning,
-                TEXT("KeyBindingPanel_Base::BuildContextPage -- mapping '%s' has no associated InputAction [%s]"),
+                TEXT("KeyBindingPanel_Base::BuildContextPage: mapping '%s' has no associated InputAction [%s]"),
                 *Mapping->GetMappingName().ToString(), *GetNameSafe(this));
              continue;
           }
@@ -367,7 +376,7 @@ UScrollBox* UMCore_KeyBindingPanel_Base::BuildFallbackPage(APlayerController* Ow
 	if (AllMappings.IsEmpty())
 	{
 		UE_LOG(LogModulusUI, Log,
-			TEXT("KeyBindingPanel_Base::BuildFallbackPage -- no remappable actions found [%s]"),
+			TEXT("KeyBindingPanel_Base::BuildFallbackPage: no remappable actions found [%s]"),
 			*GetNameSafe(this));
 		return nullptr;
 	}
@@ -424,7 +433,7 @@ UScrollBox* UMCore_KeyBindingPanel_Base::BuildFallbackPage(APlayerController* Ow
 			if (!Action)
 			{
 				UE_LOG(LogModulusUI, Warning,
-					TEXT("KeyBindingPanel_Base::BuildFallbackPage -- mapping '%s' has no associated InputAction [%s]"),
+					TEXT("KeyBindingPanel_Base::BuildFallbackPage: mapping '%s' has no associated InputAction [%s]"),
 					*Mapping->GetMappingName().ToString(), *GetNameSafe(this));
 				continue;
 			}
@@ -479,19 +488,19 @@ void UMCore_KeyBindingPanel_Base::HandleResetAllClicked()
 {
 	DismissActiveConfirmationDialog();
 	
-	/** Resolve dialog class: per-widget override w/ CoreSettings fallback */
+	/* Resolve dialog class: per-widget override w/ CoreSettings fallback */
 	TSubclassOf<UMCore_ConfirmationDialog> DialogClass = ResetConfirmationDialogClass;
 	if (!DialogClass)
 	{
 		const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 		if (CoreSettings) { DialogClass = CoreSettings->DefaultConfirmationDialogClass; }
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("KeyBindingPanel::ResetAllClicked -- No local Dialog set, falling back to CoreSettings."));
+			TEXT("KeyBindingPanel::ResetAllClicked: No local Dialog set, falling back to CoreSettings."));
 	}
 	
 	if (!DialogClass)
 	{
-		/** No dialog configured, reset directly as safety net */
+		/* No dialog configured, reset directly as safety net */
 		UMCore_InputDisplayLibrary::ResetAllBindingsToDefault(GetOwningPlayer());
 		RefreshAllRows();
 		return;
@@ -559,23 +568,23 @@ void UMCore_KeyBindingPanel_Base::HandleResetCategoryClicked()
 	if (!ActiveIMC)
 	{
 		UE_LOG(LogModulusUI, Warning,
-			TEXT("KeyBindingPanel_Base::HandleResetCategoryClicked -- no active IMC found for tab '%s' [%s]"),
+			TEXT("KeyBindingPanel_Base::HandleResetCategoryClicked: no active IMC found for tab '%s' [%s]"),
 			*ActiveContextTabID.ToString(), *GetNameSafe(this));
 		return;
 	}
 	
-	/** Resolve dialog class: per-widget override w/ CoreSettings fallback */
+	/* Resolve dialog class: per-widget override w/ CoreSettings fallback */
 	TSubclassOf<UMCore_ConfirmationDialog> DialogClass = ResetConfirmationDialogClass;
 	if (!DialogClass)
 	{
 		if (CoreSettings) { DialogClass = CoreSettings->DefaultConfirmationDialogClass; }
 		UE_LOG(LogModulusSettings, Log,
-			TEXT("KeyBindingPanel::ResetAllClicked -- No local Dialog set, falling back to CoreSettings."));
+			TEXT("KeyBindingPanel_Base::HandleResetCategoryClicked: No local Dialog set, falling back to CoreSettings."));
 	}
-	
+
 	if (!DialogClass)
 	{
-		/** No dialog configured, reset directly as safety net */
+		/* No dialog configured, reset directly as safety net */
 		UMCore_InputDisplayLibrary::ResetBindingsForContext(GetOwningPlayer(), ActiveIMC);
 		RefreshAllRows();
 		return;
@@ -648,7 +657,7 @@ void UMCore_KeyBindingPanel_Base::HandleRowCaptureStateChanged(
 		if (!CaptureDialogClass)
 		{
 			UE_LOG(LogModulusUI, Warning,
-				TEXT("KeyBindingPanel_Base::HandleRowCaptureStateChanged -- CaptureDialogClass not set [%s]"),
+				TEXT("KeyBindingPanel_Base::HandleRowCaptureStateChanged: CaptureDialogClass not set [%s]"),
 				*GetNameSafe(this));
 			return;
 		}
@@ -787,10 +796,10 @@ void UMCore_KeyBindingPanel_Base::BindThemeDelegate()
 	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
 	if (!LocalPlayer) { return; }
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UI) { return; }
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (!UISubsystem) { return; }
 
-	UI->OnThemeChanged.AddDynamic(this, &UMCore_KeyBindingPanel_Base::HandleThemeChanged);
+	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_KeyBindingPanel_Base::HandleThemeChanged);
 	bThemeDelegateBound = true;
 }
 
@@ -805,10 +814,10 @@ void UMCore_KeyBindingPanel_Base::UnbindThemeDelegate()
 		return;
 	}
 
-	UMCore_UISubsystem* UI = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UI)
+	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
+	if (UISubsystem)
 	{
-		UI->OnThemeChanged.RemoveDynamic(this, &UMCore_KeyBindingPanel_Base::HandleThemeChanged);
+		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_KeyBindingPanel_Base::HandleThemeChanged);
 	}
 
 	bThemeDelegateBound = false;

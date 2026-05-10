@@ -55,7 +55,7 @@ void UMCore_ActivatableBase::NativeConstruct()
 	if (bAutoActivate)
 	{
 		UE_LOG(LogModulusUI, Error,
-			TEXT("ActivatableBase::NativeConstruct -- bAutoActivate is TRUE, stack-managed widgets must not auto-activate. Forcing to false. widget=%s"),
+			TEXT("ActivatableBase::NativeConstruct: bAutoActivate is TRUE, stack-managed widgets must not auto-activate. Forcing to false. widget=%s"),
 			*GetNameSafe(this));
 		bAutoActivate = false;
 	}
@@ -79,14 +79,14 @@ void UMCore_ActivatableBase::RegisterBinding(
 {
 	if (InputAction.IsNull() || InputAction.RowName.IsNone())
 	{
-		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::RegisterBinding -- InputAction row handle is invalid [%s]"),
+		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::RegisterBinding: InputAction row handle is invalid [%s]"),
 			*GetNameSafe(this));
 		return;
 	}
 
 	if (!Callback.IsBound())
 	{
-		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::RegisterBinding -- Callback delegate not bound [%s]"),
+		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::RegisterBinding: Callback delegate not bound [%s]"),
 			*GetNameSafe(this));
 		return;
 	}
@@ -110,7 +110,7 @@ void UMCore_ActivatableBase::RegisterBinding(
 	IABindingHandles.Add(NewHandle);
 
 	UE_LOG(LogModulusUI, Log,
-		TEXT("ActivatableBase::RegisterBinding -- Registered input binding for action: %s (Display in ActionBar: %s) widget=%s"),
+		TEXT("ActivatableBase::RegisterBinding: Registered input binding for action: %s (Display in ActionBar: %s) widget=%s"),
 		*InputAction.RowName.ToString(),
 		bShouldDisplayInActionBar ? TEXT("Yes") : TEXT("No"),
 		*GetNameSafe(this));
@@ -120,7 +120,7 @@ void UMCore_ActivatableBase::UnregisterAllBindings()
 {
 	if (IABindingHandles.Num() == 0) { return; }
 
-	UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::UnregisterAllBindings -- Unregistering input binding(s), widget=%s"),
+	UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::UnregisterAllBindings: Unregistering input binding(s), widget=%s"),
 		*GetNameSafe(this));
 
 	for (FUIActionBindingHandle& Handle : IABindingHandles)
@@ -155,7 +155,7 @@ void UMCore_ActivatableBase::NativeOnInitialized()
 	if (IsActivated())
 	{
 		UE_LOG(LogModulusUI, Log,
-			TEXT("ActivatableBase::NativeOnInitialized -- Stale bIsActive detected in CDO, resetting for stack-managed activation, widget=%s"),
+			TEXT("ActivatableBase::NativeOnInitialized: Stale bIsActive detected in CDO, resetting for stack-managed activation, widget=%s"),
 			*GetNameSafe(this));
 		Reset();
 	}
@@ -175,7 +175,7 @@ void UMCore_ActivatableBase::NativeOnActivated()
 {
 	if (bShouldBlockActivation())
 	{
-		UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated -- Activation blocked by BlockTags, deactivating, widget=%s"),
+		UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated: Activation blocked by BlockTags, deactivating, widget=%s"),
 			*GetNameSafe(this));
 
 		DeactivateWidget();
@@ -191,7 +191,7 @@ void UMCore_ActivatableBase::NativeOnActivated()
 			SavedFocusTarget->SetFocus();
 			SavedFocusTarget.Reset();
 
-			UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated -- Restored saved focus, widget=%s"),
+			UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated: Restored saved focus, widget=%s"),
 				*GetNameSafe(this));
 			return;
 		}
@@ -200,7 +200,7 @@ void UMCore_ActivatableBase::NativeOnActivated()
 		{
 			WidgetToFocus->SetFocus();
 
-			UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated -- Auto focusing on desired focus target, widget=%s"),
+			UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnActivated: Auto focusing on desired focus target, widget=%s"),
 				*GetNameSafe(this));
 			return;
 		}
@@ -222,7 +222,7 @@ void UMCore_ActivatableBase::NativeOnDeactivated()
 
 	Super::NativeOnDeactivated();
 
-	UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnDeactivated -- Deactivated, input bindings cleared, widget=%s"),
+	UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::NativeOnDeactivated: Deactivated, input bindings cleared, widget=%s"),
 		*GetNameSafe(this));
 }
 
@@ -233,14 +233,14 @@ bool UMCore_ActivatableBase::bShouldBlockActivation() const
 	const APlayerController* OwningPlayer = GetOwningPlayer();
 	if (!OwningPlayer)
 	{
-		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::bShouldBlockActivation -- No PlayerController detected"));
+		UE_LOG(LogModulusUI, Warning, TEXT("ActivatableBase::bShouldBlockActivation: No PlayerController detected"));
 		return false;
 	}
 
 	const IGameplayTagAssetInterface* BlockTagInterface = Cast<IGameplayTagAssetInterface>(OwningPlayer);
 	if (!BlockTagInterface)
 	{
-		UE_LOG(LogModulusUI, Verbose, TEXT("ActivatableBase::bShouldBlockActivation -- OwningPlayer doesn't implement the BlockTag Interface, allowing activation"));
+		UE_LOG(LogModulusUI, Verbose, TEXT("ActivatableBase::bShouldBlockActivation: OwningPlayer doesn't implement the BlockTag Interface, allowing activation"));
 		return false;
 	}
 
@@ -249,7 +249,7 @@ bool UMCore_ActivatableBase::bShouldBlockActivation() const
 
 	if (OwnedTags.HasAny(BlockTags))
 	{
-		UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::bShouldBlockActivation -- Activation blocked by BlockTags: %s, PlayerTags: %s"),
+		UE_LOG(LogModulusUI, Log, TEXT("ActivatableBase::bShouldBlockActivation: Activation blocked by BlockTags: %s, PlayerTags: %s"),
 			*BlockTags.ToStringSimple(),
 			*OwnedTags.ToStringSimple());
 		return true;
@@ -258,6 +258,13 @@ bool UMCore_ActivatableBase::bShouldBlockActivation() const
 	return false;
 }
 
+/**
+ * Assigns NewTheme to CachedTheme as its first action so Blueprint K2_OnThemeApplied
+ * overrides may read CachedTheme to access the current theme. C++ subclasses
+ * overriding this must either call Super::ApplyTheme_Implementation(NewTheme) or
+ * assign CachedTheme = NewTheme themselves before performing any work; otherwise
+ * CachedTheme will be stale relative to the theme that was just applied.
+ */
 void UMCore_ActivatableBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme)
 {
 	CachedTheme = Theme;

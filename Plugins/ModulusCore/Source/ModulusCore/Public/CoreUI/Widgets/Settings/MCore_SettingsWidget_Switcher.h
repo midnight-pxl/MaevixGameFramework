@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_SettingsWidget_Switcher.h
- *
- * Inline option cycling widget for Toggle and Dropdown setting types.
- * Immediate-apply model: every cycle writes to the settings system immediately.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -16,7 +9,8 @@
 class UMCore_ButtonBase;
 
 /**
- * Inline option cycling widget for Toggle and Dropdown setting types.
+ * Inline option cycling widget for Toggle and Dropdown setting types with
+ * immediate-apply semantics: every cycle writes to the settings system immediately.
  * Toggle mode uses hardcoded Off/On options; Dropdown copies labels from the definition.
  *
  * Requires BindWidget: Btn_Previous, Btn_Next (UMCore_ButtonBase),

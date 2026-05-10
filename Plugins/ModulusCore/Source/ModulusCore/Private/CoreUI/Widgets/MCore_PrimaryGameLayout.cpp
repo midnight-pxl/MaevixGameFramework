@@ -19,12 +19,12 @@ void UMCore_PrimaryGameLayout::NativeOnInitialized()
 
 	if (bAllLayersValid)
 	{
-		UE_LOG(LogModulusUI, Log, TEXT("PrimaryGameLayout::NativeOnInitialized -- all 4 layer stacks bound successfully"));
+		UE_LOG(LogModulusUI, Log, TEXT("PrimaryGameLayout::NativeOnInitialized: all 4 layer stacks bound successfully"));
 	}
 	else
 	{
 		UE_LOG(LogModulusUI, Error,
-			TEXT("PrimaryGameLayout::NativeOnInitialized -- missing layer stacks - Game:%s GameMenu:%s Menu:%s Modal:%s"),
+			TEXT("PrimaryGameLayout::NativeOnInitialized: missing layer stacks - Game:%s GameMenu:%s Menu:%s Modal:%s"),
 			MCore_GameLayer ? TEXT("OK") : TEXT("MISSING"),
 			MCore_GameMenuLayer ? TEXT("OK") : TEXT("MISSING"),
 			MCore_MenuLayer ? TEXT("OK") : TEXT("MISSING"),
@@ -32,7 +32,3 @@ void UMCore_PrimaryGameLayout::NativeOnInitialized()
 	}
 }
 
-void UMCore_PrimaryGameLayout::NativeDestruct()
-{
-	Super::NativeDestruct();
-}

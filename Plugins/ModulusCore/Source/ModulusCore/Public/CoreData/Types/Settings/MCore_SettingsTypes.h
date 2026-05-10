@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_SettingsTypes.h
- *
- * Enums and structs supporting the DataAsset-driven settings system.
- * Defines setting widget types and batch change payloads.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,7 +7,7 @@
 
 class UMCore_DA_SettingDefinition;
 
-/* Setting widget types for game settings menus */
+/** Setting widget types for game settings menus */
 UENUM(BlueprintType)
 enum class EMCore_SettingType : uint8
 {
@@ -23,7 +16,7 @@ enum class EMCore_SettingType : uint8
     Dropdown     UMETA(DisplayName = "Dropdown (Selection)")
 };
 
-/* Float setting + value pair for batch setter operations */
+/** Float setting + value pair for batch setter operations */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_FloatSettingChange
 {
@@ -38,7 +31,7 @@ struct MODULUSCORE_API FMCore_FloatSettingChange
     float Value = 0.f;
 };
 
-/* Int setting + value pair for batch setter operations */
+/** Int setting + value pair for batch setter operations */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_IntSettingChange
 {
@@ -53,7 +46,7 @@ struct MODULUSCORE_API FMCore_IntSettingChange
     int32 Value = 0;
 };
 
-/* Bool setting + value pair for batch setter operations */
+/** Bool setting + value pair for batch setter operations */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_BoolSettingChange
 {
@@ -68,7 +61,7 @@ struct MODULUSCORE_API FMCore_BoolSettingChange
     bool Value = false;
 };
 
-/* Visual section grouping declared on a SettingsCollection. Settings whose
+/** Visual section grouping declared on a SettingsCollection. Settings whose
  * SectionID matches render under a shared header. */
 USTRUCT(BlueprintType)
 struct MODULUSCORE_API FMCore_SettingsSection

@@ -1,12 +1,5 @@
 // Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
-/**
- * MCore_DA_SettingsCollection.h
- *
- * DataAsset grouping UMCore_DA_SettingDefinition assets into a single
- * reference that settings widgets and the library can consume.
- */
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -34,7 +27,7 @@ public:
 	// PROPERTIES
 	// ============================================================================
 
-	/* Display name for this collection (e.g. "Default Settings", "PC Settings") */
+	/** Display name for this collection (e.g. "Default Settings", "PC Settings") */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
 	FText CollectionName;
 
