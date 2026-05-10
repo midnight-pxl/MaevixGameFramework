@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonBorderStyle> PanelBorderStyle;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
+	TSubclassOf<UCommonBorderStyle> HighlightBorderStyle;
 
 	/** Main actions: play, confirm, submit */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
@@ -45,10 +48,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TSubclassOf<UCommonButtonStyle> GhostButtonStyle;
 	
-	/** 	*/
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TArray<TSubclassOf<UCommonTextStyle>> HeadingTextStyle;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
+	TArray<TSubclassOf<UCommonTextStyle>> TabTextStyle;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonUI Styles")
 	TArray<TSubclassOf<UCommonTextStyle>> LabelTextStyle;
 
