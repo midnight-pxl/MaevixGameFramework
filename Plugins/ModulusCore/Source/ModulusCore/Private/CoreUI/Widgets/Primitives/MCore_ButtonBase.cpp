@@ -180,11 +180,34 @@ void UMCore_ButtonBase::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme
 	}
 	else if (Theme)
 	{
+		const TArray<TSubclassOf<UCommonTextStyle>>& TextStyles =
+			(ButtonStyleMode == EMCore_ButtonStyleMode::Tab)
+			? Theme->TabTextStyle
+			: Theme->LabelTextStyle;
+		
 		UMCore_ThemeLibrary::ApplyTextStyleFromTheme(
-			GetOwningLocalPlayer(), Txt_BtnLabel, Theme->LabelTextStyle);
+			GetOwningLocalPlayer(), Txt_BtnLabel, TextStyles);
 	}
 
 	K2_OnThemeApplied(Theme);
+}
+
+void UMCore_ButtonBase::SetStyleMode(EMCore_ButtonStyleMode NewMode)
+{
+	if (ButtonStyleMode == NewMode)
+	{
+		return;
+	}
+
+	ButtonStyleMode = NewMode;
+
+	if (const ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
+	{
+		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
+		{
+			ApplyTheme(UISubsystem->GetActiveTheme());
+		}
+	}
 }
 
 void UMCore_ButtonBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)

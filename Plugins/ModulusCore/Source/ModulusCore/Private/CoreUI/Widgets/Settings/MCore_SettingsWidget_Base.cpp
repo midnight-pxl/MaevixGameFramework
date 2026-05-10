@@ -3,14 +3,10 @@
 #include "CoreUI/Widgets/Settings/MCore_SettingsWidget_Base.h"
 
 #include "CoreData/Types/Settings/MCore_DA_SettingDefinition.h"
-#include "CoreData/Assets/UI/Themes/MCore_PDA_UITheme_Base.h"
 #include "CoreData/Logging/LogModulusSettings.h"
 #include "CoreData/Tags/MCore_SettingsTags.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
 #include "CoreEvents/MCore_LocalEventSubsystem.h"
-#include "CoreUI/MCore_UISubsystem.h"
-#include "CoreData/DevSettings/MCore_CoreSettings.h"
-#include "CoreData/Libraries/MCore_ThemeLibrary.h"
 
 #include "Engine/LocalPlayer.h"
 #include "CommonTextBlock.h"
@@ -38,9 +34,9 @@ void UMCore_SettingsWidget_Base::InitFromDefinition(const UMCore_DA_SettingDefin
 
 	SettingDefinition = InDefinition;
 
-	if (Txt_SettingName)
+	if (Txt_Label)
 	{
-		Txt_SettingName->SetText(InDefinition->SettingDisplayName);
+		Txt_Label->SetText(InDefinition->SettingDisplayName);
 	}
 
 	UE_LOG(LogModulusSettings, Verbose,
@@ -111,88 +107,15 @@ void UMCore_SettingsWidget_Base::BroadcastValueChanged()
 }
 
 // ============================================================================
-// THEME
-// ============================================================================
-
-void UMCore_SettingsWidget_Base::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme)
-{
-	CachedTheme = NewTheme;
-
-	if (NewTheme)
-	{
-		UMCore_ThemeLibrary::ApplyTextStyleFromTheme(
-			GetOwningLocalPlayer(), Txt_SettingName, NewTheme->LabelTextStyle);
-	}
-
-	K2_OnThemeApplied(NewTheme);
-}
-
-void UMCore_SettingsWidget_Base::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
-{
-	CachedTheme = NewTheme;
-	ApplyTheme(NewTheme);
-}
-
-void UMCore_SettingsWidget_Base::BindThemeDelegate()
-{
-	if (bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer) { return; }
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UISubsystem) { return; }
-
-	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
-	bThemeDelegateBound = true;
-}
-
-void UMCore_SettingsWidget_Base::UnbindThemeDelegate()
-{
-	if (!bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer)
-	{
-		bThemeDelegateBound = false;
-		return;
-	}
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UISubsystem)
-	{
-		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_SettingsWidget_Base::HandleThemeChanged);
-	}
-
-	bThemeDelegateBound = false;
-}
-
-// ============================================================================
 // LIFECYCLE
 // ============================================================================
-
-void UMCore_SettingsWidget_Base::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-	if (IsDesignTime())
-	{
-		ApplyTheme(UMCore_CoreSettings::GetDesignTimeTheme());
-	}
-}
 
 void UMCore_SettingsWidget_Base::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	BindThemeDelegate();
-
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
-		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
-		{
-			ApplyTheme(UISubsystem->GetActiveTheme());
-		}
-
 		if (UMCore_LocalEventSubsystem* LocalEventSubsystem = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())
 		{
 			EventSubscriptionHandle = LocalEventSubsystem->OnLocalEventBroadcast.AddUObject(
@@ -215,38 +138,16 @@ void UMCore_SettingsWidget_Base::NativeDestruct()
 		EventSubscriptionHandle.Reset();
 	}
 
-	UnbindThemeDelegate();
 	Super::NativeDestruct();
 }
 
-void UMCore_SettingsWidget_Base::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+// ============================================================================
+// ROW HOOKS
+// ============================================================================
+
+void UMCore_SettingsWidget_Base::NotifyRowFocusGained()
 {
-	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-	bIsRowMouseOver = true;
-	UpdateHighlightState();
 	BroadcastFocusedIfValid();
-}
-
-void UMCore_SettingsWidget_Base::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseLeave(InMouseEvent);
-	bIsRowMouseOver = false;
-	UpdateHighlightState();
-}
-
-void UMCore_SettingsWidget_Base::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
-{
-	Super::NativeOnAddedToFocusPath(InFocusEvent);
-	bIsRowInFocusPath = true;
-	UpdateHighlightState();
-	BroadcastFocusedIfValid();
-}
-
-void UMCore_SettingsWidget_Base::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
-{
-	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
-	bIsRowInFocusPath = false;
-	UpdateHighlightState();
 }
 
 void UMCore_SettingsWidget_Base::BroadcastFocusedIfValid()
@@ -254,17 +155,6 @@ void UMCore_SettingsWidget_Base::BroadcastFocusedIfValid()
 	if (const UMCore_DA_SettingDefinition* Def = GetSettingDefinition())
 	{
 		OnSettingFocused.Broadcast(Def->SettingTag, Def->Description);
-	}
-}
-
-void UMCore_SettingsWidget_Base::UpdateHighlightState()
-{
-	if (Highlight)
-	{
-		const ESlateVisibility NewVisibility = (bIsRowMouseOver || bIsRowInFocusPath)
-			? ESlateVisibility::HitTestInvisible
-			: ESlateVisibility::Hidden;
-		Highlight->SetVisibility(NewVisibility);
 	}
 }
 

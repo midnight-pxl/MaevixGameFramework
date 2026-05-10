@@ -23,6 +23,15 @@ enum class EMCore_ButtonDisplayMode : uint8
 	TextAndIcon
 };
 
+UENUM(BlueprintType)
+enum class EMCore_ButtonStyleMode : uint8
+{
+	/* Pulls LabelTextStyle. Default for all buttons */
+	Standard,
+	/* Pulls TabTextStyle. Set by UMCore_TabbedContainer for tab buttons */
+	Tab
+};
+
 /**
  * Base button with theme integration, per-instance style overrides, and text/icon display modes.
  * Binds automatically to UISubsystem::OnThemeChanged for runtime theme switching.
@@ -70,6 +79,14 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Button|Style")
 	bool IsUsingStyleOverrides() const { return ButtonStyleOverride != nullptr || TextStyleOverride != nullptr; }
+	
+	/**
+	 * Sets the button's style mode and immediately re-applies the active theme.
+	 * Used by container widgets (e.g. UMCore_TabbedContainer) to retroactively
+	 * style buttons spawned through CommonUI's RegisterTab path.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Theme")
+	void SetStyleMode(EMCore_ButtonStyleMode NewMode);
 
 	// ============================================================================
 	// ICON AND DISPLAY
@@ -124,7 +141,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* Theme);
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme);
-
+	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Theme", meta = (DisplayName = "On Theme Applied"))
 	void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
 
@@ -137,6 +154,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Icon")
 	TObjectPtr<UTexture2D> ButtonIcon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Theme")
+	EMCore_ButtonStyleMode ButtonStyleMode = EMCore_ButtonStyleMode::Standard;
+	
 	/** Override takes precedence over theme's PrimaryButtonStyle. Leave None for theme default. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|Style")
 	TSubclassOf<UCommonButtonStyle> ButtonStyleOverride;

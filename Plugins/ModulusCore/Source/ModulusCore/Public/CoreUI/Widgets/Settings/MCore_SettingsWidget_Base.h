@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CommonUserWidget.h"
+#include "CoreUI/Widgets/Primitives/MCore_RowBase.h"
 #include "GameplayTagContainer.h"
 #include "MCore_SettingsWidget_Base.generated.h"
 
 class UMCore_DA_SettingDefinition;
 class UMCore_PDA_UITheme_Base;
-class UCommonTextBlock;
 struct FMCore_EventData;
 
 /**
@@ -33,7 +32,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSettingFocused,
  * - UMCore_SettingsWidget_Switcher (discrete options: resolution, quality presets)
  */
 UCLASS(Abstract, Blueprintable, ClassGroup= "ModulusUI", meta = (DisableNativeTick))
-class MODULUSCORE_API UMCore_SettingsWidget_Base : public UCommonUserWidget
+class MODULUSCORE_API UMCore_SettingsWidget_Base : public UMCore_RowBase
 {
 	GENERATED_BODY()
 
@@ -109,17 +108,6 @@ protected:
     void BroadcastValueChanged();
 
     // ====================================================================
-    // BIND WIDGETS
-    // ====================================================================
-
-    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-    TObjectPtr<UCommonTextBlock> Txt_SettingName;
-
-    /** Optional. When supplied by the WBP, this widget is shown while the row is hovered or in the focus path, hidden otherwise. Set HitTestInvisible to avoid stealing hover events. */
-    UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
-    TObjectPtr<UWidget> Highlight;
-
-    // ====================================================================
     // DATA
     // ====================================================================
 
@@ -130,46 +118,21 @@ protected:
     bool bIsSettingEnabled{true};
 
     // ====================================================================
-    // THEME
+    // LIFECYCLE
     // ====================================================================
 
-    UFUNCTION(BlueprintNativeEvent, Category = "Theme")
-    void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
-
-    UFUNCTION(BlueprintImplementableEvent, Category = "Theme",
-        meta = (DisplayName = "On Theme Applied"))
-    void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
-
-    UPROPERTY(Transient)
-    mutable TWeakObjectPtr<UMCore_PDA_UITheme_Base> CachedTheme;
-
-    virtual void NativePreConstruct() override;
     virtual void NativeOnInitialized() override;
     virtual void NativeDestruct() override;
 
-    //~ Begin UUserWidget interface
-    virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-    virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
-    virtual void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
-    virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
-    //~ End UUserWidget interface
+    /* Override of UMCore_RowBase hook. Broadcasts OnSettingFocused so the
+     * settings panel can update its description pane when a row gains
+     * hover or focus. */
+    virtual void NotifyRowFocusGained() override;
 
     /* Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
     void BroadcastFocusedIfValid();
 
-    /* Updates Highlight visibility based on current hover and focus-path state. Safe to call when Highlight is unbound. */
-    void UpdateHighlightState();
-
-    bool bIsRowMouseOver = false;
-    bool bIsRowInFocusPath = false;
-
 private:
-    UFUNCTION()
-    void HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme);
-    void BindThemeDelegate();
-    void UnbindThemeDelegate();
-    bool bThemeDelegateBound{false};
-
     /* Filters local events for MCore.Settings.Event.ExternalValueChange and refreshes display. */
     void HandleLocalEvent(const FMCore_EventData& EventData);
     FDelegateHandle EventSubscriptionHandle;

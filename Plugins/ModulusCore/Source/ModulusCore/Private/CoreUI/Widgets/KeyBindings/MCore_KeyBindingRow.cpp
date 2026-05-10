@@ -65,45 +65,6 @@ void UMCore_KeyBindingRow::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UMCore_KeyBindingRow::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-	bIsRowMouseOver = true;
-	UpdateHighlightState();
-}
-
-void UMCore_KeyBindingRow::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseLeave(InMouseEvent);
-	bIsRowMouseOver = false;
-	UpdateHighlightState();
-}
-
-void UMCore_KeyBindingRow::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
-{
-	Super::NativeOnAddedToFocusPath(InFocusEvent);
-	bIsRowInFocusPath = true;
-	UpdateHighlightState();
-}
-
-void UMCore_KeyBindingRow::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
-{
-	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
-	bIsRowInFocusPath = false;
-	UpdateHighlightState();
-}
-
-void UMCore_KeyBindingRow::UpdateHighlightState()
-{
-	if (Highlight)
-	{
-		const ESlateVisibility NewVisibility = (bIsRowMouseOver || bIsRowInFocusPath)
-			? ESlateVisibility::HitTestInvisible
-			: ESlateVisibility::Hidden;
-		Highlight->SetVisibility(NewVisibility);
-	}
-}
-
 // ============================================================================
 // PUBLIC API
 // ============================================================================
@@ -114,9 +75,9 @@ void UMCore_KeyBindingRow::InitFromAction(APlayerController* OwningPlayer, UInpu
 	this->PlayerRef = OwningPlayer;
 	BoundAction = Action;
 
-	if (Txt_ActionName && OwningPlayer && Action)
+	if (Txt_Label && OwningPlayer && Action)
 	{
-		Txt_ActionName->SetText(
+		Txt_Label->SetText(
 			UMCore_InputDisplayLibrary::GetActionDisplayName(OwningPlayer, Action));
 	}
 

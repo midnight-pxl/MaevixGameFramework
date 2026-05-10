@@ -71,6 +71,20 @@ bool UMCore_TabbedContainer::AddTab(FName TabID, UWidget* PageWidget)
 	TabOrder.Add(TabID);
 	PageSwitcher->AddChild(PageWidget);
 	TabList->RegisterTab(TabID, ButtonClass, PageWidget, PageWidgets.Num() - 1);
+	
+	if (UCommonButtonBase* SpawnedTabButton = TabList->GetTabButtonBaseByID(TabID))
+	{
+		if (UMCore_ButtonBase* MCoreTabButton = Cast<UMCore_ButtonBase>(SpawnedTabButton))
+		{
+			MCoreTabButton->SetStyleMode(EMCore_ButtonStyleMode::Tab);
+		}
+		else
+		{
+			UE_LOG(LogModulusUI, Warning,
+				TEXT("TabbedContainer::AddTab: TabButtonClass not a UMCore_ButtonBase subclass; tab '%s' will use default text styling."),
+				*TabID.ToString());
+		}
+	}
 
 	if (UCommonButtonBase* TabButton = TabList->GetTabButtonBaseByID(TabID))
 	{
