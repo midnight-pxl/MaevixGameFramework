@@ -46,8 +46,9 @@ public class ModulusCore : ModuleRules
 			new string[]
 			{
 				"ApplicationCore",
-				"PropertyPath"
-				// ... add private dependencies that you statically link with here ...	
+				"PropertyPath",
+				"MoviePlayer"
+				// ... add private dependencies that you statically link with here ...
 			}
 			);
 

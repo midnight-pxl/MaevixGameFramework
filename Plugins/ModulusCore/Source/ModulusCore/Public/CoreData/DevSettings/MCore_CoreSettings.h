@@ -9,6 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "CoreData/Types/Settings/MCore_DA_SettingsCollection.h"
 #include "CoreData/Types/Input/MCore_KeyBindingTypes.h"
+#include "CoreData/Types/Loading/MCore_LoadingScreenTypes.h"
 #include "MCore_CoreSettings.generated.h"
 
 class UMCore_PDA_UITheme_Base;
@@ -19,7 +20,10 @@ class UMCore_SettingsWidget_Switcher;
 class UMCore_ConfirmationDialog;
 class UMCore_KeyBindingPanel_Base;
 class UMCore_SettingsRevertCountdown;
+class UMCore_LoadingScreenWidget;
+class UMCore_PDA_LoadingScreens;
 class USoundMix;
+class UInputAction;
 
 /**
  * Developer settings for the Modulus Game Framework (Project Settings > Game > Modulus Core).
@@ -177,6 +181,61 @@ public:
 	 * Volume Mix" section. */
 	UPROPERTY(config, EditAnywhere, Category = "Audio")
 	TSoftObjectPtr<USoundMix> VolumeMix;
+
+	// ============================================================================
+	// LOADING SCREEN
+	// ============================================================================
+
+	/**
+	 * Widget class shown by the MoviePlayer during PreLoadMap transitions.
+	 * Leave empty to disable the loading screen entirely.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Loading Screen Widget Class"))
+	TSoftClassPtr<UMCore_LoadingScreenWidget> LoadingScreenWidgetClass;
+
+	/** Libraries of loading screen entries. All entries aggregate into one selection pool. */
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Loading Screen Libraries"))
+	TArray<TSoftObjectPtr<UMCore_PDA_LoadingScreens>> LoadingScreenLibraries;
+
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Selection Mode"))
+	EMCore_LoadingScreenSelectionMode LoadingScreenSelectionMode = EMCore_LoadingScreenSelectionMode::TagBased;
+
+	/**
+	 * Controls how the loading screen exits after the level finishes loading.
+	 * AutoOnLoadComplete reproduces Chunk 1 behavior. InputRequired (default)
+	 * gates dismissal on player input. Manual disables both and is intended
+	 * for async post-load work or server-synchronized ready barriers.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Dismissal Mode"))
+	EMCore_LoadingDismissalMode LoadingDismissalMode = EMCore_LoadingDismissalMode::InputRequired;
+
+	/**
+	 * Input action whose icon is displayed in the loading screen's dismiss prompt.
+	 * If null while Dismissal Mode is InputRequired, the widget hides the icon
+	 * and dismisses on any input.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Dismissal Input Action",
+		      EditCondition="LoadingDismissalMode==EMCore_LoadingDismissalMode::InputRequired",
+		      EditConditionHides))
+	TSoftObjectPtr<UInputAction> LoadingDismissalAction;
+
+	/**
+	 * Floor on loading screen visibility. The screen stays visible at least
+	 * this long even when the map finishes loading or input arrives sooner.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(ClampMin="0.0", ClampMax="10.0", Units="s",
+		      DisplayName="Minimum Display Time"))
+	float MinimumLoadingScreenTime{0.5f};
+
+	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+		meta=(DisplayName="Loading Screen Enabled By Default"))
+	bool bLoadingScreenEnabledByDefault{true};
 
 	// ============================================================================
 	// DEBUG (EDITOR ONLY)
