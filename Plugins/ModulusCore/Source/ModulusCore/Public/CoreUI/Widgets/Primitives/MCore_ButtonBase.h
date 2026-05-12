@@ -98,6 +98,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Button")
 	void SetButtonIconSoft(TSoftObjectPtr<UTexture2D> InIcon);
 
+	/* Set the icon from a pre-resolved Slate brush. Use for CommonInput-resolved icons. */
+	UFUNCTION(BlueprintCallable, Category = "Button")
+	void SetButtonIconBrush(const FSlateBrush& InBrush);
+
 	UFUNCTION(BlueprintCallable, Category = "Button")
 	void SetDisplayMode(EMCore_ButtonDisplayMode InMode);
 
@@ -113,6 +117,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
 	TObjectPtr<UImage> Img_BtnIcon;
+
+	/* Switcher layers must be ordered: 0=TextOnly, 1=IconOnly, 2=TextAndIcon */
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	TObjectPtr<UWidgetSwitcher> WS_BtnContent;
 
 	UPROPERTY(BlueprintAssignable, Category = "Button")
 	FOnModulusButtonClicked OnButtonClicked;

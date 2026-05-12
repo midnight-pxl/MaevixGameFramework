@@ -6,8 +6,9 @@
 #include "CoreData/Libraries/MCore_InputDisplayLibrary.h"
 #include "CoreData/Logging/LogModulusUI.h"
 
-#include "Components/Image.h"
+#include "CommonInputSubsystem.h"
 #include "CommonInputTypeEnum.h"
+#include "Components/Image.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Application/IInputProcessor.h"
 #include "GameFramework/PlayerController.h"
@@ -101,6 +102,14 @@ void UMCore_KeyBindingButton::NativeOnInitialized()
 	{
 		Btn_Capture->OnButtonClicked.AddDynamic(this, &ThisClass::HandleButtonPressed);
 	}
+
+	if (const ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
+	{
+		if (UCommonInputSubsystem* CIS = LocalPlayer->GetSubsystem<UCommonInputSubsystem>())
+		{
+			CIS->OnInputMethodChangedNative.AddUObject(this, &ThisClass::HandleInputMethodChanged);
+		}
+	}
 }
 
 void UMCore_KeyBindingButton::NativeDestruct()
@@ -110,6 +119,14 @@ void UMCore_KeyBindingButton::NativeDestruct()
 	{
 		FSlateApplication::Get().UnregisterInputPreProcessor(KeyCaptureProcessor);
 		KeyCaptureProcessor.Reset();
+	}
+
+	if (const ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
+	{
+		if (UCommonInputSubsystem* CIS = LocalPlayer->GetSubsystem<UCommonInputSubsystem>())
+		{
+			CIS->OnInputMethodChangedNative.RemoveAll(this);
+		}
 	}
 
 	if (Btn_Capture)
@@ -162,9 +179,9 @@ void UMCore_KeyBindingButton::RefreshKeyDisplay()
 		const bool bHasIcon = LocalPlayer && UMCore_InputDisplayLibrary::GetIconBrushForKeyByDeviceType(
 			LocalPlayer, BoundKey, DeviceType, IconBrush);
 
-		if (bHasIcon && Btn_Capture->Img_BtnIcon)
+		if (bHasIcon)
 		{
-			Btn_Capture->Img_BtnIcon->SetBrush(IconBrush);
+			Btn_Capture->SetButtonIconBrush(IconBrush);
 			Btn_Capture->SetDisplayMode(EMCore_ButtonDisplayMode::IconOnly);
 		}
 		else
@@ -281,4 +298,9 @@ void UMCore_KeyBindingButton::OnKeyCaptured(FKey NewKey)
 void UMCore_KeyBindingButton::OnCaptureCancelled()
 {
 	ExitCaptureMode();
+}
+
+void UMCore_KeyBindingButton::HandleInputMethodChanged(ECommonInputType NewInputType)
+{
+	RefreshKeyDisplay();
 }

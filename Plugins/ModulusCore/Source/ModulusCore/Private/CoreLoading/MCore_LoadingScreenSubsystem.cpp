@@ -10,6 +10,7 @@
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
 #include "MoviePlayer.h"
+#include "Widgets/SNullWidget.h"
 
 // ============================================================================
 // LIFECYCLE
@@ -182,14 +183,33 @@ void UMCore_LoadingScreenSubsystem::HandlePreLoadMap(const FString& MapName)
 			*MapName);
 	}
 
+	const TSharedRef<SWidget> SlateWidget = Widget->TakeWidget();
+	UE_LOG(LogModulusLoading, Log,
+		TEXT("LoadingScreenSubsystem::HandlePreLoadMap: TakeWidget produced %s (map=%s)"),
+		SlateWidget == SNullWidget::NullWidget ? TEXT("NULL WIDGET") : TEXT("real widget"),
+		*MapName);
+
 	FLoadingScreenAttributes Attributes;
-	Attributes.WidgetLoadingScreen              = Widget->TakeWidget();
+	Attributes.WidgetLoadingScreen              = SlateWidget;
 	Attributes.bAllowEngineTick                 = true;
 	Attributes.bAutoCompleteWhenLoadingCompletes = !bManualOrInputDriven;
 	Attributes.bWaitForManualStop               = bManualOrInputDriven;
 	Attributes.MinimumLoadingScreenDisplayTime  = Settings->MinimumLoadingScreenTime;
 
 	GetMoviePlayer()->SetupLoadingScreen(Attributes);
+
+	if (!GetMoviePlayer()->LoadingScreenIsPrepared())
+	{
+		UE_LOG(LogModulusLoading, Warning,
+			TEXT("LoadingScreenSubsystem::HandlePreLoadMap: MoviePlayer rejected the setup (map=%s)"),
+			*MapName);
+	}
+	else
+	{
+		UE_LOG(LogModulusLoading, Log,
+			TEXT("LoadingScreenSubsystem::HandlePreLoadMap: MoviePlayer accepted setup (map=%s)"),
+			*MapName);
+	}
 
 	/* Clear one-shot state so the next transition starts fresh. */
 	PendingOverrideEntry.Reset();

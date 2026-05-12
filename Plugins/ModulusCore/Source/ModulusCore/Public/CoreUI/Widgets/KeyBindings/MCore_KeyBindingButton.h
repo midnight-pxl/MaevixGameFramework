@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
+#include "CommonInputTypeEnum.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 #include "MCore_KeyBindingButton.generated.h"
 
 class UMCore_ButtonBase;
 class UInputAction;
+class UCommonInputSubsystem;
 class APlayerController;
 class ULocalPlayer;
 class IInputProcessor;
@@ -102,6 +104,9 @@ protected:
 	UFUNCTION()
 	void HandleButtonPressed();
 	void AttemptRebind(FKey NewKey);
+
+	UFUNCTION()
+	void HandleInputMethodChanged(ECommonInputType NewInputType);
 
 	// ====================================================================
 	// INPUT PROCESSOR CALLBACKS

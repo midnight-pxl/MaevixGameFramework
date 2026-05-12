@@ -11,6 +11,7 @@
 #include "CommonTextBlock.h"
 #include "CommonButtonBase.h"
 #include "Components/Image.h"
+#include "Components/WidgetSwitcher.h"
 #include "Engine/Texture2D.h"
 
 UMCore_ButtonBase::UMCore_ButtonBase()
@@ -113,9 +114,24 @@ void UMCore_ButtonBase::SetButtonIconSoft(TSoftObjectPtr<UTexture2D> InIcon)
 	SetButtonIcon(InIcon.LoadSynchronous());
 }
 
+void UMCore_ButtonBase::SetButtonIconBrush(const FSlateBrush& InBrush)
+{
+	if (Img_BtnIcon)
+	{
+		Img_BtnIcon->SetBrush(InBrush);
+		Img_BtnIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+}
+
 void UMCore_ButtonBase::SetDisplayMode(EMCore_ButtonDisplayMode InMode)
 {
 	DisplayMode = InMode;
+
+	if (WS_BtnContent)
+	{
+		WS_BtnContent->SetActiveWidgetIndex(static_cast<int32>(DisplayMode));
+		return;
+	}
 
 	const bool bShowText = (DisplayMode == EMCore_ButtonDisplayMode::TextOnly
 		|| DisplayMode == EMCore_ButtonDisplayMode::TextAndIcon);
