@@ -14,27 +14,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadingScreenReadyToDismiss);
 
 /**
  * Game-instance subsystem that drives UE's MoviePlayer for level-transition loading screens.
- *
- * Binds FCoreUObjectDelegates::PreLoadMap / PostLoadMapWithWorld, selects a
- * FMCore_LoadingScreenEntry per the configured strategy (Random / Sequential /
- * Tag-Based / Custom), instantiates the configured widget class, and hands the
- * resulting SWidget to MoviePlayer with bAllowEngineTick=true so UMG animations
- * (including UCircularThrobber) play during the load.
- *
- * Does not instantiate on dedicated servers. Single-player and listen-server
- * clients see the same behavior.
- *
- * Dismissal modes (see EMCore_LoadingDismissalMode):
- *   - AutoOnLoadComplete: auto-dismiss on PostLoadMapWithWorld (Chunk 1 behavior).
- *   - InputRequired (default): waits for player input. Each client dismisses
- *     independently. Server-authoritative coordination is the developer's job
- *     via the OnDismissalInputReceived widget override and their own RPC layer.
- *   - Manual: waits for an explicit DismissLoadingScreen() call. Use for async
- *     post-load (asset streaming, save loading) or server-synchronized barriers.
- *
- * The widget is owned by the subsystem during transitions; access it during
- * the input-wait phase via GetActiveLoadingScreenWidget() to update prompt
- * text or state from a custom coordination layer.
+ * Binds PreLoadMap / PostLoadMapWithWorld, selects an FMCore_LoadingScreenEntry per the
+ * configured strategy, and hands the resulting widget to MoviePlayer. Skipped on dedicated
+ * servers. See EMCore_LoadingDismissalMode for dismissal semantics; access the live widget
+ * during the input-wait phase via GetActiveLoadingScreenWidget().
  *
  * Known engine limitation (UE-207172): with bAllowEngineTick=true, FApp::GetDeltaTime()
  * returns the entire load duration on the first tick after the loading screen ends.
@@ -55,25 +38,25 @@ public:
 	 * Provides a context hint that influences entry selection on the next transition.
 	 * Cleared automatically after the next PostLoadMapWithWorld. Has effect only in Tag-Based mode.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetNextLoadingContext(const FGameplayTagContainer& ContextTags);
 
 	/**
 	 * One-shot override that bypasses the selection strategy entirely.
 	 * Highest priority; consumed on the next transition.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void OverrideNextLoadingScreen(const FMCore_LoadingScreenEntry& Entry);
 
 	/** Globally enables or disables the loading screen. Initial value comes from CoreSettings. */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetLoadingScreenEnabled(bool bEnabled);
 
 	/**
 	 * Manually dismisses the active loading screen. Only effective when
 	 * SetNextTransitionManualDismiss(true) was called before the transition.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void DismissLoadingScreen();
 
 	/**
@@ -81,7 +64,7 @@ public:
 	 * instead of auto-completing when the level finishes loading. Cleared after the next transition.
 	 * Use for async post-load work that must finish before the loading screen disappears.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetNextTransitionManualDismiss(bool bManualDismiss);
 
 	/**
@@ -89,7 +72,7 @@ public:
 	 * (Selection Mode = Custom) to implement project-specific logic. Default behavior
 	 * implements the four built-in selection modes.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category="Modulus|Loading")
+	UFUNCTION(BlueprintNativeEvent, Category="ModulusCore|Loading")
 	FMCore_LoadingScreenEntry SelectLoadingScreenEntry(FName NextMapName);
 	virtual FMCore_LoadingScreenEntry SelectLoadingScreenEntry_Implementation(FName NextMapName);
 
@@ -99,7 +82,7 @@ public:
 	 * OnLoadingScreenReadyToDismiss fires) to update prompt copy or icon from
 	 * a custom coordination layer.
 	 */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="ModulusCore|Loading")
 	UMCore_LoadingScreenWidget* GetActiveLoadingScreenWidget() const;
 
 	/**
@@ -107,7 +90,7 @@ public:
 	 * is InputRequired. Subscribers can update widget state (prompt text, icon)
 	 * or start coordination logic before the user dismisses the screen.
 	 */
-	UPROPERTY(BlueprintAssignable, Category="Modulus|Loading")
+	UPROPERTY(BlueprintAssignable, Category="ModulusCore|Loading")
 	FOnLoadingScreenReadyToDismiss OnLoadingScreenReadyToDismiss;
 
 protected:

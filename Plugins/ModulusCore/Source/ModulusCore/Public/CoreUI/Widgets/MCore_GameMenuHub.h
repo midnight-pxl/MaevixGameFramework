@@ -33,31 +33,31 @@ public:
      * Rebuild tab bar from currently registered screens.
      * Called by OpenMenuHub() on creation and RegisterMenuScreen() on dynamic registration.
      */
-    UFUNCTION(BlueprintCallable, Category = "Menu Hub")
+    UFUNCTION(BlueprintCallable, Category = "ModulusCore|Menu Hub")
     void RebuildTabBar();
 
-    UFUNCTION(BlueprintCallable, Category = "Menu Hub", meta = (Keywords = "Toggle Lock Tab Button"))
+    UFUNCTION(BlueprintCallable, Category = "ModulusCore|Menu Hub", meta = (Keywords = "Toggle Lock Tab Button"))
     bool SetTabEnabled(FGameplayTag TabID, bool bEnabled);
 
-    UFUNCTION(BlueprintCallable, Category = "Menu Hub", meta = (Keywords = "Toggle Tab Visibility"))
+    UFUNCTION(BlueprintCallable, Category = "ModulusCore|Menu Hub", meta = (Keywords = "Toggle Tab Visibility"))
     bool SetTabHidden(FGameplayTag TabID, bool bIsHidden);
 
-    UFUNCTION(BlueprintPure, Category = "Menu Hub", meta = (Keywords = "Is Tab Enabled"))
+    UFUNCTION(BlueprintPure, Category = "ModulusCore|Menu Hub", meta = (Keywords = "Is Tab Enabled"))
     bool IsTabEnabled(FGameplayTag TabID) const;
 
-    UFUNCTION(BlueprintPure, Category = "Menu Hub", meta = (Keywords = "Is Tab Hidden"))
+    UFUNCTION(BlueprintPure, Category = "ModulusCore|Menu Hub", meta = (Keywords = "Is Tab Hidden"))
     bool IsTabHidden(FGameplayTag TabID) const;
 
     // ============================================================================
     // BLUEPRINT EXTENSION POINTS
     // ============================================================================
 
-    UFUNCTION(BlueprintNativeEvent, Category = "Menu Hub")
+    UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Menu Hub")
     void OnTabCreated(FName TabID, UCommonButtonBase* TabButton);
     void OnTabCreated_Implementation(FName TabID, UCommonButtonBase* TabButton)
     {}
 
-    UFUNCTION(BlueprintNativeEvent, Category = "Menu Hub")
+    UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Menu Hub")
     void OnPageCreated(FName TabID, UCommonActivatableWidget* PageWidget);
     void OnPageCreated_Implementation(FName TabID, UCommonActivatableWidget* PageWidget)
     {}
@@ -75,7 +75,7 @@ protected:
     UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     TObjectPtr<UMCore_TabbedContainer> TabbedContainer;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Menu Hub")
+    UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Menu Hub")
     TSubclassOf<UCommonActivatableWidget> EmptyStateWidgetClass;
 
 private:

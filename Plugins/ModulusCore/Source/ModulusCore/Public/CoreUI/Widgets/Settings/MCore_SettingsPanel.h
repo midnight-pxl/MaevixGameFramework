@@ -35,7 +35,7 @@ class MODULUSCORE_API UMCore_SettingsPanel : public UMCore_ActivatableBase
 public:
  
 	/** Re-reads current values from the settings library and updates all setting widgets. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Settings")
 	void RefreshAllWidgets();
  
 protected:
@@ -53,39 +53,39 @@ protected:
 	// ============================================================================
  
 	/** Blueprint class spawned at runtime for nested sub-tab containers. */
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel")
 	TSubclassOf<UMCore_TabbedContainer> SubTabContainerClass;
 
 	/**
 	 * Confirmation dialog class for reset operations. falls back to
 	 * DefaultConfirmationDialogClass in CoreSettings if null
 	 */
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel")
 	TSubclassOf<UMCore_ConfirmationDialog> ResetConfirmationDialogClass;
 
 	// ============================================================================
 	// INPUT ACTIONS
 	// ============================================================================
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle TabNextAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle TabPrevAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle SubTabNextAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle SubTabPrevAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle RevertSettingsAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle ResetDefaultsAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings Panel|Input Actions")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Settings|Panel|Input Actions")
 	FDataTableRowHandle BackAction;
 
 	// ============================================================================
@@ -124,12 +124,12 @@ protected:
 	// ============================================================================
 	
 	/** Called after each category page is built and populated with setting widgets */
-	UFUNCTION(BlueprintNativeEvent, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Settings")
 	void OnCategoryPageCreated(const FGameplayTag& CategoryTag,
 		UScrollBox* PageScrollBox);
 	
 	/** Called after the full panel build completes. All tabs + pages ready */
-	UFUNCTION(BlueprintNativeEvent, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Settings")
 	void OnPanelBuildComplete();
  
 private:

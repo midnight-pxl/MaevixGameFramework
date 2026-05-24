@@ -10,6 +10,7 @@
 
 class UInputAction;
 class UMCore_UISubsystem;
+class UMCore_PrimaryGameLayout;
 class UInputMappingContext;
 class UCommonActivatableWidget;
 
@@ -41,14 +42,14 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/** Widget to push when UI system ready (HUD, MainMenu, etc.) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|UI")
 	TSubclassOf<UCommonActivatableWidget> PrimaryWidgetClass;
 
 	/** Layer to push PrimaryWidgetClass onto. Default: MCore_UI_Layer_Game */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta = (Categories = "MCore.UI.Layer"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|UI", meta = (Categories = "MCore.UI.Layer"))
 	FGameplayTag PrimaryWidgetLayer;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Modulus|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|Input")
 	TArray<TObjectPtr<UInputMappingContext>> InputContexts;
 
 	/**
@@ -56,11 +57,11 @@ protected:
 	 * Default pushes PrimaryWidgetClass to PrimaryWidgetLayer.
 	 * Override for custom setup (clear layers, push additional widgets, etc.)
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|UI")
 	void OnUISystemReady(UMCore_UISubsystem* UISubsystem);
 	virtual void OnUISystemReady_Implementation(UMCore_UISubsystem* UISubsystem);
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "ModulusCore|UI")
 	TObjectPtr<UCommonActivatableWidget> PrimaryWidget;
 
 private:

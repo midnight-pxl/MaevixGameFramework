@@ -28,19 +28,19 @@ public:
 	// ============================================================================
 
 	/** CommonUI DataTable row this button represents. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|InputAction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModulusCore|Button|InputAction")
 	FDataTableRowHandle InputAction;
 
 	/** When true, forces IconOnly display mode on initialization. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Button|InputAction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModulusCore|Button|InputAction")
 	bool bShowIconOnly{false};
 
 	/** Set the input action and refresh the icon for the current platform. */
-	UFUNCTION(BlueprintCallable, Category = "Button|InputAction")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Button|InputAction")
 	void SetInputAction(const FDataTableRowHandle& InAction);
 
 	/** Re-resolve the platform icon from the current input method and apply it. */
-	UFUNCTION(BlueprintCallable, Category = "Button|InputAction")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Button|InputAction")
 	void RefreshInputIcon();
 
 protected:

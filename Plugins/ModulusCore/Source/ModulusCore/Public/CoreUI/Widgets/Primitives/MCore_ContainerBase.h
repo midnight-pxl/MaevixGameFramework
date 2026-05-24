@@ -29,20 +29,17 @@ public:
 	// PUBLIC API
 	// ============================================================================
 
-	/** Set background color on Border_Background. */
-	UFUNCTION(BlueprintCallable, Category = "Container")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Container")
 	void SetBackgroundColor(FLinearColor InColor);
 
-	/** Set background brush on Border_Background. */
-	UFUNCTION(BlueprintCallable, Category = "Container")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Container")
 	void SetBackgroundBrush(const FSlateBrush& InBrush);
 
 	/** Set background image on Image_Background. Pass nullptr to hide. */
-	UFUNCTION(BlueprintCallable, Category = "Container")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Container")
 	void SetBackgroundImage(UTexture2D* InTexture);
 
-	/** Set padding on Border_Background. */
-	UFUNCTION(BlueprintCallable, Category = "Container")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Container")
 	void SetContentPadding(FMargin InPadding);
 
 protected:
@@ -59,11 +56,11 @@ protected:
 	// ============================================================================
 
 	/** Apply theme to container. Called on init and on theme change. Override for custom handling. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* Theme);
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Theme);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Theme", meta = (DisplayName = "On Theme Applied"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "ModulusCore|Theme", meta = (DisplayName = "On Theme Applied"))
 	void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
 
 	// ============================================================================

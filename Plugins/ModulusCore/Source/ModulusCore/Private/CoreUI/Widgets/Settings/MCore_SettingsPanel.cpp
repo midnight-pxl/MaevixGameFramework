@@ -208,6 +208,13 @@ void UMCore_SettingsPanel::NativeOnDeactivated()
 		ActiveRevertCountdown.Reset();
 	}
 
+	/* Cancel any pending confirmation debounce timer. Without this, the timer
+	 * fires after deactivation and spawns a Modal-layer countdown on a non-interactable panel. */
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(ConfirmationDebounceTimer);
+	}
+
 	PendingConfirmationTags = TArray<FGameplayTag>();
 
 	Super::NativeOnDeactivated();
@@ -262,6 +269,13 @@ void UMCore_SettingsPanel::NativeDestruct()
 		ActiveRevertCountdown.Reset();
 	}
 
+	/* Cancel any pending confirmation debounce timer. Defends against the narrow
+	 * Destruct-to-GC window where the timer could fire on a mid-teardown widget. */
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(ConfirmationDebounceTimer);
+	}
+
 	PendingConfirmationTags = TArray<FGameplayTag>();
 
 	if (Btn_ResetAll) { Btn_ResetAll->OnButtonClicked.RemoveAll(this); }
@@ -312,8 +326,8 @@ void UMCore_SettingsPanel::ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* Ne
 
 void UMCore_SettingsPanel::BuildPanel()
 {
-	UE_LOG(LogModulusSettings, Verbose, TEXT("SettingsPanel::BuildPanel: TabbedContainer has %d tabs"),
-	TabbedContainer_Main->GetTabCount());
+	UE_LOG(LogModulusSettings, VeryVerbose, TEXT("SettingsPanel::BuildPanel: rebuilding from %d existing tabs"),
+		TabbedContainer_Main->GetTabCount());
 	
 	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
 	if (!CoreSettings || !CoreSettings->HasValidSettingsCollections())
@@ -399,8 +413,8 @@ void UMCore_SettingsPanel::BuildPanel()
 			}
 		}
 
-		UE_LOG(LogModulusSettings, Log,
-			TEXT("SettingsPanel::BuildPanel: adding tab [%s] order index %d"),
+		UE_LOG(LogModulusSettings, VeryVerbose,
+			TEXT("SettingsPanel::BuildPanel: adding tab %s at index %d"),
 			*TabID.ToString(), MainTabOrder.IndexOfByKey(ParentTag));
 		if (PageWidget && TabbedContainer_Main->AddTab(TabID, PageWidget))
 		{

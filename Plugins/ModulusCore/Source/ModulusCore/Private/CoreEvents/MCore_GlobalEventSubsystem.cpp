@@ -3,6 +3,7 @@
 #include "CoreEvents/MCore_GlobalEventSubsystem.h"
 
 #include "CoreEvents/MCore_GlobalEventReplicator.h"
+#include "CoreData/DevSettings/MCore_CoreSettings.h"
 #include "CoreData/Logging/LogModulusEvent.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
 #include "CoreEvents/MCore_EventListenerComponent.h"
@@ -173,24 +174,28 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 		return false;
 	}
 	
-	/* Hardcoded param limits. Override ValidateEventRequest() to customize. */
-	constexpr int32 MaxParams{8};
-	constexpr int32 MaxContextIDLength{64};
-	
+	/* Network safety limits sourced from UMCore_CoreSettings (Project Settings > Modulus Core > Network Safety).
+	 * ClampMin/ClampMax in the UPROPERTY meta enforce floor + ceiling; defaults match historical hardcoded values. */
+	const UMCore_CoreSettings* CoreSettings = UMCore_CoreSettings::Get();
+	const int32 MaxParams = CoreSettings ? CoreSettings->MaxEventParams : 8;
+	const int32 MaxContextIDLength = CoreSettings ? CoreSettings->MaxEventContextIDLength : 64;
+	const int32 MaxStructSizeBytes = CoreSettings ? CoreSettings->MaxEventStructSizeBytes : 2048;
+	const int32 MaxSerializedPayloadBytes = CoreSettings ? CoreSettings->MaxEventSerializedPayloadBytes : 4096;
+
 	if (EventData.EventParams.Num() > MaxParams)
 	{
 		UE_LOG(LogModulusEvent, Warning,
 			TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': %d params exceeds cap of %d. "
-				 "Override ValidateEventRequest() for custom limits."),
+				 "Tune MaxEventParams in Project Settings > Modulus Core > Network Safety."),
 				 *EventData.EventTag.ToString(), EventData.EventParams.Num(), MaxParams);
 		return false;
 	}
-	
+
 	if (EventData.ContextID.Len() > MaxContextIDLength)
 	{
 		UE_LOG(LogModulusEvent, Warning,
 			TEXT("GlobalEventSubsystem::ValidateEventRequest: rejected '%s': ContextID length of %d exceeds cap of %d. "
-				 "Override ValidateEventRequest() for custom limits."),
+				 "Tune MaxEventContextIDLength in Project Settings > Modulus Core > Network Safety."),
 				 *EventData.EventTag.ToString(), EventData.ContextID.Len(), MaxContextIDLength);
 		return false;
 	}
@@ -202,7 +207,6 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 		if (PayloadStruct)
 		{
 			/* Fast reject; GetStructureSize() is the C++ sizeof, zero runtime cost */
-			constexpr int32 MaxStructSizeBytes = 2048;
 			if (PayloadStruct->GetStructureSize() > MaxStructSizeBytes)
 			{
 				UE_LOG(LogModulusEvent, Warning,
@@ -217,7 +221,6 @@ bool UMCore_GlobalEventSubsystem::ValidateEventRequest(const FMCore_EventData& E
 
 			/* Serialized size check; catches dynamic content (TArrays, FStrings, maps)
 			 * where sizeof is small but serialized form can be arbitrarily large */
-			constexpr int32 MaxSerializedPayloadBytes = 4096;
 			FBufferArchive SizeCounter;
 			const_cast<UScriptStruct*>(PayloadStruct)->SerializeItem(SizeCounter,
 				const_cast<uint8*>(EventData.TypedPayload.GetMemory()), nullptr);

@@ -31,7 +31,7 @@ public:
 	 * Called automatically by RefreshTheme() and when the global theme
 	 * changes in Developer Settings.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Modulus|Theme")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Theme")
 	void OnThemeChanged(const UMCore_PDA_UITheme_Base* NewTheme);
 	virtual void OnThemeChanged_Implementation(const UMCore_PDA_UITheme_Base* NewTheme) {}
 
@@ -39,7 +39,7 @@ public:
 	 * Request theme refresh from Developer Settings.
 	 * Call this in NativeOnInitialized() to apply the initial theme.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Modulus|Theme")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Theme")
 	void RefreshTheme();
 	virtual void RefreshTheme_Implementation() {}
 

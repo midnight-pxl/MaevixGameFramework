@@ -13,17 +13,13 @@ class UCommonTextBlock;
 class UWidget;
 
 /**
- * Base widget for level-transition loading screens. Hosted by UE's MoviePlayer
- * via TakeWidget() during PreLoadMap, so it renders as a Slate widget while the
- * game thread is blocked on the level swap.
+ * Base widget for level-transition loading screens. Hosted by UE's MoviePlayer via
+ * TakeWidget() during PreLoadMap; renders as Slate while the game thread is blocked.
  *
- * Derives from UUserWidget (not UMCore_ActivatableBase) because the CommonUI
- * activation pipeline does not run during PreLoadMap, so ActivatableBase's
- * lifecycle protections add no value here. The Blueprint subclass must be
- * cookable (referenced as TSoftClassPtr in MCore_CoreSettings).
- *
- * Optional bound widgets receive default content from Initialize(); add your
- * own logic via K2_OnLoadingScreenInitialized.
+ * Derives from UUserWidget (not UMCore_ActivatableBase) because the CommonUI activation
+ * pipeline does not run during PreLoadMap, so ActivatableBase's lifecycle protections
+ * add no value here. Subclasses must be cookable (TSoftClassPtr in MCore_CoreSettings).
+ * Optional bound widgets receive defaults via InitializeFromEntry; customize via K2_OnLoadingScreenInitialized.
  */
 UCLASS(Abstract, BlueprintType, Blueprintable)
 class MODULUSCORE_API UMCore_LoadingScreenWidget : public UUserWidget
@@ -59,12 +55,13 @@ public:
 	/**
 	 * Applies entry data to optional bound widgets and dispatches the Blueprint event.
 	 * Called by UMCore_LoadingScreenSubsystem before the widget is handed to MoviePlayer.
+	 * Named InitializeFromEntry (not Initialize) to avoid hiding UUserWidget::Initialize().
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
-	void Initialize(const FMCore_LoadingScreenEntry& Entry);
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
+	virtual void InitializeFromEntry(const FMCore_LoadingScreenEntry& Entry);
 
 	/** Blueprint hook fired after Initialize applies the default content. */
-	UFUNCTION(BlueprintImplementableEvent, Category="Modulus|Loading",
+	UFUNCTION(BlueprintImplementableEvent, Category="ModulusCore|Loading",
 		meta=(DisplayName="On Loading Screen Initialized"))
 	void K2_OnLoadingScreenInitialized(const FMCore_LoadingScreenEntry& Entry);
 
@@ -77,26 +74,23 @@ public:
 	 * and dismissal mode is InputRequired. Sets prompt visibility, refreshes
 	 * the input icon, claims keyboard focus, and enables native input handling.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void HandleLoadingComplete();
 
 	/**
 	 * Default content placement after load completes. Override to customize
 	 * prompt visibility, icon refresh, or focus behavior.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category="Modulus|Loading",
+	UFUNCTION(BlueprintNativeEvent, Category="ModulusCore|Loading",
 		meta=(DisplayName="On Loading Complete"))
 	void OnLoadingComplete();
 
 	/**
-	 * Fired when the player provides dismissal input. Default implementation calls
-	 * Subsystem->DismissLoadingScreen(). Override (BP or C++) for server-authoritative
-	 * ready barriers: send your RPC, call SetAwaitingDismissalInput(false), update
-	 * prompt via SetPromptText, and do NOT call DismissLoadingScreen here. Your
-	 * client RPC handler should call Subsystem->DismissLoadingScreen() when the
-	 * server signals dismissal.
+	 * Fired when the player provides dismissal input. Default calls Subsystem->DismissLoadingScreen().
+	 * Override for server-authoritative ready barriers: send your RPC, clear SetAwaitingDismissalInput,
+	 * and let the server's reply RPC trigger DismissLoadingScreen instead of dismissing here.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category="Modulus|Loading",
+	UFUNCTION(BlueprintNativeEvent, Category="ModulusCore|Loading",
 		meta=(DisplayName="On Dismissal Input Received"))
 	void OnDismissalInputReceived();
 
@@ -104,16 +98,16 @@ public:
 	// PROMPT HELPERS
 	// ============================================================================
 
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetPromptText(const FText& InText);
 
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetPromptIconVisible(bool bVisible);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="ModulusCore|Loading")
 	bool IsAwaitingDismissalInput() const { return bAwaitingInput; }
 
-	UFUNCTION(BlueprintCallable, Category="Modulus|Loading")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Loading")
 	void SetAwaitingDismissalInput(bool bAwaiting);
 
 protected:

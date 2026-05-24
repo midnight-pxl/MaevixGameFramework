@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreData/Logging/LogModulusNetworking.h"
 #include "Modules/ModuleManager.h"
 
 class FModulusCoreModule : public IModuleInterface

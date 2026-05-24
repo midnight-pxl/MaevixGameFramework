@@ -110,10 +110,10 @@ protected:
 	// ====================================================================
 
 	/** Apply theme styling to this widget. Override for custom theme handling. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Theme",
+	UFUNCTION(BlueprintImplementableEvent, Category = "ModulusCore|Theme",
 		meta = (DisplayName = "On Theme Applied"))
 	void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
 

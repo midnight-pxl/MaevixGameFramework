@@ -386,11 +386,6 @@ UCommonActivatableWidget* UMCore_UISubsystem::OpenScreen(
 {
 	if (!ScreenClass || !HasPrimaryGameLayout()) { return nullptr; }
 
-	// TODO: Temporary diagnostic; remove after modal lifecycle audit
-	UE_LOG(LogModulusUI, Log, TEXT("UISubsystem::OpenScreen: Class=%s Layer=%s TrackedCount=%d"),
-		*GetNameSafe(ScreenClass), *LayerTag.ToString(),
-		TrackedWidgets.Contains(LayerTag) ? TrackedWidgets[LayerTag].Num() : 0);
-
 	if (!bAllowDuplicates)
 	{
 		CompactTrackedWidgets(LayerTag);
@@ -402,12 +397,6 @@ UCommonActivatableWidget* UMCore_UISubsystem::OpenScreen(
 			for (int32 i = Widgets->Num() - 1; i >= 0; --i)
 			{
 				TWeakObjectPtr<UCommonActivatableWidget>& Weak = (*Widgets)[i];
-
-				// TODO: Temporary diagnostic; remove after modal lifecycle audit
-				UE_LOG(LogModulusUI, Log, TEXT("UISubsystem::OpenScreen: Found tracked: %s IsValid=%s IsActivated=%s"),
-					*GetNameSafe(Weak.Get()),
-					Weak.IsValid() ? TEXT("Y") : TEXT("N"),
-					(Weak.IsValid() && Weak->IsActivated()) ? TEXT("Y") : TEXT("N"));
 
 				if (Weak->GetClass() == ScreenClass)
 				{

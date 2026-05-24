@@ -62,11 +62,11 @@ public:
 	 * Leave empty to use default UMCore_PrimaryGameLayout.
 	 * Set to a Blueprint subclass for custom layout structure.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="UI", meta=(DisplayName="Primary Game Layout Class"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|UI", meta=(DisplayName="Primary Game Layout Class"))
 	TSoftClassPtr<UMCore_PrimaryGameLayout> PrimaryGameLayoutClass;
 
 	/** Z-Order for PrimaryGameLayout in viewport. Higher values render on top. */
-	UPROPERTY(Config, EditAnywhere, Category="UI", meta=(DisplayName="Layout Z-Order", ClampMin="-100", ClampMax="100"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|UI", meta=(DisplayName="Layout Z-Order", ClampMin="-100", ClampMax="100"))
 	int32 PrimaryGameLayoutZOrder{0};
 
 	// ============================================================================
@@ -80,7 +80,7 @@ public:
 	 * Leave empty to use default UMCore_GameMenuHub.
 	 * Set to a Blueprint subclass for custom hub appearance.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Menu Hub", meta=(DisplayName="Menu Hub Class"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Menu Hub", meta=(DisplayName="Menu Hub Class"))
 	TSoftClassPtr<UMCore_GameMenuHub> MenuHubClass;
 
 	/**
@@ -88,7 +88,7 @@ public:
 	 * Configure all default tabs here, including tabs from other Modulus plugins.
 	 * Additional tabs can be added at runtime via RegisterMenuScreen().
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Menu Hub", meta=(DisplayName="Default Menu Tabs"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Menu Hub", meta=(DisplayName="Default Menu Tabs"))
 	TArray<FMCore_MenuTab> DefaultMenuTabs;
 
 	// ============================================================================
@@ -100,11 +100,11 @@ public:
 	 * Each entry has a display name, description, and theme DataAsset.
 	 * Order determines display order in theme selection UI.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Theme", meta=(DisplayName="Available Themes"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Theme", meta=(DisplayName="Available Themes"))
 	TArray<FMCore_ThemeEntry> AvailableThemes;
 
 	/** Index into AvailableThemes for the default theme. Loads automatically on UI init. */
-	UPROPERTY(Config, EditAnywhere, Category="Theme", meta=(DisplayName="Default Theme", ClampMin="0"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Theme", meta=(DisplayName="Default Theme", ClampMin="0"))
 	int32 DefaultThemeIndex{0};
 
 	// ============================================================================
@@ -117,24 +117,24 @@ public:
 	 * Display order follows each collection's Settings array; cross-collection ordering
 	 * follows the position of each collection in this array.
 	 */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings",
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings",
 		meta=(DisplayName="Settings Collections"))
 	TArray<TSoftObjectPtr<UMCore_DA_SettingsCollection>> SettingsCollections;
 	
 	/** Widget class used to render Slider-type settings. */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	TSubclassOf<UMCore_SettingsWidget_Slider> SettingsSliderWidgetClass;
 
 	/** Widget class used to render Switcher-type settings (Toggle and Dropdown). */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	TSubclassOf<UMCore_SettingsWidget_Switcher> SettingsSwitcherWidgetClass;
 
 	/** Widget class for inline key binding panel content in the Settings Panel. */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	TSubclassOf<UMCore_KeyBindingPanel_Base> KeyBindingPanelClass;
 
 	/** Show secondary binding columns in the key binding panel. */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	bool bShowSecondaryBindings = false;
 
 	/**
@@ -142,7 +142,7 @@ public:
 	 * Each entry becomes a tab with the given display name.
 	 * Order determines tab order. If empty, the panel falls back to a flat list.
 	 */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings",
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings",
 		meta=(DisplayName="Key Binding Contexts"))
 	TArray<FMCore_KeyBindingContext> KeyBindingContexts;
 
@@ -150,22 +150,22 @@ public:
 	 * Default dialog class used for destructive action confirmations (Reset All, etc).
 	 * used wherever confirmation is required and not locally set for custom functionality
 	 */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	TSubclassOf<UMCore_ConfirmationDialog> DefaultConfirmationDialogClass;
 
 	/** Widget class for the revert countdown overlay when a setting with bRequiresConfirmation is changed. */
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|Settings")
 	TSubclassOf<UMCore_SettingsRevertCountdown> SettingsRevertCountdownClass;
 	
 	/**
 	 * Delay for showing revert countdown after a confirmation-required setting change.
 	 * Resets on each new change, preventing modal spam during rapid cycling.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ClampMin = "0.0", ClampMax = "3.0", Units = "s"))
+	UPROPERTY(Config, EditAnywhere, Category = "ModulusCore|Settings", meta = (ClampMin = "0.0", ClampMax = "3.0", Units = "s"))
 	float ConfirmationDebounceDelay{0.75f};
 
 	/** How long the revert countdown modal displays before auto-reverting. */
-	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ClampMin = "5.0", ClampMax = "30.0", Units = "s"))
+	UPROPERTY(Config, EditAnywhere, Category = "ModulusCore|Settings", meta = (ClampMin = "5.0", ClampMax = "30.0", Units = "s"))
 	float ConfirmationRevertDelay = 15.0f;
 
 	// ============================================================================
@@ -179,8 +179,36 @@ public:
 	 * have one Master parent so the Master slider multiplies through the
 	 * parent chain at playback resolution. See README "Customizing the
 	 * Volume Mix" section. */
-	UPROPERTY(config, EditAnywhere, Category = "Audio")
+	UPROPERTY(config, EditAnywhere, Category = "ModulusCore|Audio")
 	TSoftObjectPtr<USoundMix> VolumeMix;
+
+	// ============================================================================
+	// NETWORK SAFETY
+	// ============================================================================
+
+	/* Bounds for UMCore_GlobalEventSubsystem::ValidateEventRequest. ClampMin enforces
+	 * a safety floor; ClampMax prevents accidentally permissive overrides that would
+	 * open DoS surface area on the server. Defaults match historical hardcoded values. */
+
+	/** Maximum FMCore_EventParameter count per global event. Floor: 1, Ceiling: 32. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="ModulusCore|Network Safety|Event Validation",
+		meta=(ClampMin="1", ClampMax="32"))
+	int32 MaxEventParams = 8;
+
+	/** Maximum ContextID string length in chars. Floor: 16, Ceiling: 256. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="ModulusCore|Network Safety|Event Validation",
+		meta=(ClampMin="16", ClampMax="256"))
+	int32 MaxEventContextIDLength = 64;
+
+	/** Maximum FInstancedStruct sizeof for typed payloads. Floor: 256 B, Ceiling: 8 KB. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="ModulusCore|Network Safety|Event Validation",
+		meta=(ClampMin="256", ClampMax="8192"))
+	int32 MaxEventStructSizeBytes = 2048;
+
+	/** Maximum FBufferArchive serialized payload size for typed payloads. Floor: 512 B, Ceiling: 16 KB. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="ModulusCore|Network Safety|Event Validation",
+		meta=(ClampMin="512", ClampMax="16384"))
+	int32 MaxEventSerializedPayloadBytes = 4096;
 
 	// ============================================================================
 	// LOADING SCREEN
@@ -190,16 +218,16 @@ public:
 	 * Widget class shown by the MoviePlayer during PreLoadMap transitions.
 	 * Leave empty to disable the loading screen entirely.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Loading Screen Widget Class"))
 	TSoftClassPtr<UMCore_LoadingScreenWidget> LoadingScreenWidgetClass;
 
 	/** Libraries of loading screen entries. All entries aggregate into one selection pool. */
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Loading Screen Libraries"))
 	TArray<TSoftObjectPtr<UMCore_PDA_LoadingScreens>> LoadingScreenLibraries;
 
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Selection Mode"))
 	EMCore_LoadingScreenSelectionMode LoadingScreenSelectionMode = EMCore_LoadingScreenSelectionMode::TagBased;
 
@@ -209,7 +237,7 @@ public:
 	 * gates dismissal on player input. Manual disables both and is intended
 	 * for async post-load work or server-synchronized ready barriers.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Dismissal Mode"))
 	EMCore_LoadingDismissalMode LoadingDismissalMode = EMCore_LoadingDismissalMode::InputRequired;
 
@@ -218,7 +246,7 @@ public:
 	 * If null while Dismissal Mode is InputRequired, the widget hides the icon
 	 * and dismisses on any input.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Dismissal Input Action",
 		      EditCondition="LoadingDismissalMode==EMCore_LoadingDismissalMode::InputRequired",
 		      EditConditionHides))
@@ -228,12 +256,12 @@ public:
 	 * Floor on loading screen visibility. The screen stays visible at least
 	 * this long even when the map finishes loading or input arrives sooner.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(ClampMin="0.0", ClampMax="10.0", Units="s",
 		      DisplayName="Minimum Display Time"))
 	float MinimumLoadingScreenTime{0.5f};
 
-	UPROPERTY(Config, EditAnywhere, Category="Loading Screen",
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Loading|Screen",
 		meta=(DisplayName="Loading Screen Enabled By Default"))
 	bool bLoadingScreenEnabledByDefault{true};
 
@@ -246,14 +274,14 @@ public:
 	 * Log all event broadcasts and subscriptions to Output Log.
 	 * Shows: Event tag, payload data, subscriber count, broadcast scope.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Debug", meta=(DisplayName="Enable Event System Logging"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Debug", meta=(DisplayName="Enable Event System Logging"))
 	bool bEnableEventSystemLogging{false};
 
 	/**
 	 * Show debug overlay for UI layer stack.
 	 * Helps debug: Widget not appearing, wrong layer, input not working.
 	 */
-	UPROPERTY(Config, EditAnywhere, Category="Debug", meta=(DisplayName="Show UI Layer Debug Overlay"))
+	UPROPERTY(Config, EditAnywhere, Category="ModulusCore|Debug", meta=(DisplayName="Show UI Layer Debug Overlay"))
 	bool bShowUILayerDebugOverlay{false};
 #endif
 
@@ -314,15 +342,15 @@ public:
 	// ============================================================================
 
 	/** Returns true if event system logging is enabled. Always false in shipping builds. */
-	UFUNCTION(BlueprintPure, Category="Modulus|Debug")
+	UFUNCTION(BlueprintPure, Category="ModulusCore|Debug")
 	bool IsEventLoggingEnabled() const;
 
 	/** Returns true if the UI debug overlay is enabled. Always false in shipping builds. */
-	UFUNCTION(BlueprintPure, Category="Modulus|Debug")
+	UFUNCTION(BlueprintPure, Category="ModulusCore|Debug")
 	bool IsUIDebugOverlayEnabled() const;
 
 	/** Returns the theme DataAsset at DefaultThemeIndex (loads synchronously). Returns nullptr if index is invalid. */
-	UFUNCTION(BlueprintCallable, Category="Modulus|Theme")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|Theme")
 	UMCore_PDA_UITheme_Base* GetDefaultTheme() const;
 	
 	// ============================================================================
@@ -330,28 +358,28 @@ public:
 	// ============================================================================
 
 	/** Returns all loaded settings collections. Resolves soft references on first call, caches results. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Settings")
 	const TArray<UMCore_DA_SettingsCollection*>& GetAllSettingsCollections() const;
 
 	/** Searches all collections for a setting definition matching the tag. Returns first match. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Settings")
 	UMCore_DA_SettingDefinition* FindSettingDefinitionByTag(const FGameplayTag& SettingTag) const;
 
 	/** Returns all settings across all collections for a category, ordered by collection
 	 *  array index then by setting array position within each collection. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Settings")
 	TArray<UMCore_DA_SettingDefinition*> GetSettingsForCategory(const FGameplayTag& CategoryTag) const;
 
 	/** Returns all unique category tags across all collections in first-seen order
 	 *  (collection array index, then setting array position). */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Settings")
 	TArray<FGameplayTag> GetAllSettingsCategories() const;
 
 	/** Searches all collections for a category display name. Returns tag leaf segment as fallback. */
 	FText GetCategoryDisplayName(const FGameplayTag& CategoryTag) const;
 
 	/** Returns true if at least one collection is assigned and loadable. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Settings")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Settings")
 	bool HasValidSettingsCollections() const;
 
 	/** Clears the resolved collection cache. Next GetAllSettingsCollections() call will re-resolve. */
@@ -369,10 +397,10 @@ public:
 	 * Returns the default theme for design-time preview (static, no UISubsystem needed).
 	 * Use in NativePreConstruct() for UMG editor preview. At runtime, prefer UISubsystem->GetActiveTheme().
 	 */
-	UFUNCTION(BlueprintPure, Category="Modulus|Theme")
+	UFUNCTION(BlueprintPure, Category="ModulusCore|Theme")
 	static UMCore_PDA_UITheme_Base* GetDesignTimeTheme();
 
-	UFUNCTION(BlueprintPure, Category="Modulus|Theme")
+	UFUNCTION(BlueprintPure, Category="ModulusCore|Theme")
 	bool IsValidThemeIndex(int32 Index) const;
 
 };

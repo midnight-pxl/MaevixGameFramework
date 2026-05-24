@@ -24,7 +24,7 @@ void UMCore_SettingsWidget_Base::InitFromDefinition(const UMCore_DA_SettingDefin
 		return;
 	}
 
-	if (!InDefinition->IsValid())
+	if (!InDefinition->IsDefinitionValid())
 	{
 		UE_LOG(LogModulusSettings, Warning,
 			TEXT("SettingsWidget_Base::InitFromDefinition: definition '%s' failed validation, widget=%s"),

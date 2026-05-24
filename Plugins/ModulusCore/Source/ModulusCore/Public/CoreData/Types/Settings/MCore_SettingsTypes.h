@@ -22,11 +22,11 @@ struct MODULUSCORE_API FMCore_FloatSettingChange
 {
     GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Setting"))
     TObjectPtr<UMCore_DA_SettingDefinition> Setting = nullptr;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Value"))
     float Value = 0.f;
 };
@@ -37,11 +37,11 @@ struct MODULUSCORE_API FMCore_IntSettingChange
 {
     GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Setting"))
     TObjectPtr<UMCore_DA_SettingDefinition> Setting = nullptr;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Value"))
     int32 Value = 0;
 };
@@ -52,11 +52,11 @@ struct MODULUSCORE_API FMCore_BoolSettingChange
 {
     GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Setting"))
     TObjectPtr<UMCore_DA_SettingDefinition> Setting = nullptr;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings",
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Settings",
         meta = (DisplayName = "Value"))
     bool Value = false;
 };
@@ -68,9 +68,9 @@ struct MODULUSCORE_API FMCore_SettingsSection
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Section")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModulusCore|Settings|Section")
     FName SectionID;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Section")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModulusCore|Settings|Section")
     FText SectionDisplayName;
 };

@@ -23,21 +23,12 @@ void UMCore_NetworkingComponent::BeginPlay()
 		"(Authority: %s, Iris: %s)"), *GetClass()->GetName(),
 		HasNetworkAuthority() ? TEXT("Yes") : TEXT("No"),
 		bIrisDetected ? TEXT("Yes") : TEXT("No"));
-
 }
 
 void UMCore_NetworkingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	OnNetworkShutdown();
 	Super::EndPlay(EndPlayReason);
-}
-
-template <typename TOperation>
-bool UMCore_NetworkingComponent::ExecuteWithAuthority(TOperation&& Operation, bool bRequireServerAuthority)
-{
-	/* Scheduled for completion with first cross-plugin authority use case. */
-	checkNoEntry();
-	return false;
 }
 
 void UMCore_NetworkingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -49,7 +40,8 @@ void UMCore_NetworkingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
 void UMCore_NetworkingComponent::DetectNetworkingSystem()
 {
-	/* Iris replication detection - currently disabled. Enable when Iris is configured at project level. */
+	/* Honesty stub: Iris replication detection is targeted for v1.X once Iris graduates Beta.
+	 * See MODULUSCORE_WORK_TRACKER.md T-13 / T-19. */
 	bIrisDetected = false;
 }
 
@@ -60,7 +52,8 @@ bool UMCore_NetworkingComponent::IsUsingIrisReplication() const
 
 bool UMCore_NetworkingComponent::IsIrisAvailable() const
 {
-	/* Iris availability check - implement when Iris replication is needed. */
+	/* Honesty stub: Iris availability detection is targeted for v1.X once Iris graduates Beta.
+	 * See MODULUSCORE_WORK_TRACKER.md T-13 / T-19. */
 	return false;
 }
 

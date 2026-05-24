@@ -13,10 +13,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnLocalEventBroadcast, const FMCore_EventDa
 
 /**
  * Local event subsystem for client-only, non-networked GameplayTag events.
- * Each LocalPlayer has its own instance (split-screen safe).
- *
- * Events broadcast here never reach other clients or the server.
- * Use UMCore_GlobalEventSubsystem for networked events.
+ * Per-LocalPlayer (split-screen safe); use UMCore_GlobalEventSubsystem for networked broadcasts.
  */
 UCLASS()
 class MODULUSCORE_API UMCore_LocalEventSubsystem : public ULocalPlayerSubsystem

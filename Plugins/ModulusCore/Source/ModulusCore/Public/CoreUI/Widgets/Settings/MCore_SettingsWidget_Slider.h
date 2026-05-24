@@ -39,7 +39,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_StepRight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModulusCore|Settings|Widget")
 	bool bShowStepButtons{true};
 	
 protected:

@@ -8,11 +8,9 @@
 #include "MCore_PrimaryGameLayout.generated.h"
 
 /**
- * Primary game layout providing the 4-layer CommonUI widget stack.
+ * Primary game layout providing the 4-layer CommonUI widget stack
+ * (Game / GameMenu / Menu / Modal).
  * Visual container only; access layers via UISubsystem's screen management API.
- *
- * Layers: GameLayer (HUD), GameMenuLayer (in-game menus),
- * MenuLayer (full-screen menus), ModalLayer (dialogs).
  */
 
 class UMCore_UISubsystem;
@@ -26,6 +24,15 @@ class MODULUSCORE_API UMCore_PrimaryGameLayout : public UCommonUserWidget
 
 public:
     UMCore_PrimaryGameLayout(const FObjectInitializer& ObjectInitializer);
+	
+	/** True when all four layer stacks (Game / GameMenu / Menu / Modal) are bound. */
+	bool AreAllLayersBound() const
+	{
+		return MCore_GameLayer != nullptr &&
+			MCore_GameMenuLayer != nullptr &&
+				MCore_MenuLayer != nullptr &&
+					MCore_ModalLayer != nullptr;
+	};
 
 protected:
 	virtual void NativeOnInitialized() override;

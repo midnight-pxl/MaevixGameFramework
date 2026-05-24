@@ -166,7 +166,13 @@ void UMCore_ActivatableBase::NativeOnInitialized()
 	{
 		if (UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>())
 		{
-			ApplyTheme(UISubsystem->GetActiveTheme());
+			/* Cache theme before ApplyTheme so BP K2_OnThemeApplied overrides and any
+			 * subclass work during ApplyTheme's reflection dispatch see the resolved theme,
+			 * not the prior null. ApplyTheme_Implementation also assigns CachedTheme,
+			 * but only after the BP dispatch layer has already had a chance to read it. */
+			UMCore_PDA_UITheme_Base* ActiveTheme = UISubsystem->GetActiveTheme();
+			CachedTheme = ActiveTheme;
+			ApplyTheme(ActiveTheme);
 		}
 	}
 }

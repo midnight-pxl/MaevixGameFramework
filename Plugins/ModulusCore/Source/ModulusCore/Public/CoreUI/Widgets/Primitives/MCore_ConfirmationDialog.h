@@ -26,7 +26,6 @@ class MODULUSCORE_API UMCore_ConfirmationDialog : public UMCore_ActivatableBase
 public:
 	UMCore_ConfirmationDialog(const FObjectInitializer& ObjectInitializer);
 
-	/** Set the dialog prompt text. */
 	UFUNCTION(BlueprintCallable, Category = "UI|Dialog")
 	void SetDialogMessage(FText InMessage);
 

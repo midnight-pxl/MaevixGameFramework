@@ -33,11 +33,11 @@ public:
 	// ============================================================================
 
 	/** Returns the first bound key for the given input action, or Invalid if unbound. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static FKey GetCurrentKeyForAction(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	/** Returns all bound keys for the given input action. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static TArray<FKey> GetAllKeysForAction(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	// ============================================================================
@@ -45,19 +45,19 @@ public:
 	// ============================================================================
 
 	/** Returns the display name from PlayerMappableKeySettings, or empty if not configured. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static FText GetActionDisplayName(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	/** Returns the display category from PlayerMappableKeySettings, or empty if not configured. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static FText GetActionDisplayCategory(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	/** Returns true if the input action has PlayerMappableKeySettings and is marked remappable. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static bool IsActionRemappable(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	/** Returns the mapping name from PlayerMappableKeySettings for Data Table display. */
-	UFUNCTION(BlueprintPure, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input|Display")
 	static FName GetActionMappingName(APlayerController* OwningPlayer, UInputAction* InputAction);
 
 	// ============================================================================
@@ -68,14 +68,14 @@ public:
 	 * Remap an input action to a new key. Validates that the action is remappable
 	 * and handles slot-based binding through the active key profile.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input|Display")
 	static bool RemapActionKey(APlayerController* OwningPlayer,
 							  UInputAction* InputAction,
 							  FKey NewKey,
 							  FText& OutError);
 
 	/** Resets a specific mapping slot for an action to its default binding. */
-	UFUNCTION(BlueprintCallable, Category = "Enhanced Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input|Display")
 	static bool ResetActionToDefault(APlayerController* OwningPlayer,
 									UInputAction* InputAction,
 									UPARAM(DisplayName = "Error Message") FText& OutError);
@@ -85,11 +85,11 @@ public:
 	// ============================================================================
 
 	/** Returns all player-mappable key mappings from the active key profile. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static TArray<FPlayerKeyMapping> GetAllRemappableActions(APlayerController* OwningPlayer);
 
 	/** Returns player-mappable key mappings filtered to a specific device type. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static TArray<FPlayerKeyMapping> GetRemappableActionsForDevice(
 		APlayerController* OwningPlayer, ECommonInputType DeviceType);
 
@@ -98,11 +98,11 @@ public:
 	// ============================================================================
 
 	/** Resolve an FKey to its platform-appropriate icon brush using the current input device. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static bool GetIconBrushForKey(const ULocalPlayer* LocalPlayer, FKey Key, FSlateBrush& OutBrush);
 
 	/** Resolve an FKey to its icon brush for a specific device type (for dual-column display). */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static bool GetIconBrushForKeyByDeviceType(const ULocalPlayer* LocalPlayer, FKey Key,
 		ECommonInputType InputType, FSlateBrush& OutBrush);
 
@@ -111,12 +111,12 @@ public:
 	// ============================================================================
 
 	/** Returns the registered gamepad config names from CommonInput platform settings. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Input Display",
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input Display",
 		meta = (WorldContext = "WorldContextObject"))
 	static TArray<FName> GetAvailableGamepadConfigs(const UObject* WorldContextObject);
 
 	/** Returns the gamepad name to use for icon resolution, respecting the player's manual override. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Input Display",
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input Display",
 		meta = (WorldContext = "WorldContextObject"))
 	static FName GetEffectiveGamepadName(const UObject* WorldContextObject,
 		const ULocalPlayer* LocalPlayer);
@@ -126,17 +126,17 @@ public:
 	// ============================================================================
 
 	/** Returns the bound key for a specific action, slot, and device type. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Input Display")
 	static FKey GetBoundKeyForSlot(APlayerController* OwningPlayer, UInputAction* InputAction,
 		EPlayerMappableKeySlot Slot, bool bGamepad);
 
 	/** Remap an action to a new key in a specific slot. Device derived from NewKey. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static bool RemapActionKeyForSlot(APlayerController* OwningPlayer, UInputAction* InputAction,
 		FKey NewKey, EPlayerMappableKeySlot Slot, FText& OutError);
 
 	/** Reset an action's binding to default for a specific slot and device type. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static bool ResetActionToDefaultForSlot(APlayerController* OwningPlayer, UInputAction* InputAction,
 		EPlayerMappableKeySlot Slot, bool bGamepad, FText& OutError);
 
@@ -145,7 +145,7 @@ public:
 	// ============================================================================
 
 	/** Returns deduplicated remappable actions that belong to the given InputMappingContext. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static TArray<FPlayerKeyMapping> GetRemappableActionsForContext(
 		APlayerController* OwningPlayer, const UInputMappingContext* MappingContext);
 
@@ -154,11 +154,11 @@ public:
 	// ============================================================================
 
 	/** Reset all key bindings across all actions in the active key profile to defaults. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static void ResetAllBindingsToDefault(APlayerController* OwningPlayer);
 
 	/** Reset key bindings for all remappable actions within a specific InputMappingContext. */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Input Display")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Input Display")
 	static void ResetBindingsForContext(APlayerController* OwningPlayer,
 		const UInputMappingContext* MappingContext);
 

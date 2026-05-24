@@ -45,16 +45,16 @@ struct MODULUSCORE_API FMCore_EventData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EventData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Events|Data")
 	FGameplayTag EventTag;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EventData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Events|Data")
 	FString ContextID;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EventData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Events|Data")
 	TArray<FMCore_EventParameter> EventParams;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EventData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ModulusCore|Events|Data")
 	FInstancedStruct TypedPayload;
 
 	FMCore_EventData() = default;
@@ -95,7 +95,6 @@ struct MODULUSCORE_API FMCore_EventData
 		return DefaultValue;
 	}
 
-	/** Returns true if this event carries a typed struct payload. */
 	bool HasTypedPayload() const { return TypedPayload.IsValid(); }
 
 	/**

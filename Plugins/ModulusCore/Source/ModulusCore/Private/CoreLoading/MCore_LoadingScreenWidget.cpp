@@ -20,7 +20,7 @@
 // INITIALIZATION
 // ============================================================================
 
-void UMCore_LoadingScreenWidget::Initialize(const FMCore_LoadingScreenEntry& Entry)
+void UMCore_LoadingScreenWidget::InitializeFromEntry(const FMCore_LoadingScreenEntry& Entry)
 {
 	if (Image_Background && !Entry.BackgroundImage.IsNull())
 	{

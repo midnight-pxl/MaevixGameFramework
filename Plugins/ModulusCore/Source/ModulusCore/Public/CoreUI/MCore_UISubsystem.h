@@ -14,7 +14,6 @@ class UCommonActivatableWidgetStack;
 class UCommonActivatableWidget;
 class UMCore_PDA_UITheme_Base;
 class UMCore_GameMenuHub;
-class UMCore_PrimaryGameLayout;
 class UTexture2D;
 struct FGameplayTag;
 struct FMCore_EventData;
@@ -42,9 +41,12 @@ public:
 	//~ End USubsystem Interface
 
 	UFUNCTION(BlueprintPure, Category = "UI|Layout")
-	bool HasPrimaryGameLayout() const { return IsValid(PrimaryGameLayout); }
+	bool HasPrimaryGameLayout() const
+	{
+		return IsValid(PrimaryGameLayout) && PrimaryGameLayout->AreAllLayersBound();
+	}
 	
-	UPROPERTY(BlueprintAssignable, Category = "Modulus|UI|Events")
+	UPROPERTY(BlueprintAssignable, Category = "ModulusCore|UI|Events")
 	FOnPrimaryGameLayoutReady OnPrimaryGameLayoutReady;
 	
 // ============================================================================
@@ -82,10 +84,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MCore|UI")
 	bool IsLayerActive(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
-	UPROPERTY(BlueprintAssignable, Category = "Modulus|UI|Events")
+	UPROPERTY(BlueprintAssignable, Category = "ModulusCore|UI|Events")
 	FOnWidgetLayerChanged OnWidgetPushed;
 
-	UPROPERTY(BlueprintAssignable, Category = "Modulus|UI|Events")
+	UPROPERTY(BlueprintAssignable, Category = "ModulusCore|UI|Events")
 	FOnWidgetLayerChanged OnWidgetRemoved;
 
 	void NotifyWidgetDestroyed(UCommonActivatableWidget* Widget);
@@ -154,7 +156,7 @@ public:
 
 protected:
 	/** Widget class for PrimaryGameLayout. Set in project defaults or override in Blueprint. */
-	UPROPERTY(EditDefaultsOnly, Category = "Modulus|UI")
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|UI")
 	TSubclassOf<UMCore_PrimaryGameLayout> PrimaryGameLayoutClass;
 	
 	/** Widget class for MenuHub (loaded from settings or defaults) */
@@ -162,14 +164,14 @@ protected:
 	TSubclassOf<UMCore_GameMenuHub> MenuHubClass;
 
 	/** Z-order for layout when added to viewport */
-	UPROPERTY(EditDefaultsOnly, Category = "Modulus|UI", meta = (ClampMin = "-100", ClampMax = "100"))
+	UPROPERTY(EditDefaultsOnly, Category = "ModulusCore|UI", meta = (ClampMin = "-100", ClampMax = "100"))
 	int32 PrimaryGameLayoutZOrder = 0;
 	
 	/**
 	 * Called after PrimaryGameLayout is successfully created and added to viewport.
 	 * Override in C++ or Blueprint subclasses for custom initialization.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Modulus|UI")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|UI")
 	void OnPrimaryGameLayoutCreated(UMCore_PrimaryGameLayout* Layout);
 	virtual void OnPrimaryGameLayoutCreated_Implementation(UMCore_PrimaryGameLayout* Layout);
 

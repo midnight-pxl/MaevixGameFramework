@@ -47,17 +47,17 @@ class MODULUSCORE_API UMCore_PressToContinueWidget : public UMCore_ActivatableBa
 public:
 	UMCore_PressToContinueWidget(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(BlueprintAssignable, Category="Modulus|UI")
+	UPROPERTY(BlueprintAssignable, Category="ModulusCore|UI")
 	FOnPressToContinueAccepted OnAccepted;
 
 	/* Advance from Loading to Ready. No-op if already Ready. Fires K2_OnReadyToContinue. */
-	UFUNCTION(BlueprintCallable, Category="Modulus|UI")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|UI")
 	void SetReadyToContinue();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Modulus|UI")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="ModulusCore|UI")
 	bool IsReadyToContinue() const { return bReadyToContinue; }
 
-	UFUNCTION(BlueprintCallable, Category="Modulus|UI")
+	UFUNCTION(BlueprintCallable, Category="ModulusCore|UI")
 	void SetPromptText(const FText& InText);
 
 protected:
@@ -75,31 +75,31 @@ protected:
 	TObjectPtr<UImage> Img_Background;
 
 	/* Initial visual state on activation. Default Ready preserves the simple "press any key" case. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Press To Continue")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|UI|PressToContinue")
 	EMCore_PressToContinueStartState StartState{EMCore_PressToContinueStartState::Ready};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Press To Continue")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|UI|PressToContinue")
 	FText PromptText{NSLOCTEXT("ModulusCore", "PressAnyKeyToContinue", "Press any key to continue")};
 
 	/*
 	 * Anti-bounce window measured from the Loading->Ready transition (or from activation
 	 * if StartState=Ready). Prevents accidental dismiss from key holdovers during the swap.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Press To Continue",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|UI|PressToContinue",
 		meta=(ClampMin="0.0", ClampMax="2.0"))
 	float InputDelaySeconds{0.5f};
 
 	/* When false, only keyboard/gamepad/touch dismiss. Mouse clicks are ignored. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Press To Continue")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ModulusCore|UI|PressToContinue")
 	bool bAcceptMouseInput{true};
 
 	/* Fired when the widget enters the Loading state on activation. WBP-side animation hook. */
-	UFUNCTION(BlueprintImplementableEvent, Category="Press To Continue",
+	UFUNCTION(BlueprintImplementableEvent, Category="ModulusCore|UI|PressToContinue",
 		meta=(DisplayName="On Enter Loading State"))
 	void K2_OnEnterLoadingState();
 
 	/* Fired when the widget enters the Ready state. WBP-side animation hook (e.g. pulsing prompt). */
-	UFUNCTION(BlueprintImplementableEvent, Category="Press To Continue",
+	UFUNCTION(BlueprintImplementableEvent, Category="ModulusCore|UI|PressToContinue",
 		meta=(DisplayName="On Ready To Continue"))
 	void K2_OnReadyToContinue();
 

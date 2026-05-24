@@ -13,7 +13,7 @@ FString UMCore_DA_SettingDefinition::GetSaveKey() const
 	return SettingTag.ToString().Replace(TEXT("."), TEXT("_"));
 }
 
-bool UMCore_DA_SettingDefinition::IsValid() const
+bool UMCore_DA_SettingDefinition::IsDefinitionValid() const
 {
 	if (SettingDisplayName.IsEmpty() || !SettingTag.IsValid()) { return false; }
 

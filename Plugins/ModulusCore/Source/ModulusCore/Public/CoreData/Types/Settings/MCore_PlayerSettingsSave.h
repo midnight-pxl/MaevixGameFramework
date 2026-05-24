@@ -47,12 +47,12 @@ class MODULUSCORE_API UMCore_PlayerSettingsSave : public USaveGame
     bool bHasSeenWelcomeScreen{false};
 
     /** Index into the available gamepad controller configs. 0 = Auto-Detect. */
-    UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Settings")
+    UPROPERTY(SaveGame, BlueprintReadWrite, Category = "ModulusCore|Settings")
     int32 GamepadIconSetIndex = 0;
 
 	/** Last value the user explicitly selected for the QualityPreset (OverallScalabilityLevel).
 	   -1 means Custom (user has tweaked individual scalability settings). 0..3 are preset levels. */
-	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save|QualityPreset")
+	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "ModulusCore|Settings|QualityPreset")
 	int32 LastSelectedQualityPreset{-1};
 
 	/** Disambiguates first-load (-1 = uninitialized, will be backfilled from engine state) from

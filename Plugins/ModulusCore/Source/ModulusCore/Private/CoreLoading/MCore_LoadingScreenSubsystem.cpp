@@ -161,7 +161,7 @@ void UMCore_LoadingScreenSubsystem::HandlePreLoadMap(const FString& MapName)
 		return;
 	}
 
-	Widget->Initialize(SelectedEntry);
+	Widget->InitializeFromEntry(SelectedEntry);
 	ActiveWidget = Widget;
 
 	/* bNextTransitionManualDismiss is a per-transition override that wins over

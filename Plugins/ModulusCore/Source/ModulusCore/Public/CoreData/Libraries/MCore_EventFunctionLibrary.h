@@ -32,7 +32,7 @@ public:
 	 * Broadcast signal-only event (most common). Listeners query subsystems for current state.
 	 * No parameters attached; use BroadcastEventWithContext when you need an identifier.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Events",
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Events",
 			  meta = (DefaultToSelf = "WorldContext"))
 	static void BroadcastSimpleEvent(const UObject* WorldContext,
 		FGameplayTag EventTag,
@@ -42,7 +42,7 @@ public:
 	 * Broadcast event with a single context identifier.
 	 * Use when you need to include minimal context (quest ID, item name, player name).
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Events",
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Events",
 			  meta = (DefaultToSelf = "WorldContext"))
 	static void BroadcastEventWithContext(const UObject* WorldContext,
 		FGameplayTag EventTag,
@@ -53,7 +53,7 @@ public:
 	 * Broadcast event with multiple key-value parameters.
 	 * Only use when you need to pass multiple pieces of data not available elsewhere.
 	 */
-    UFUNCTION(BlueprintCallable, Category = "Modulus|Events",
+    UFUNCTION(BlueprintCallable, Category = "ModulusCore|Events",
               meta = (DefaultToSelf = "WorldContext"))
 	static void BroadcastEvent(const UObject* WorldContext,
 		FGameplayTag EventTag,
@@ -65,29 +65,29 @@ public:
 // ============================================================================
 	
 	/** Get context ID from event data (for events broadcast with BroadcastEventWithContext) */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static FString GetEventContextID(const FMCore_EventData& EventData);
 	
 	/** Get raw string parameter (returns DefaultValue if key not found) */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static FString GetEventParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		const FString& DefaultValue = TEXT(""));
 	
 	/** Get parameter as bool (parses "true"/"false"/"1"/"0"/"on"/"off"/"yes"/"no") */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static bool GetBoolParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		bool DefaultValue = false);
 
 	/** Get parameter as int32 */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static int32 GetIntParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		int32 DefaultValue = 0);
 
 	/** Get parameter as float (parses string to float) */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static float GetFloatParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		float DefaultValue = 0.0f);
@@ -101,7 +101,7 @@ public:
 	 * The struct must be a USTRUCT(BlueprintType). Receivers extract via
 	 * GetTypedPayload<T>() in C++ or GetTypedPayload node in Blueprint.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Modulus|Events",
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Events",
 			  meta = (DefaultToSelf = "WorldContext"))
 	static void BroadcastTypedEvent(const UObject* WorldContext,
 		FGameplayTag EventTag,
@@ -122,11 +122,11 @@ public:
 	}
 
 	/** Returns true if the event data carries a typed struct payload. */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static bool HasTypedPayload(const FMCore_EventData& EventData);
 
 	/** Get the typed payload as FInstancedStruct. Check HasTypedPayload() first. */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Events")
 	static FInstancedStruct GetTypedPayload(const FMCore_EventData& EventData);
 
 	/**

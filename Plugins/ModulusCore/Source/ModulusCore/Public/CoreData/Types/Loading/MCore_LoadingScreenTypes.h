@@ -50,19 +50,19 @@ struct MODULUSCORE_API FMCore_LoadingScreenEntry
 	GENERATED_BODY()
 
 	/** Background texture displayed behind the loading widget. Loaded synchronously at PreLoadMap. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Loading Screen")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ModulusCore|Loading|Screen")
 	TSoftObjectPtr<UTexture2D> BackgroundImage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Loading Screen",
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ModulusCore|Loading|Screen",
 		meta=(MultiLine="true"))
 	FText TipText;
 
 	/** Hints for Tag-Based selection. An entry matches when any of its tags overlap the pending context. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Loading Screen",
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ModulusCore|Loading|Screen",
 		meta=(Categories="MCore.Loading.Context"))
 	FGameplayTagContainer ContextTags;
 
 	/** Map names this entry is preferred for. Matched against the destination map in Tag-Based mode. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Loading Screen")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ModulusCore|Loading|Screen")
 	TArray<FName> AssociatedMaps;
 };

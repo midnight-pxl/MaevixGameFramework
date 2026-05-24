@@ -21,11 +21,10 @@ class MODULUSCORE_API AMCore_GameStateBase : public AGameStateBase
 public:
 	AMCore_GameStateBase();
 
-	/** Returns the global event replicator component. */
-	UFUNCTION(BlueprintPure, Category = "Modulus|Events")
+	UFUNCTION(BlueprintPure, Category = "ModulusCore|Events")
 	UMCore_GlobalEventReplicator* GetCoreGlobalEventReplicator() const { return GlobalEventReplicator; }
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Modulus|Events")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ModulusCore|Events")
 	TObjectPtr<UMCore_GlobalEventReplicator> GlobalEventReplicator;
 };

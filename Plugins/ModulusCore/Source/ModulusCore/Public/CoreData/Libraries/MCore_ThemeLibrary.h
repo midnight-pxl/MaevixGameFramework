@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Styling/SlateTypes.h"
+#include "Templates/SubclassOf.h"
+#include "CoreData/Assets/UI/Themes/MCore_PDA_UITheme_Base.h"
+#include "CoreData/Assets/UI/Themes/MCore_PDA_ExtensionStyle_Base.h"
 #include "MCore_ThemeLibrary.generated.h"
 
 class UCommonTextBlock;
@@ -46,4 +50,25 @@ public:
 	static TSubclassOf<UCommonButtonStyle> ResolveButtonStyle(
 		TSubclassOf<UCommonButtonStyle> StyleOverride,
 		TSubclassOf<UCommonButtonStyle> ThemeDefault);
+
+	/**
+	 * BP-friendly typed lookup. Returns the extension style at StyleTag cast to TargetClass,
+	 * or nullptr if absent or wrong type. The DeterminesOutputType meta lets the BP node's
+	 * output pin auto-match TargetClass for chained-cast ergonomics.
+	 */
+	UFUNCTION(BlueprintPure, Category="ModulusCore|Theme",
+		meta=(DeterminesOutputType="TargetClass"))
+	static UMCore_PDA_ExtensionStyle_Base* GetExtensionStyleOfClass(
+		const UMCore_PDA_UITheme_Base* Theme,
+		FGameplayTag StyleTag,
+		TSubclassOf<UMCore_PDA_ExtensionStyle_Base> TargetClass);
+
+	/** Templated C++ helper with compile-time guard. Use for type-safe extension lookup. */
+	template<typename T>
+	static T* GetExtensionStyle(const UMCore_PDA_UITheme_Base* Theme, FGameplayTag Tag)
+	{
+		static_assert(TIsDerivedFrom<T, UMCore_PDA_ExtensionStyle_Base>::Value,
+			"T must derive from UMCore_PDA_ExtensionStyle_Base");
+		return Theme ? Cast<T>(Theme->GetExtensionStyle(Tag)) : nullptr;
+	}
 };

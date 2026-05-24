@@ -20,7 +20,7 @@ class MODULUSCORE_API UMCore_PDA_LoadingScreens : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Loading Screens")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ModulusCore|Loading|Screens")
 	TArray<FMCore_LoadingScreenEntry> Entries;
 
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;

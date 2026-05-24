@@ -59,68 +59,68 @@ public:
 	// ============================================================================
 
 	/** Unique gameplay tag identifying this setting (e.g. Settings.Graphics.ShadowQuality) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Identity",
 		meta = (Categories = "Settings"))
 	FGameplayTag SettingTag;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Identity")
 	FText SettingDisplayName;
 
 	/** Optional tooltip/description */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Identity")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Identity")
 	FText Description;
 
 	// ============================================================================
 	// TYPE & VALUES
 	// ============================================================================
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Type")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Type")
 	EMCore_SettingType SettingType = EMCore_SettingType::Toggle;
 
 	/** How this slider value displays in the UI */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides))
 	EMCore_SliderDisplayFormat SliderDisplayFormat = EMCore_SliderDisplayFormat::RawValue;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides, ClampMin = "0.0"))
 	float MinValue{0.0f};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides, ClampMin = "0.0"))
 	float MaxValue{1.0f};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides))
 	float StepSize{0.02f};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Slider",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides))
 	float DefaultValue{0.5f};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Toggle",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Toggle",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Toggle",
 				EditConditionHides))
 	bool DefaultToggleValue{false};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Dropdown",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Dropdown",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 				EditConditionHides))
 	TArray<FText> DropdownOptions;
 
 	/** If > 0, user can only cycle indices 0..NumSelectableOptions-1. Higher indices are
 	 *  display-only (e.g. "Custom" status). 0 means all DropdownOptions are selectable. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Setting|Dropdown",
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Dropdown",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 				EditConditionHides, ClampMin = "0"))
 	int32 NumSelectableOptions{0};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Dropdown",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Dropdown",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 				EditConditionHides, ClampMin = "0"))
 	int32 DefaultDropdownIndex{0};
@@ -134,7 +134,7 @@ public:
 	 * Pair with NamedSetter = "MCore.SetActiveTheme" so the dispatcher routes
 	 * to the theme-apply branch.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Dropdown",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Dropdown",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 				EditConditionHides, TitleProperty = "DisplayName"))
 	TArray<FMCore_ThemeEntry> ThemeOptions;
@@ -144,7 +144,7 @@ public:
 	// ============================================================================
 
 	/** Category tag for grouping (e.g. Settings.Category.Graphics) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Category",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Category",
 		meta = (Categories = "Settings.Category"))
 	FGameplayTag CategoryTag;
 
@@ -153,7 +153,7 @@ public:
 	 * declared on the parent collection. NAME_None = unsectioned (renders at
 	 * top of page, no header).
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Setting|Category")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Category")
 	FName SectionID;
 
 	// ============================================================================
@@ -171,29 +171,29 @@ public:
 	 *              EnableHDRDisplayOutput, DisplayGamma, ApplicationScale).
 	 *
 	 * Use the literal engine name. Do not translate or invent keys. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply",
 		meta = (DisplayName = "Named Setter"))
 	FName NamedSetter = NAME_None;
 
 	/** Optional override of the widget class to instantiate for this setting.
 	 *  Null = use the type-driven default from CoreSettings. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply",
 		meta = (DisplayName = "Widget Class Override"))
 	TSubclassOf<UMCore_SettingsWidget_Base> WidgetClassOverride;
 
 	/** Console variable to write to (empty = none) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply")
 	FName ConsoleVariable;
 
 	/** Sound class to adjust volume on (Audio settings) */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 		        EditConditionHides))
 	TSoftObjectPtr<USoundClass> SoundClass;
 
 	/** When true, widget queries UKismetSystemLibrary::GetSupportedFullscreenResolutions
 	   at runtime instead of using DA-authored DropdownOptions */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 		        EditConditionHides))
 	bool bPopulateFromSupportedResolutions = false;
@@ -202,12 +202,12 @@ public:
 	   renderer layer. Default None = inert. Pair two DAs: a Dropdown for Type
 	   (values 0-3 = Normal/Deuteranope/Protanope/Tritanope) and a Slider for
 	   Severity (0.0-10.0). */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply")
 	EMCore_ColorVisionRole ColorVisionRole = EMCore_ColorVisionRole::None;
 
 	/** SoundMix pushed when toggle is ON, popped when OFF.
 	   Library tracks matched push/pop pairs per setting save key */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Apply",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Toggle",
 		        EditConditionHides))
 	TSoftObjectPtr<USoundMix> PushedSoundMix;
@@ -221,7 +221,7 @@ public:
 	 * Use for destructive settings (resolution, display mode) that may render
 	 * the screen unreadable. The countdown auto-reverts if not confirmed.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setting|Behavior",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ModulusCore|Settings|Definition|Behavior",
 		meta = (DisplayName = "Requires Confirmation"))
 	bool bRequiresConfirmation = false;
 
@@ -233,9 +233,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
 	FString GetSaveKey() const;
 
-	/** Validates this definition. Returns false if SettingTag/SettingDisplayName is missing or values are out of range. */
+	/** Validates this definition's internal configuration. Returns false if SettingTag/SettingDisplayName is missing or values are out of range. Distinct from UObject liveness (use global IsValid for that). */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ModulusCore|Settings")
-	bool IsValid() const;
+	bool IsDefinitionValid() const;
 
 #if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;

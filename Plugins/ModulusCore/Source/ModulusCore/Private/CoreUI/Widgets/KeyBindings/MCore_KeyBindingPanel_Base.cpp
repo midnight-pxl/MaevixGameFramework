@@ -66,8 +66,10 @@ void UMCore_KeyBindingPanel_Base::NativeOnInitialized()
 		}
 	}
 
-	/* Pre-populate apply: writes CachedTheme so CreateThemedCategoryHeader
-	 * styles each header as it spawns. */
+	/* Cache theme before ApplyTheme: makes CachedTheme visible to CreateThemedCategoryHeader
+	 * and any BP K2_OnThemeApplied work that runs during ApplyTheme's reflection dispatch,
+	 * not just after ApplyTheme_Implementation reaches its assignment. */
+	CachedTheme = ActiveTheme;
 	ApplyTheme(ActiveTheme);
 
 	/* Bind tab selection */

@@ -14,10 +14,7 @@ void UMCore_PrimaryGameLayout::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	/* Validate BindWidget properties */
-	const bool bAllLayersValid = MCore_GameLayer && MCore_GameMenuLayer && MCore_MenuLayer && MCore_ModalLayer;
-
-	if (bAllLayersValid)
+	if (this->AreAllLayersBound())
 	{
 		UE_LOG(LogModulusUI, Log, TEXT("PrimaryGameLayout::NativeOnInitialized: all 4 layer stacks bound successfully"));
 	}

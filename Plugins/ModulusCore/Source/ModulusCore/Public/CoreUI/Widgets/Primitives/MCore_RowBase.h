@@ -49,11 +49,11 @@ protected:
 	// THEME
 	// ====================================================================
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Theme")
+	UFUNCTION(BlueprintNativeEvent, Category = "ModulusCore|Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Theme",
+	UFUNCTION(BlueprintImplementableEvent, Category = "ModulusCore|Theme",
 		meta = (DisplayName = "On Theme Applied"))
 	void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
 

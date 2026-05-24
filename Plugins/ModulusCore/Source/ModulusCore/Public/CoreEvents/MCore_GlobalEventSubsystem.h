@@ -11,11 +11,9 @@ class UMCore_EventListenerComponent;
 class UMCore_GlobalEventReplicator;
 
 /**
- * Server-authoritative event subsystem for networked GameplayTag events.
- * One instance per GameInstance (shared by all players).
- *
- * Requires UMCore_GlobalEventReplicator on GameState for network transport.
- * Without a replicator, events broadcast locally only with a warning.
+ * Server-authoritative event subsystem for networked GameplayTag events (one per GameInstance).
+ * Requires UMCore_GlobalEventReplicator on GameState for transport; without one, broadcasts
+ * stay local only with a warning.
  */
 UCLASS(Config=ModulusCore)
 class MODULUSCORE_API UMCore_GlobalEventSubsystem : public UGameInstanceSubsystem
@@ -62,7 +60,7 @@ public:
 	void DeliverToLocalListeners(const FMCore_EventData& EventData);
 
 	/** Returns true if this instance has authority to broadcast global events (server or standalone). */
-	UFUNCTION(BlueprintCallable, Category = "Event System")
+	UFUNCTION(BlueprintCallable, Category = "ModulusCore|Events")
 	bool HasGlobalEventAuthority() const;
 	
 	/** Validates an inbound event request. Override to add custom validation rules. */
