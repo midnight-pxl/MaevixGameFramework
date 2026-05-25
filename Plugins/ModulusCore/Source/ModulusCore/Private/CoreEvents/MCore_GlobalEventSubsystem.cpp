@@ -118,21 +118,21 @@ void UMCore_GlobalEventSubsystem::UnregisterGlobalListener(UMCore_EventListenerC
 void UMCore_GlobalEventSubsystem::DeliverToLocalListeners(const FMCore_EventData& EventData)
 {
 	if (GlobalListeners.IsEmpty()) { return; }
-	
-	UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::DeliverToLocalListeners: delivering '%s' to %d listeners"),
+
+	UE_LOG(LogModulusEvent, Verbose, TEXT("GlobalEventSubsystem::DeliverToLocalListeners -- delivering '%s' to %d listeners"),
 		*EventData.EventTag.ToString(), GlobalListeners.Num());
-	
+
 	/* Reverse traverse to remove stale entries */
 	for (int32 i = GlobalListeners.Num() - 1; i >= 0; --i)
 	{
 		TWeakObjectPtr<UMCore_EventListenerComponent>& CurListener = GlobalListeners[i];
-		
+
 		if (CurListener.IsValid())
 		{
 			UMCore_EventListenerComponent* ListenerComp = CurListener.Get();
-			if (ListenerComp && CurListener->ShouldReceiveEvent(EventData, /*bIsGlobalEvent*/ true))
+			if (ListenerComp && CurListener->ShouldReceiveEvent(EventData, EMCore_EventScope::Global))
 			{
-				CurListener->DeliverEvent(EventData, /*bIsGlobalEvent*/ true);
+				CurListener->DeliverEvent(EventData, EMCore_EventScope::Global);
 			}
 		}
 		else

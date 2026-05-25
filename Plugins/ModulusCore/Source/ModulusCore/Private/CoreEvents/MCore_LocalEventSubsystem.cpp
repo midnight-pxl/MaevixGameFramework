@@ -58,27 +58,29 @@ void UMCore_LocalEventSubsystem::UnregisterLocalListener(UMCore_EventListenerCom
 	}
 }
 
-void UMCore_LocalEventSubsystem::BroadcastLocalEvent(const FMCore_EventData& EventData)
+void UMCore_LocalEventSubsystem::BroadcastLocalEvent(const FMCore_EventData& EventData,
+	EMCore_EventScope SourceScope)
 {
 	if (!EventData.IsValid()) { return; }
 
+	/* Native delegate fires regardless of scope; the per-component listeners receive SourceScope. */
 	OnLocalEventBroadcast.Broadcast(EventData);
 
-	MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::BroadcastLocalEvent: broadcasting: %s"),
-		*EventData.EventTag.ToString());
-	
+	MCORE_EVENT_LOG(TEXT("LocalEventSubsystem::BroadcastLocalEvent -- broadcasting: %s (Scope: %s)"),
+		*EventData.EventTag.ToString(),
+		SourceScope == EMCore_EventScope::AllLocal ? TEXT("AllLocal") : TEXT("Local"));
+
 	for (int32 i = LocalListeners.Num() - 1; i >= 0; --i)
 	{
 		TWeakObjectPtr<UMCore_EventListenerComponent>& WeakListener = LocalListeners[i];
 
-		
 		if (WeakListener.IsValid())
 		{
 			UMCore_EventListenerComponent* CurrentListener = WeakListener.Get();
-		
-			if (CurrentListener->ShouldReceiveEvent(EventData, false))
+
+			if (CurrentListener->ShouldReceiveEvent(EventData, SourceScope))
 			{
-				CurrentListener->DeliverEvent(EventData, false);
+				CurrentListener->DeliverEvent(EventData, SourceScope);
 			}
 		}
 		else

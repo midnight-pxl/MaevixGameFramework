@@ -107,15 +107,15 @@ ULocalPlayer* UMCore_EventListenerComponent::ResolveOwningLocalPlayer() const
 		}
 	}
 
-	/* Fallback for non-player-owned actors (world actors, GameState, etc.) */
-	if (const UWorld* World = GetWorld())
-	{
-		if (const UGameInstance* GameInstance = World->GetGameInstance())
-		{
-			return GameInstance->GetFirstGamePlayer();
-		}
-	}
-
+	/* No owner chain resolved to a specific LocalPlayer. In split-screen this fallback
+	 * would have contaminated Player 0; instead we explicitly fail and log so the developer
+	 * is forced to either attach this component to a player-owned actor or wire the listener
+	 * directly via UMCore_LocalEventSubsystem with an explicit LocalPlayer. */
+	UE_LOG(LogModulusEvent, Warning,
+		TEXT("EventListenerComponent::ResolveOwningLocalPlayer -- actor '%s' has no LocalPlayer owner chain. "
+			 "Component will not register. Attach to a player-owned actor (Pawn/Controller/Widget) "
+			 "or call UMCore_LocalEventSubsystem::RegisterLocalListener directly with an explicit LocalPlayer."),
+		*GetNameSafe(GetOwner()));
 	return nullptr;
 }
 
@@ -139,20 +139,41 @@ void UMCore_EventListenerComponent::EndPlay(const EEndPlayReason::Type EndPlayRe
 	Super::EndPlay(EndPlayReason);
 }
 
-void UMCore_EventListenerComponent::DeliverEvent(const FMCore_EventData& EventData, bool bWasGlobalEvent)
+void UMCore_EventListenerComponent::DeliverEvent(const FMCore_EventData& EventData, EMCore_EventScope SourceScope)
 {
-	UE_LOG(LogModulusEvent, VeryVerbose, TEXT("EventListenerComp::DeliverEvent: delivering to %s: %s (Global: %s)"),
-	   *GetNameSafe(this), *EventData.EventTag.ToString(), bWasGlobalEvent ? TEXT("Yes") : TEXT("No"));
+	const TCHAR* ScopeName = TEXT("Unknown");
+	switch (SourceScope)
+	{
+	case EMCore_EventScope::Local:    ScopeName = TEXT("Local");    break;
+	case EMCore_EventScope::AllLocal: ScopeName = TEXT("AllLocal"); break;
+	case EMCore_EventScope::Global:   ScopeName = TEXT("Global");   break;
+	default: checkNoEntry();          break;
+	}
+	UE_LOG(LogModulusEvent, VeryVerbose, TEXT("EventListenerComp::DeliverEvent -- delivering to %s: %s (Scope: %s)"),
+	   *GetNameSafe(this), *EventData.EventTag.ToString(), ScopeName);
 
-	OnEventReceived(EventData, bWasGlobalEvent);
+	OnEventReceived(EventData, SourceScope);
 }
 
-bool UMCore_EventListenerComponent::ShouldReceiveEvent(const FMCore_EventData& EventData, bool bIsGlobalEvent) const
+bool UMCore_EventListenerComponent::ShouldReceiveEvent(const FMCore_EventData& EventData, EMCore_EventScope SourceScope) const
 {
-	if (bIsGlobalEvent && !bReceiveGlobalEvents) { return false; }
-	if (!bIsGlobalEvent && !bReceiveLocalEvents) { return false; }
+	switch (SourceScope)
+	{
+	case EMCore_EventScope::Local:
+		if (!bReceiveLocalEvents) { return false; }
+		break;
+	case EMCore_EventScope::AllLocal:
+		if (!bReceiveAllLocalEvents) { return false; }
+		break;
+	case EMCore_EventScope::Global:
+		if (!bReceiveGlobalEvents) { return false; }
+		break;
+	default:
+		checkNoEntry();
+		return false;
+	}
 
-	/* Empty subscription list means receive all events */
+	/* Empty subscription list means receive all events. */
 	if (!SubscribedEvents.IsEmpty())
 	{
 		return EventData.EventTag.MatchesAny(SubscribedEvents);

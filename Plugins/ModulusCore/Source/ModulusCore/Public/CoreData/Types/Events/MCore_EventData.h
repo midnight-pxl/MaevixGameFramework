@@ -6,12 +6,21 @@
 #include "StructUtils/InstancedStruct.h"
 #include "MCore_EventData.generated.h"
 
-/** Determines how an event is routed: Local (client-only) or Global (server-authoritative). */
+/* Event broadcast scope. Underlying values are explicitly assigned to preserve
+ * serialization compatibility -- Global retains its original value (1) from when
+ * this enum had only two values. AllLocal was inserted at declaration position 2
+ * for logical ordering in BP dropdowns (narrow -> wide scope) but assigned value
+ * 2 to avoid renumbering Global. Do not change underlying values without a
+ * dedicated CoreRedirects migration. */
 UENUM(BlueprintType)
 enum class EMCore_EventScope : uint8
 {
-	Local	UMETA(DisplayName="Local Only", ToolTip = "This client only - UI updates, audio cues, client-side effects, etc."),
-	Global	UMETA(DisplayName="Global (All Players)", ToolTip = "All players - Player actions, gameplay state, multiplayer events, etc.")
+	Local    = 0 UMETA(DisplayName = "Local (This Player)",
+	                   ToolTip = "This LocalPlayer only - UI updates, audio cues, per-player effects. Requires component on a player-owned actor."),
+	AllLocal = 2 UMETA(DisplayName = "All Local Players",
+	                   ToolTip = "Every LocalPlayer on this client - couch co-op shared UI, split-screen notifications. Zero network traffic. No-op on dedicated server."),
+	Global   = 1 UMETA(DisplayName = "Global (All Connected)",
+	                   ToolTip = "All players via server multicast - cross-network gameplay state. Requires UMCore_GlobalEventReplicator on GameState.")
 };
 
 /** Single key-value parameter entry, RPC-safe */
