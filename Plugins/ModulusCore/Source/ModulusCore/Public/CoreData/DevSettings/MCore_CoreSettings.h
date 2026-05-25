@@ -211,6 +211,18 @@ public:
 	int32 MaxEventSerializedPayloadBytes = 4096;
 
 	// ============================================================================
+	// EVENT DIAGNOSTICS
+	// ============================================================================
+
+	/* When true, suppresses the one-shot warning that fires the first time
+	 * UMCore_GlobalEventSubsystem::BroadcastGlobalEvent runs in Standalone mode
+	 * without a UMCore_GlobalEventReplicator on the GameState. The warning exists
+	 * to flag silently degraded multiplayer code during PIE testing; suppress it
+	 * if your project intentionally uses Global scope for local-only delivery. */
+	UPROPERTY(EditAnywhere, Config, BlueprintReadOnly, Category = "ModulusCore|Events|Diagnostics")
+	bool bSuppressStandaloneNoReplicatorWarning = false;
+
+	// ============================================================================
 	// LOADING SCREEN
 	// ============================================================================
 
