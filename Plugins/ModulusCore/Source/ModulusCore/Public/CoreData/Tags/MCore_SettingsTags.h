@@ -4,8 +4,6 @@
 
 #include "NativeGameplayTags.h"
 
-enum class EMCore_SettingType : uint8;
-
 namespace MCore_SettingsTags
 {
     // ========================================================================

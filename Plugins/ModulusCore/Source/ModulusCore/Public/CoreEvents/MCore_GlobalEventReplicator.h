@@ -14,6 +14,12 @@ class UMCore_GlobalEventSubsystem;
  * Attach to GameState (or use AMCore_GameStateBase) to enable cross-network event broadcasting.
  *
  * Pure network transport; all business logic lives in UMCore_GlobalEventSubsystem.
+ *
+ * Late-join semantics: this replicator does NOT persist event history. Clients that join the
+ * session after a global event has fired will not receive that event. Consumers requiring
+ * durable state should propagate state via replicated properties on the GameState or a
+ * dedicated replicated subobject, then derive UI events from property change notifications --
+ * do not rely on Global-scope event broadcasts as a state-restoration mechanism.
  */
 UCLASS(ClassGroup=(ModulusCore), meta=(BlueprintSpawnableComponent, DisplayName="Global Event Replicator"))
 class MODULUSCORE_API UMCore_GlobalEventReplicator : public UActorComponent

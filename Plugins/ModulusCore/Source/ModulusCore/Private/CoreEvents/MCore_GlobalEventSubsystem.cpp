@@ -48,20 +48,36 @@ void UMCore_GlobalEventSubsystem::BroadcastGlobalEvent(const FMCore_EventData& E
 		{
 			/* Deliver locally */
 			DeliverToLocalListeners(EventData);
-			
+
 			if (IsNetworkedGame())
 			{
 				UE_LOG(LogModulusEvent, Warning,
-					TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: delivered locally only, no replicator found; "
+					TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- delivered locally only, no replicator found; "
 						 "add GlobalEventReplicator to GameState for network support."));
 				return;
+			}
+			else if (!bHasLoggedStandaloneNoReplicatorWarning)
+			{
+				/* Standalone-with-authority path: fire a one-shot diagnostic so devs notice
+				 * silent multiplayer breakage during PIE testing. Suppressible via
+				 * UMCore_CoreSettings::bSuppressStandaloneNoReplicatorWarning. */
+				bHasLoggedStandaloneNoReplicatorWarning = true;
+				const UMCore_CoreSettings* Settings = UMCore_CoreSettings::Get();
+				if (!Settings || !Settings->bSuppressStandaloneNoReplicatorWarning)
+				{
+					UE_LOG(LogModulusEvent, Warning,
+						TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- no UMCore_GlobalEventReplicator on GameState; "
+							 "Global scope is degrading to local-only delivery on this GameInstance. This is correct for "
+							 "Standalone but will silently mask broken multiplayer code in PIE. Suppress via "
+							 "UMCore_CoreSettings::bSuppressStandaloneNoReplicatorWarning if intentional."));
+				}
 			}
 		}
 		else
 		{
 			/* Client w/o replicator: cannot request broadcast */
 			UE_LOG(LogModulusEvent, Warning,
-				TEXT("GlobalEventSubsystem::BroadcastGlobalEvent: not authority and no replicator found; "
+				TEXT("GlobalEventSubsystem::BroadcastGlobalEvent -- not authority and no replicator found; "
 					 "add GlobalEventReplicator to GameState for network support."))
 			return;
 		}
@@ -137,8 +153,9 @@ void UMCore_GlobalEventSubsystem::DeliverToLocalListeners(const FMCore_EventData
 		}
 		else
 		{
-			/* Invalid pointer, clean up */
-			GlobalListeners.RemoveAt(i);
+			/* Invalid pointer, clean up. RemoveAtSwap is O(1); reverse iteration is safe
+			 * with swap-from-end because the swapped-in element has already been processed. */
+			GlobalListeners.RemoveAtSwap(i, 1, EAllowShrinking::No);
 		}
 	}
 }

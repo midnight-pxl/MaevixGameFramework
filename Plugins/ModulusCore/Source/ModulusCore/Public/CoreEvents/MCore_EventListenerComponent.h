@@ -77,7 +77,12 @@ private:
 	 *   (4) Owner-chain walk -> first AController encountered -> GetLocalPlayer();
 	 * Returns nullptr with a warning log when no owner chain resolves -- components on
 	 * unowned actors (and components on any actor in a dedicated server build) will
-	 * not register. Split-screen safety: no Player 0 fallback. */
+	 * not register. Split-screen safety: no Player 0 fallback.
+	 *
+	 * @see UMCore_EventFunctionLibrary's anonymous-namespace ResolveLocalPlayer in
+	 *      MCore_EventFunctionLibrary.cpp -- the WorldContext-based symmetric chain
+	 *      used by the library's broadcast routing path. Both share the same
+	 *      no-Player-0-fallback policy (audit §5.6, Phase 1 + Phase 2). */
 	ULocalPlayer* ResolveOwningLocalPlayer() const;
 
 	/** Cached reference to local event subsystem */

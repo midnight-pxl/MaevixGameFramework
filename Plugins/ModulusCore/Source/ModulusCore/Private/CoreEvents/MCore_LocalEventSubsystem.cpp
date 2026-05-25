@@ -27,8 +27,8 @@ void UMCore_LocalEventSubsystem::Initialize(FSubsystemCollectionBase& Collection
 
 void UMCore_LocalEventSubsystem::Deinitialize()
 {
-	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Deinitialize: cleaning up, %d listener(s)"), LocalListeners.Num());
-	LocalListeners.Empty();
+	UE_LOG(LogModulusEvent, Log, TEXT("LocalEventSubsystem::Deinitialize -- cleaning up, %d listener(s)"), LocalListeners.Num());
+	LocalListeners.Reset();
 
 	Super::Deinitialize();
 }
@@ -85,7 +85,8 @@ void UMCore_LocalEventSubsystem::BroadcastLocalEvent(const FMCore_EventData& Eve
 		}
 		else
 		{
-			LocalListeners.RemoveAtSwap(i);
+			/* Reverse iteration + RemoveAtSwap: swapped-in element has already been processed. */
+			LocalListeners.RemoveAtSwap(i, 1, EAllowShrinking::No);
 		}
 	}
 }

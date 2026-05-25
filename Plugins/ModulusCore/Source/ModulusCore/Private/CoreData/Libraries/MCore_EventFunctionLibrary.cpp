@@ -15,6 +15,20 @@
 
 namespace
 {
+	/* Resolves the LocalPlayer from a WorldContext object by trying, in order:
+	 *   (1) WorldContext is a PlayerController -> GetLocalPlayer();
+	 *   (2) WorldContext is a Pawn -> Controller -> GetLocalPlayer();
+	 *   (3) WorldContext is an ActorComponent -> recurse on its Owner;
+	 *   (4) WorldContext is a UserWidget -> GetOwningLocalPlayer();
+	 *   (5) WorldContext is an Actor -> Instigator -> Controller -> GetLocalPlayer();
+	 *   (6) Owner-chain walk -> first APlayerController encountered -> GetLocalPlayer();
+	 * Returns nullptr with a warning log when no owner chain resolves -- callers must
+	 * pass a player-owned WorldContext or use EMCore_EventScope::AllLocal/Global instead.
+	 * Split-screen safety: no Player 0 fallback.
+	 *
+	 * @see UMCore_EventListenerComponent::ResolveOwningLocalPlayer -- the Actor-based
+	 *      symmetric chain used by listener registration in BeginPlay. Both share
+	 *      the same no-Player-0-fallback policy (audit §5.6, Phase 1 + Phase 2). */
 	ULocalPlayer* ResolveLocalPlayer(const UObject* WorldContext)
 	{
 		if (!WorldContext) { return nullptr; }

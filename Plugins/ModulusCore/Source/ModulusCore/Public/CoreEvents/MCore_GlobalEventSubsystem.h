@@ -74,9 +74,13 @@ private:
 	/** Registered global listener components */
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UMCore_EventListenerComponent>> GlobalListeners;
-	
+
 	/* Cached reference to the network replicator on GameState */
 	TWeakObjectPtr<UMCore_GlobalEventReplicator> EventReplicator;
+
+	/* One-shot guard for the Standalone-no-replicator diagnostic. Resets on
+	 * subsystem deinit. Not config, not replicated, not serialized. */
+	bool bHasLoggedStandaloneNoReplicatorWarning = false;
 
 	bool IsNetworkedGame() const;
 };
