@@ -47,38 +47,38 @@ public:
 	// ====================================================================
 
 	/** Configure this button for a specific action, slot, and device type. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void InitForSlot(APlayerController* OwningPlayer, UInputAction* Action,
 		EPlayerMappableKeySlot InSlot, bool bInIsGamepad);
 
 	/** Re-read the current binding and update visuals via ButtonBase. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void RefreshKeyDisplay();
 
 	/** Begin listening for a key press. Registers the input preprocessor. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void EnterCaptureMode();
 
 	/** Stop listening and restore display state. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void ExitCaptureMode();
 
-	UFUNCTION(BlueprintPure, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|KeyBinding")
 	bool IsGamepadSlot() const { return bIsGamepad; }
 
-	UFUNCTION(BlueprintPure, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|KeyBinding")
 	UInputAction* GetInputAction() const { return BoundAction; }
 
-	UFUNCTION(BlueprintPure, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|KeyBinding")
 	EPlayerMappableKeySlot GetSlot() const { return Slot; }
 
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnRebindComplete OnRebindComplete;
 
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnCaptureStateChanged OnCaptureStateChanged;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	EMCore_KeyBindingButtonState CurrentState = EMCore_KeyBindingButtonState::Unbound;
 
 protected:
@@ -94,7 +94,7 @@ protected:
 	// ====================================================================
 
 	/** Text shown when no key is bound for this slot. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	FText UnboundText;
 
 	// ====================================================================

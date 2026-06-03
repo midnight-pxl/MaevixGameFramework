@@ -32,11 +32,11 @@ public:
 	// ====================================================================
 
 	/** Set the dialog display text for this capture session. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void ConfigureForCapture(const FText& ActionName, const FText& SlotContext, const FText& PromptText);
 
 	/** Show an error message in the prompt area. Starts the cooldown timer. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void ShowCaptureError(const FText& ErrorMessage);
 
 	// ====================================================================
@@ -44,11 +44,11 @@ public:
 	// ====================================================================
 
 	/** Fires when the user cancels (Cancel button or Back action). */
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnCaptureDialogDismissed OnDialogDismissed;
 
 	/** Fires when the error cooldown expires and the dialog is ready for another capture attempt. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnCaptureDialogReadyForCapture OnReadyForCapture;
 
 protected:
@@ -74,11 +74,11 @@ protected:
 	// ====================================================================
 
 	/** How long error messages display before restoring the capture prompt. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	float ErrorDisplayDuration{2.0f};
 
 	/** Input action for back/cancel. Registered on activation, cleaned up on deactivation. */
-	UPROPERTY(EditDefaultsOnly, Category = "UI|KeyBinding|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|KeyBinding|Input")
 	FDataTableRowHandle BackInputAction;
 
 	// ====================================================================

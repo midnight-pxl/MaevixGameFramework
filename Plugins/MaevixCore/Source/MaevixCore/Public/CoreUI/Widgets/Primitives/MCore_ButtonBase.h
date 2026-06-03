@@ -112,14 +112,14 @@ public:
 	// WIDGET BINDINGS AND DELEGATES
 	// ============================================================================
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UCommonTextBlock> Txt_BtnLabel;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UImage> Img_BtnIcon;
 
 	/* Switcher layers must be ordered: 0=TextOnly, 1=IconOnly, 2=TextAndIcon */
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UWidgetSwitcher> WS_BtnContent;
 
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Button")

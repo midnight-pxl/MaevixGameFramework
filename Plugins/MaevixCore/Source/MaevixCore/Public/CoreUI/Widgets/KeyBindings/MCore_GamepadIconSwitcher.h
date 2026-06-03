@@ -31,10 +31,10 @@ public:
 	// ====================================================================
 
 	/** Rebuild option list from registered configs and sync display to saved index. */
-	UFUNCTION(BlueprintCallable, Category = "UI|Settings")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
 	void RefreshDisplay();
 
-	UFUNCTION(BlueprintPure, Category = "UI|Settings")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	int32 GetCurrentIndex() const { return CurrentIndex; }
 
 protected:
@@ -63,10 +63,10 @@ protected:
 	// STATE
 	// ====================================================================
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI|Settings")
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Settings")
 	TArray<FText> AvailableOptions;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI|Settings")
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Settings")
 	int32 CurrentIndex = 0;
 
 private:

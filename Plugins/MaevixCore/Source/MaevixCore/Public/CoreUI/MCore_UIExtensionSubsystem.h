@@ -29,7 +29,7 @@ public:
 	 * Register an extension point that receives widget injections.
 	 * Callback is immediately invoked for any existing matching extensions, sorted by priority.
 	 */
-	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI Extension", 
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension", 
 		meta=(AutoCreateRefTerm="ExtensionCallback"))
 	FMCore_UIExtensionPointHandle RegisterExtensionPoint(
 		const FGameplayTag& ExtensionPointTag,
@@ -40,14 +40,14 @@ public:
 	 * Unregister extension point (stop receiving extensions).
 	 * Safe to call with invalid handle.
 	 */
-	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	void UnregisterExtensionPoint(UPARAM(ref) FMCore_UIExtensionPointHandle& ExtensionPointHandle);
 
 	/**
 	 * Register a widget to inject at matching extension points.
 	 * Immediately notifies all matching extension points of the new extension.
 	 */
-	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	FMCore_UIExtensionHandle RegisterExtension(
 		const FGameplayTag& ExtensionPointTag,
 		UObject* ContextObject,
@@ -59,22 +59,22 @@ public:
 	 * Notifies all extension points to remove widget.
 	 * Safe to call with invalid handle.
 	 */
-	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	void UnregisterExtension(UPARAM(ref) FMCore_UIExtensionHandle& ExtensionHandle);
 
 	/**
 	 * Get widget class for extension handle.
 	 * Used by extension point widgets to create instances.
 	 */
-	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	TSubclassOf<UUserWidget> GetWidgetClassForExtension(const FMCore_UIExtensionHandle& ExtensionHandle) const;
 
 	/** Check if extension handle is currently registered */
-	UFUNCTION(BlueprintPure, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintPure, Category="MaevixCore|UI|Extension")
 	bool IsExtensionRegistered(const FMCore_UIExtensionHandle& ExtensionHandle) const;
 
 	/** Check if extension point handle is currently registered */
-	UFUNCTION(BlueprintPure, Category="MaevixCore|UI Extension")
+	UFUNCTION(BlueprintPure, Category="MaevixCore|UI|Extension")
 	bool IsExtensionPointRegistered(const FMCore_UIExtensionPointHandle& ExtensionPointHandle) const;
 
 private:

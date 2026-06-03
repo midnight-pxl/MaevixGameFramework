@@ -32,11 +32,11 @@ public:
 	 * Begin the countdown. Stores affected settings and starts a 1-second looping timer.
 	 * Duration is read from CoreSettings::ConfirmationRevertDelay.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "UI|Settings")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
 	void StartCountdown(const TArray<FGameplayTag>& AffectedTags);
 
 	/** Fires when the countdown resolves. True = user confirmed, false = reverted or timed out. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|Settings")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Settings")
 	FOnCountdownResult OnCountdownResult;
 
 	/** Marks this countdown as resolved without firing the auto-revert fallback.
@@ -58,16 +58,16 @@ protected:
 	// WIDGET BINDINGS
 	// ============================================================================
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> Txt_Message;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> Txt_Countdown;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Confirm;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Revert;
 
 private:

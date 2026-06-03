@@ -191,22 +191,22 @@ public:
 	 * open DoS surface area on the server. Defaults match historical hardcoded values. */
 
 	/** Maximum FMCore_EventParameter count per global event. Floor: 1, Ceiling: 32. */
-	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Network Safety|Event Validation",
+	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="1", ClampMax="32"))
 	int32 MaxEventParams = 8;
 
 	/** Maximum ContextID string length in chars. Floor: 16, Ceiling: 256. */
-	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Network Safety|Event Validation",
+	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="16", ClampMax="256"))
 	int32 MaxEventContextIDLength = 64;
 
 	/** Maximum FInstancedStruct sizeof for typed payloads. Floor: 256 B, Ceiling: 8 KB. */
-	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Network Safety|Event Validation",
+	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="256", ClampMax="8192"))
 	int32 MaxEventStructSizeBytes = 2048;
 
 	/** Maximum FBufferArchive serialized payload size for typed payloads. Floor: 512 B, Ceiling: 16 KB. */
-	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Network Safety|Event Validation",
+	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="512", ClampMax="16384"))
 	int32 MaxEventSerializedPayloadBytes = 4096;
 

@@ -39,26 +39,26 @@ public:
 	// ====================================================================
 
 	/** Configure this row for a specific action. Sets display name and inits all buttons. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void InitFromAction(APlayerController* OwningPlayer, UInputAction* Action, bool bShowSecondary);
 
 	/** Re-read current bindings and update all 4 buttons. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void RefreshDisplay();
 
-	UFUNCTION(BlueprintPure, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|KeyBinding")
 	UInputAction* GetInputAction() const { return BoundAction; }
 
 	/** Fires after any button completes a rebind attempt. Panel binds to this for cross-row refresh. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnRowRebindCompleted OnRowRebindCompleted;
 
 	/** Fires when a button enters or exits capture mode. Panel binds for centralized prompt display. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnRowCaptureStateChanged OnRowCaptureStateChanged;
 
 	/** Fires after a rebind attempt with success/failure status. Panel binds for centralized error display. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|KeyBinding")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
 	FOnRowRebindResult OnRowRebindResult;
 
 protected:

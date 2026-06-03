@@ -40,7 +40,7 @@ public:
 	virtual void Deinitialize() override;
 	//~ End USubsystem Interface
 
-	UFUNCTION(BlueprintPure, Category = "UI|Layout")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|Layout")
 	bool HasPrimaryGameLayout() const
 	{
 		return IsValid(PrimaryGameLayout) && PrimaryGameLayout->AreAllLayersBound();
@@ -54,34 +54,34 @@ public:
 // ============================================================================
 
 	/** Opens a screen on the specified layer. Returns existing instance if already active (dedup by default). */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI", meta = (DeterminesOutputType = "ScreenClass"))
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI", meta = (DeterminesOutputType = "ScreenClass"))
 	UCommonActivatableWidget* OpenScreen(TSubclassOf<UCommonActivatableWidget> ScreenClass,
 		UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag,
 		bool bAllowDuplicates = false);
 
 	/** Closes a screen: untracks it and deactivates it. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI")
 	void CloseScreen(UCommonActivatableWidget* Screen);
 
 	/** Pops the top widget from the specified layer stack. Returns true if a widget was closed. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI")
 	bool PopLayer(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag);
 
 	/** Removes a specific widget from a specific layer. Returns true if found and closed. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI")
 	bool RemoveWidgetFromLayer(UCommonActivatableWidget* Widget,
 		UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag);
 
 	/** Returns the top active widget on the specified layer, or nullptr. */
-	UFUNCTION(BlueprintPure, Category = "MCore|UI")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI")
 	UCommonActivatableWidget* GetActiveWidgetInLayer(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
 	/** Returns the number of tracked widgets on the specified layer. */
-	UFUNCTION(BlueprintPure, Category = "MCore|UI")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI")
 	int32 GetWidgetCountInLayer(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
 	/** Returns true if the layer's stack has any tracked, valid widget. */
-	UFUNCTION(BlueprintPure, Category = "MCore|UI")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI")
 	bool IsLayerActive(UPARAM(meta = (Categories = "MCore.UI.Layer")) FGameplayTag LayerTag) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|Events")
@@ -97,15 +97,15 @@ public:
 // ============================================================================
 
 	/** Opens the GameMenuHub on the GameMenu layer. Returns existing if already active. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	UMCore_GameMenuHub* OpenMenuHub();
 
 	/** Closes the GameMenuHub if it's currently on the GameMenu layer. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	void CloseMenuHub();
 
 	/** Register a menu screen tab in the MenuHub. Duplicate TabIDs are rejected. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	void RegisterMenuScreen(
 		FGameplayTag TabID,
 		TSubclassOf<UCommonActivatableWidget> ScreenWidgetClass,
@@ -113,33 +113,33 @@ public:
 		UTexture2D* TabIcon = nullptr);
 
 	/** Unregister a menu screen tab. Returns true if found and removed. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	bool UnregisterMenuScreen(FGameplayTag TabID);
 
-	UFUNCTION(BlueprintPure, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|Menu Hub")
 	const TArray<FMCore_MenuTab>& GetRegisteredMenuScreens() const { return RegisteredMenuScreens; }
 
 	/** Force rebuild of MenuHub tab bar. Auto-called when screens registered/unregistered while hub is active. */
-	UFUNCTION(BlueprintCallable, Category = "MCore|UI|MenuHub")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	void RebuildMenuHubTabBar();
 	
 // ============================================================================
 // THEME
 // ============================================================================
 
-	UFUNCTION(BlueprintPure, Category = "UI|Theme")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|Theme")
 	UMCore_PDA_UITheme_Base* GetActiveTheme() const { return CachedActiveTheme; }
 	
-	UPROPERTY(BlueprintAssignable, Category = "UI|Theme")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Theme")
 	FOnThemeChanged OnThemeChanged;
 
-	UFUNCTION(BlueprintPure, Category = "UI|Theme")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|Theme")
 	const TArray<FMCore_ThemeEntry>& GetAvailableThemes() const;
 
-	UFUNCTION(BlueprintPure, Category = "UI|Theme")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|Theme")
 	int32 GetActiveThemeIndex() const { return ActiveThemeIndex; }
 
-	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Theme")
 	bool SetActiveThemeByIndex(int32 ThemeIndex);
 
 	/**
@@ -147,11 +147,11 @@ public:
 	 * MCore.Theme.Changed local event tag, then persists to UMCore_PlayerSettingsSave.
 	 * No-op if NewTheme is null or already active.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Theme")
 	void SetActiveTheme(UMCore_PDA_UITheme_Base* NewTheme);
 
 	/** Re-broadcasts OnThemeChanged so all widgets re-resolve text styles at the new size index. */
-	UFUNCTION(BlueprintCallable, Category = "UI|Theme")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Theme")
 	void NotifyTextSizeChanged();
 
 protected:

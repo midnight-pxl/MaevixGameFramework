@@ -67,13 +67,13 @@ protected:
 	// WIDGET BINDINGS
 	// ============================================================================
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UBorder> Border_Background;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UImage> Image_Background;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UNamedSlot> Slot_Content;
 
 private:

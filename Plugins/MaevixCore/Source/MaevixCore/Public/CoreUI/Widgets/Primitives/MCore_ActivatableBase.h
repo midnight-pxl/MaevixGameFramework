@@ -42,11 +42,11 @@ public:
 	UMCore_ActivatableBase(const FObjectInitializer& ObjectInitializer);
 
 	/** GameplayTags that block this widget from activating when present on OwningPlayer */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI|Activation", meta=(Categories = "State"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|UI|Activation", meta=(Categories = "State"))
 	FGameplayTagContainer BlockTags;
 
 	/** Register an input action binding with automatic cleanup on deactivation. */
-	UFUNCTION(BlueprintCallable, Category="UI|Input", meta=(AutoCreateRefTerm = "OverrideDisplayName"))
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Input", meta=(AutoCreateRefTerm = "OverrideDisplayName"))
 	void RegisterBinding(
 		FDataTableRowHandle InputAction,
 		const FInputActionExecutedDelegate& Callback,
@@ -58,7 +58,7 @@ public:
 	 * Unregister all input bindings tracked by this widget.
 	 * Called automatically on deactivation. Safe to call manually.
 	 */
-	UFUNCTION(BlueprintCallable, Category="UI|Input")
+	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Input")
 	void UnregisterAllBindings();
 
 #if WITH_EDITOR
@@ -101,7 +101,7 @@ protected:
 	/* Check if activation should be blocked based on OwningPlayer's tags */
 	bool bShouldBlockActivation() const;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI|Activation")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="MaevixCore|UI|Activation")
 	bool bShouldFocusOnActivation{false};
 
 	UPROPERTY(Transient)

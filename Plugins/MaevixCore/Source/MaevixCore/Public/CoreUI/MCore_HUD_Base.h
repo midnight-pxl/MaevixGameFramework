@@ -20,10 +20,10 @@ class MAEVIXCORE_API AMCore_HUD_Base : public AHUD
 public:
 	AMCore_HUD_Base(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintPure, Category = "UI|HUD")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|HUD")
 	bool HasValidPrimaryGameLayout() const;
 
 	/** Returns nullptr if the owning PlayerController has no LocalPlayer. */
-	UFUNCTION(BlueprintPure, Category = "UI|HUD")
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|HUD")
 	UMCore_UISubsystem* GetUISubsystem() const;
 };

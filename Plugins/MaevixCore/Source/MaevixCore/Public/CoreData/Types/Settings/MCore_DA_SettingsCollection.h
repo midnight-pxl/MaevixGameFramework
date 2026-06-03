@@ -28,17 +28,17 @@ public:
 	// ============================================================================
 
 	/** Display name for this collection (e.g. "Default Settings", "PC Settings") */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Collection")
 	FText CollectionName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Collection")
 	TArray<TObjectPtr<UMCore_DA_SettingDefinition>> Settings;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection",
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Collection",
 		meta = (TitleProperty = "SectionDisplayName"))
 	TArray<FMCore_SettingsSection> Sections;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collection")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Collection")
 	TMap<FGameplayTag, FText> CategoryDisplayName;
 
 	// ============================================================================

@@ -39,11 +39,11 @@ public:
 	// ====================================================================
 
 	/** Query all remappable actions, group by IMC and category, and spawn rows into tabs. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void PopulateBindings(APlayerController* OwningPlayer);
 
 	/** Refresh all spawned rows to reflect current bindings. */
-	UFUNCTION(BlueprintCallable, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void RefreshAllRows();
 
 	// ====================================================================
@@ -51,17 +51,17 @@ public:
 	// ====================================================================
 
 	/** Fires after each IMC tab is created and registered in the TabbedContainer. */
-	UFUNCTION(BlueprintNativeEvent, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI|KeyBinding")
 	void OnContextTabCreated(FName TabID, UWidget* PageWidget, const FText& ContextDisplayName);
 	virtual void OnContextTabCreated_Implementation(FName TabID, UWidget* PageWidget, const FText& ContextDisplayName) {}
 
 	/** Fires after each category header is added to a tab's ScrollBox. */
-	UFUNCTION(BlueprintNativeEvent, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI|KeyBinding")
 	void OnCategoryHeaderCreated(const FText& CategoryDisplayName, UWidget* HeaderWidget);
 	virtual void OnCategoryHeaderCreated_Implementation(const FText& CategoryDisplayName, UWidget* HeaderWidget) {}
 
 	/** Fires after each row is created and added to a tab's ScrollBox. */
-	UFUNCTION(BlueprintNativeEvent, Category = "UI|KeyBinding")
+	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI|KeyBinding")
 	void OnRowCreated(UMCore_KeyBindingRow* Row);
 	virtual void OnRowCreated_Implementation(UMCore_KeyBindingRow* Row) {}
 
@@ -86,23 +86,23 @@ protected:
 	// CONFIGURATION
 	// ====================================================================
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	TSubclassOf<UMCore_KeyBindingRow> KeyBindingRowClass;
 
 	/** Dialog class pushed to modal layer during key capture. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	TSubclassOf<UMCore_KeyBindingCaptureDialog> CaptureDialogClass;
 
 	/** Text shown during KBM key capture. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	FText CapturePromptText;
 
 	/** Text shown during gamepad button capture. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	FText CapturePromptGamepadText;
 	
 	/** Confirmation dialog class for reset operations. Falls back to CoreSettings::DefaultConfirmationDialogClass if null. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|KeyBinding")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	TSubclassOf<UMCore_ConfirmationDialog> ResetConfirmationDialogClass;
 
 	// ====================================================================

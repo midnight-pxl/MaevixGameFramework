@@ -60,7 +60,7 @@ public:
 	 * Force immediate network update for this component's owning actor.
 	 * Use sparingly due to performance cost.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Replication")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Networking|Replication")
 	void ForceNetUpdate();
 
 protected:

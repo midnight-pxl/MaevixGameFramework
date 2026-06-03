@@ -26,15 +26,15 @@ class MAEVIXCORE_API UMCore_ConfirmationDialog : public UMCore_ActivatableBase
 public:
 	UMCore_ConfirmationDialog(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable, Category = "UI|Dialog")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|Dialog")
 	void SetDialogMessage(FText InMessage);
 
 	/** Override confirm and cancel button labels at runtime. */
-	UFUNCTION(BlueprintCallable, Category = "UI|Dialog")
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|Dialog")
 	void SetButtonLabels(FText InConfirmText, FText InCancelText);
 
 	/** Fires when dialog resolves. True if confirmed, false if cancelled. */
-	UPROPERTY(BlueprintAssignable, Category = "UI|Dialog")
+	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|Dialog")
 	FOnDialogResult OnDialogResult;
 
 protected:
@@ -52,29 +52,29 @@ protected:
 	// CONFIGURATION
 	// ============================================================================
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI|Dialog|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|Dialog|Input")
 	FDataTableRowHandle AcceptInputAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI|Dialog|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|Dialog|Input")
 	FDataTableRowHandle BackInputAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI|Dialog")
+	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|Dialog")
 	FText ConfirmText;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI|Dialog")
+	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|Dialog")
 	FText CancelText;
 
 	// ============================================================================
 	// WIDGET BINDINGS
 	// ============================================================================
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> Txt_DialogMessage;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Confirm;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Cancel;
 
 private:
