@@ -24,6 +24,7 @@ class UMCore_LoadingScreenWidget;
 class UMCore_PDA_LoadingScreens;
 class USoundMix;
 class UInputAction;
+class UWorld;
 
 /**
  * Developer settings for the Maevix Game Framework (Project Settings > Game > Maevix Core).
@@ -276,6 +277,21 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Loading|Screen",
 		meta=(DisplayName="Loading Screen Enabled By Default"))
 	bool bLoadingScreenEnabledByDefault{true};
+
+	// ============================================================================
+	// GAME FLOW
+	// ============================================================================
+
+	/**
+	 * Level the New-Game flow travels to (see UMCore_GameFlowLibrary::StartNewGame).
+	 * Stored as a soft pointer, so the level is referenced by path and only loaded on
+	 * travel. Leave unset to disable New-Game travel: the shipped framework ships this
+	 * empty so the menu never hard-references demo content, and each integrator points
+	 * it at their own first level via config.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Game Flow",
+		meta=(DisplayName="New Game Target Level"))
+	TSoftObjectPtr<UWorld> NewGameTargetLevel;
 
 	// ============================================================================
 	// DEBUG (EDITOR ONLY)
