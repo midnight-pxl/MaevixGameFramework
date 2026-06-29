@@ -16,13 +16,17 @@ UMCore_NetworkingComponent::UMCore_NetworkingComponent()
 void UMCore_NetworkingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	DetectNetworkingSystem();
-	OnNetworkInitialized();
 
-	UE_LOG(LogMaevixNetworking, Verbose, TEXT("NetworkingComponent::BeginPlay: initialized: %s "
-		"(Authority: %s, Iris: %s)"), *GetClass()->GetName(),
-		HasNetworkAuthority() ? TEXT("Yes") : TEXT("No"),
-		bIrisDetected ? TEXT("Yes") : TEXT("No"));
+	/* Read authority once here purely to publish the init-time verdict. This is a transient
+	   local, not a cache; ExecuteWithAuthority re-reads authority live on every call and
+	   never consults it. */
+	const bool bHasAuthority = HasNetworkAuthority();
+
+	OnNetworkInitialized();
+	OnAuthorityChanged(bHasAuthority);
+
+	UE_LOG(LogMaevixNetworking, Verbose, TEXT("NetworkingComponent::BeginPlay: initialized %s (Authority: %s)"),
+		*GetClass()->GetName(), bHasAuthority ? TEXT("Yes") : TEXT("No"));
 }
 
 void UMCore_NetworkingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -36,25 +40,6 @@ void UMCore_NetworkingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, ComponentNetworkID);
-}
-
-void UMCore_NetworkingComponent::DetectNetworkingSystem()
-{
-	/* Honesty stub: Iris replication detection is targeted for v1.X once Iris graduates Beta.
-	 * See MAEVIXCORE_WORK_TRACKER.md T-13 / T-19. */
-	bIrisDetected = false;
-}
-
-bool UMCore_NetworkingComponent::IsUsingIrisReplication() const
-{
-	return bIrisDetected;
-}
-
-bool UMCore_NetworkingComponent::IsIrisAvailable() const
-{
-	/* Honesty stub: Iris availability detection is targeted for v1.X once Iris graduates Beta.
-	 * See MAEVIXCORE_WORK_TRACKER.md T-13 / T-19. */
-	return false;
 }
 
 void UMCore_NetworkingComponent::ForceNetUpdate()
