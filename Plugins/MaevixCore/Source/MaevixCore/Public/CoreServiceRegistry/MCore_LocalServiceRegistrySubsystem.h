@@ -16,9 +16,10 @@
  * UMCore_GlobalServiceRegistrySubsystem for GameInstance scoped, server authoritative providers. This is a
  * storage layer; all Blueprint exposure, interface templating, and WorldContext routing live in the facade.
  *
- * Prune cadence (deferred): PruneStale is a passthrough and is uncalled in v1 (single provider, no roster
- * churn). When the multi provider Memory roster consumer lands, the facade must prune inline as ResolveAll
- * iterates the roster key plus a low frequency tick. Do not build that here.
+ * Prune cadence (deferred): no public prune passthrough in v1. FMCore_ServiceRegistryCore::PruneStaleEntries
+ * holds the sweep logic, reserved for the future roster prune cadence. When the multi provider Memory roster
+ * consumer lands, the facade must prune inline as ResolveAll iterates the roster key plus a low frequency
+ * tick. Do not build that here.
  *
  * Re-resolution notification: OnServiceRegistered (a BlueprintAssignable delegate, not the event bus) fires
  * in process on this subsystem after a successful register, carrying the interface and discriminator, so a
@@ -38,6 +39,12 @@ class MAEVIXCORE_API UMCore_LocalServiceRegistrySubsystem : public ULocalPlayerS
 	GENERATED_BODY()
 
 public:
+	/**
+	 * Lower-tier C++ primitives beneath the UMCore_ServiceRegistryLibrary facade (RegisterService /
+	 * ResolveService / UnregisterService). Direct C++ escape hatch; the facade is the validated path
+	 * (it gates ImplementsInterface and routes scope by WorldContext). Storage layer only.
+	 */
+
 	/** Stores Provider under (InterfaceClass, Discriminator) and returns a stamped handle, or an invalid handle if rejected. */
 	FMCore_ServiceHandle RegisterProvider(UClass* InterfaceClass, FGameplayTag Discriminator, UObject* Provider);
 
@@ -47,11 +54,12 @@ public:
 	/** Removes the registration with the given id. Returns true if an entry was found and removed. */
 	bool UnregisterById(uint32 RegistrationId);
 
-	/** Passthrough to the core's stale sweep. Uncalled in v1; reserved for the future roster prune cadence. */
-	void PruneStale();
-
-	/** Fires on a successful registration into this scope's registry; carries the registered interface
-	 *  and discriminator. Bind here to re-resolve a service you resolved before it registered. */
+	/**
+	 * Fires on a successful registration into this scope's registry; carries the registered interface
+	 * and discriminator. Re-resolution boundary: a consumer that resolved null binds here and re-resolves
+	 * when OnServiceRegistered fires for its own (InterfaceClass, Discriminator). v1 has no ResolveOrAwait
+	 * or deferred-resolution; re-resolution on this notification is the supported pattern.
+	 */
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|ServiceRegistry")
 	FMCore_OnServiceRegistered OnServiceRegistered;
 
