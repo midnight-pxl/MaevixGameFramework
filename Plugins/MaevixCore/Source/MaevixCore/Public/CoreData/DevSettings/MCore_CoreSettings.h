@@ -14,6 +14,7 @@
 
 class UMCore_PDA_UITheme_Base;
 class UMCore_PrimaryGameLayout;
+class UMCore_ToastBase;
 class UMCore_GameMenuHub;
 class UMCore_SettingsWidget_Slider;
 class UMCore_SettingsWidget_Switcher;
@@ -292,6 +293,40 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Game Flow",
 		meta=(DisplayName="New Game Target Level"))
 	TSoftObjectPtr<UWorld> NewGameTargetLevel;
+
+	// ============================================================================
+	// TOAST NOTIFICATIONS
+	// ============================================================================
+
+	/** Default toast widget class when a request supplies no WidgetOverride. */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
+		meta=(DisplayName="Default Toast Widget Class"))
+	TSoftClassPtr<UMCore_ToastBase> DefaultToastWidgetClass;
+
+	/** Anchor used when a request's AnchorTag is empty or unresolved. If left empty,
+	 *  the service falls back to MCore.UI.Toast.Anchor.TopRight. */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
+		meta=(DisplayName="Default Toast Anchor", Categories="MCore.UI.Toast.Anchor"))
+	FGameplayTag DefaultToastAnchorTag;
+
+	/** Max simultaneously visible toasts per anchor; overflow queues and never drops.
+	 *  Default 1: one toast at a time per anchor, the queue shows the next as a slot frees. */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
+		meta=(ClampMin="1", ClampMax="16"))
+	int32 DefaultMaxVisibleToasts = 1;
+
+	/** Author escape hatch to raise a specific anchor's cap above the default. Ships empty;
+	 *  unlisted anchors use DefaultMaxVisibleToasts. */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
+		meta=(DisplayName="Max Visible Per Anchor", Categories="MCore.UI.Toast.Anchor"))
+	TMap<FGameplayTag, int32> ToastMaxVisiblePerAnchor;
+
+	/** Watchdog deadline for WBP intro and outro animations. When a toast sets
+	 *  bAwaitIntroAnimation or bAwaitOutroAnimation but never calls Notify*Complete,
+	 *  the subsystem forces completion after this long so the anchor slot frees. */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
+		meta=(ClampMin="1.0", ClampMax="30.0", Units="s"))
+	float AwaitAnimationTimeoutSeconds = 5.0f;
 
 	// ============================================================================
 	// DEBUG (EDITOR ONLY)

@@ -45,7 +45,12 @@ public:
 	{
 		return IsValid(PrimaryGameLayout) && PrimaryGameLayout->AreAllLayersBound();
 	}
-	
+
+	/** The PrimaryGameLayout if created, else nullptr. Lets sibling subsystems (e.g. the
+	 *  toast service) attach to it, including on the already-ready late-init path. */
+	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|Layout")
+	UMCore_PrimaryGameLayout* GetPrimaryGameLayout() const { return PrimaryGameLayout; }
+
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|Events")
 	FOnPrimaryGameLayoutReady OnPrimaryGameLayoutReady;
 	

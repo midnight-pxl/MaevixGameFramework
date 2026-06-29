@@ -7,20 +7,30 @@
 #include "CoreData/Logging/LogMaevixNetworking.h"
 #include "MCore_NetworkingComponent.generated.h"
 
+/** Outcome of an authority-gated execution: whether the operation ran and, if not, why. */
+UENUM(BlueprintType)
+enum class EMCore_AuthorityExecResult : uint8
+{
+	Executed,           /* Owner was authoritative; the operation ran. */
+	SkippedNoAuthority, /* Owner exists but is not authoritative; operation did not run. */
+	SkippedNoOwner      /* No owning Actor resolved; operation could not be gated or run. */
+};
+
 /**
- * Abstract base networking component providing authority validation, replication helpers,
- * and Iris detection. Derive from this for actor components that need network-aware
- * functionality.
+ * Abstract base networking component providing authority validation and replication helpers.
+ * Derive from this for actor components that need network-aware functionality.
  *
- * @warning ExecuteWithAuthority<T> is a reserved Phase-2 extension point. Its v1.0
- * implementation is a logged no-op that returns false; do not rely on it for shipped
- * gameplay. Real implementation lands with the first cross-plugin authority use case
- * (e.g. Dynomega). See MAEVIXCORE_WORK_TRACKER.md T-19.
+ * Legacy-replication-based and Iris-compatible (not Iris-optimized). Iris is enabled per
+ * project via bUseIris in *.Target.cs; this component's standard replicated state and RPCs
+ * ride that switch unchanged, so a downstream project on 5.7+ gets Iris support with no Core
+ * change.
  *
- * @note Iris is currently Beta in UE 5.6 (Epic documentation). Detection and dedicated-Iris
- * paths (IsUsingIrisReplication, DetectNetworkingSystem, IsIrisAvailable) are honesty stubs
- * until Iris graduates from Beta. See MAEVIXCORE_WORK_TRACKER.md T-13 (honesty doc) and
- * T-19 (real implementation when Iris reaches production status).
+ * OnAuthorityChanged fires once at BeginPlay with the init-time authority verdict. Components
+ * placed on deferred or post-spawn-reowned actors, or that need the autonomous-proxy
+ * distinction at initialization, must read authority at point-of-use rather than caching this
+ * verdict. ExecuteWithAuthority already re-reads authority live on every call, so it is
+ * unaffected. OnRep_Owner-driven correction is the additive, non-breaking extension to add if
+ * and when such a component is built.
  */
 UCLASS(Abstract, BlueprintType, ClassGroup=(MaevixCore))
 class MAEVIXCORE_API UMCore_NetworkingComponent : public UActorComponent, public IMCore_NetworkingInterface
@@ -33,7 +43,7 @@ public:
 	virtual bool HasNetworkAuthority() const override
 	{
 		return GetOwner() ? GetOwner()->HasAuthority() : false;
-	};
+	}
 
 	/** Equivalent to HasNetworkAuthority. Provided as a separate intent-named API for caller readability. */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|Networking|Authority")
@@ -45,16 +55,6 @@ public:
 	{
 		return GetOwner() ? (GetOwner()->GetNetMode() != NM_DedicatedServer) : false;
 	}
-
-	/**
-	 * True if the owning actor uses Iris replication. Result is cached on BeginPlay via DetectNetworkingSystem.
-	 *
-	 * @note Honesty stub: Iris is currently Beta in UE 5.6 (Epic documentation). Detection and
-	 * dedicated-Iris paths are targeted for v1.X once Iris reaches production status. Currently
-	 * returns false unconditionally. See MAEVIXCORE_WORK_TRACKER.md T-13 / T-19.
-	 */
-	UFUNCTION(BlueprintPure, Category="MaevixCore|Networking|Replication")
-	bool IsUsingIrisReplication() const;
 
 	/**
 	 * Force immediate network update for this component's owning actor.
@@ -73,37 +73,40 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/**
-	 * Reserved extension point for cross-plugin authority delegation.
+	 * Runs Operation only when the owning Actor is the network authority, re-reading authority
+	 * live on every call rather than trusting an init-time cache.
 	 *
-	 * v1.0 ships as a logged no-op stub (returns false unconditionally). Real implementation
-	 * arrives with the first downstream consumer (Dynomega / Catalyst). Subclasses that
-	 * require authority-gated execution today should call HasNetworkAuthority() directly.
+	 * @warning This gates execution on authority; it does not make the call network transparent.
+	 * The subclass still owns its own Server RPC. ExecuteWithAuthority is meant to run inside that
+	 * RPC handler, as the authority gate around the authoritative mutation. This is a C++ inherited
+	 * surface (a template cannot be a UFUNCTION), so Blueprint-only downstream code does not call
+	 * it and instead branches on the pure CanExecuteServerOperation check.
 	 *
-	 * @param Operation Forwarded operation to execute (signature TBD at Phase 2).
-	 * @param bRequireServerAuthority If true, requires server authority; otherwise accepts client authority too.
-	 * @return Always false in v1.0. Phase 2 will return true on successful authority-gated execution.
+	 * @param Operation Callable invoked with no arguments when authoritative. Surface any operation
+	 * result through a captured reference; this method returns the authority outcome only.
+	 * @return Executed when the operation ran, SkippedNoAuthority when the owner is not
+	 * authoritative, SkippedNoOwner when no owning Actor resolved.
 	 */
 	template<typename TOperation>
-	bool ExecuteWithAuthority(TOperation&& Operation, bool bRequireServerAuthority = true)
+	EMCore_AuthorityExecResult ExecuteWithAuthority(TOperation&& Operation)
 	{
-		UE_LOG(LogMaevixNetworking, Warning,
-			TEXT("NetworkingComponent::ExecuteWithAuthority: not yet implemented "
-				 "(Phase-2 extension point - see T-19). Operation skipped, returning false."));
-		return false;
+		const AActor* Owner = GetOwner();
+		if (!Owner)
+		{
+			return EMCore_AuthorityExecResult::SkippedNoOwner;
+		}
+		if (!Owner->HasAuthority())
+		{
+			return EMCore_AuthorityExecResult::SkippedNoAuthority;
+		}
+
+		Operation();
+		return EMCore_AuthorityExecResult::Executed;
 	}
 
 private:
 
 	UPROPERTY(Replicated)
 	FGuid ComponentNetworkID{FGuid::NewGuid()};
-
-	/* Honesty stub: Iris is currently Beta in UE 5.6 (Epic documentation). Detection and
-	 * dedicated-Iris paths are targeted for v1.X once Iris reaches production status.
-	 * See MAEVIXCORE_WORK_TRACKER.md T-13 / T-19. */
-	UPROPERTY(Transient)
-	bool bIrisDetected{false};
-
-	void DetectNetworkingSystem();
-	bool IsIrisAvailable() const;
 
 };

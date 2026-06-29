@@ -66,8 +66,3 @@ bool UMCore_GlobalServiceRegistrySubsystem::UnregisterById(uint32 RegistrationId
 {
 	return Registry.Unregister(RegistrationId);
 }
-
-void UMCore_GlobalServiceRegistrySubsystem::PruneStale()
-{
-	Registry.PruneStaleEntries();
-}

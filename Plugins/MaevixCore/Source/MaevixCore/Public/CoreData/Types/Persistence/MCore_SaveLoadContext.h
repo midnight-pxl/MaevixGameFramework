@@ -27,13 +27,17 @@ struct MAEVIXCORE_API FMCore_SaveLoadContext
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Persistence")
 	EMCore_SaveLoadPhase Phase = EMCore_SaveLoadPhase::Saving;
 
-	/** Save-format version stamped by the orchestrator; Core owns no save-format policy, so the default is 0. */
+	/**
+	 * Producer-supplied save-format version, stamped by the orchestrator. Core does not interpret it;
+	 * Core owns no save-format policy. OnPostLoad implementers may compare it to perform migration.
+	 * 0 means unset / unversioned.
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Persistence")
 	int32 SaveVersion = 0;
 
 	/** Target save slot for this cycle. */
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Persistence")
-	FName SlotName = NAME_None;
+	FString SlotName;
 
 	/** Platform user index that owns the slot. */
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Persistence")

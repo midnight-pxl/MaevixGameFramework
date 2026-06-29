@@ -34,7 +34,12 @@ public:
 	// C++ TEMPLATED CONVENIENCE  (header inline; delegates to the UClass keyed functions below)
 	// ============================================================================
 
-	/** Resolves the provider implementing IX for the WorldContext's scope, or an empty TScriptInterface if absent. */
+	/**
+	 * Resolves the provider implementing IX for the WorldContext's scope, or an empty TScriptInterface if absent.
+	 * Frozen guarantees: synchronous and total (returns empty on miss, never blocks or asserts); the empty
+	 * discriminator is matched EXACTLY (it is not a wildcard); this is an in-process locator and does not make
+	 * any resolved call network-transparent.
+	 */
 	template<class IX>
 	static TScriptInterface<IX> Resolve(const UObject* WorldContext, FGameplayTag Discriminator = FGameplayTag())
 	{
@@ -43,23 +48,7 @@ public:
 
 		UObject* Provider = nullptr;
 		ResolveService(WorldContext, IX::UClassType::StaticClass(), Discriminator, Provider);
-		return TScriptInterface<IX>(Provider); // converting ctor casts internally; empty when Provider is null
-	}
-
-	/** Resolves IX as a 0 or 1 element array (v1 is single provider). Empty on miss; never a null element. */
-	template<class IX>
-	static TArray<TScriptInterface<IX>> ResolveAll(const UObject* WorldContext)
-	{
-		static_assert(TIsIInterface<IX>::Value,
-			"UMCore_ServiceRegistryLibrary::ResolveAll<IX> requires a UINTERFACE I-type.");
-
-		TArray<TScriptInterface<IX>> Result;
-		const TScriptInterface<IX> Single = Resolve<IX>(WorldContext);
-		if (Single) // operator bool: true only when both the object and the interface pointer are set
-		{
-			Result.Add(Single);
-		}
-		return Result;
+		return TScriptInterface<IX>(Provider); /* converting ctor casts internally; empty when Provider is null */
 	}
 
 	/** Registers Provider as the IX implementation for the WorldContext's scope; returns a handle (invalid if rejected). */
