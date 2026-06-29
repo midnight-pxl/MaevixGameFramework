@@ -14,6 +14,7 @@
  */
 
 class UMCore_UISubsystem;
+class UMCore_ToastHost;
 
 UCLASS(BlueprintType, Blueprintable, Meta = (DisableNativeTick))
 class MAEVIXCORE_API UMCore_PrimaryGameLayout : public UCommonUserWidget
@@ -57,4 +58,13 @@ private:
 	/** Dialogs and confirmation popups */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_ModalLayer;
+
+	/** Optional non-activatable host for transient toasts. Bound only if the
+	 *  layout WBP supplies a matching widget; absence is non-fatal. */
+	UPROPERTY(meta=(BindWidgetOptional))
+	TObjectPtr<UMCore_ToastHost> MCore_ToastHost;
+
+public:
+	/** Toast host if the WBP provides one, else nullptr. Read by UMCore_ToastSubsystem. */
+	UMCore_ToastHost* GetToastHost() const { return MCore_ToastHost; }
 };

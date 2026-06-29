@@ -7,6 +7,7 @@
 #include "CoreData/Logging/LogMaevixPlayer.h"
 #include "CoreData/Logging/LogMaevixLoading.h"
 #include "CoreData/Logging/LogMaevixServices.h"
+#include "CoreData/Logging/LogMaevixToast.h"
 
 DEFINE_LOG_CATEGORY(LogMaevixNetworking);
 DEFINE_LOG_CATEGORY(LogMaevixUI);
@@ -15,3 +16,4 @@ DEFINE_LOG_CATEGORY(LogMaevixSettings);
 DEFINE_LOG_CATEGORY(LogMaevixPlayer);
 DEFINE_LOG_CATEGORY(LogMaevixLoading);
 DEFINE_LOG_CATEGORY(LogMaevixServices);
+DEFINE_LOG_CATEGORY(LogMaevixToast);
