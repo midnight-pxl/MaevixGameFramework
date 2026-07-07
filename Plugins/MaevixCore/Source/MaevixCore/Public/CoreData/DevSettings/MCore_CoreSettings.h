@@ -28,7 +28,7 @@ class UInputAction;
 class UWorld;
 
 /**
- * Developer settings for the Maevix Game Framework (Project Settings > Game > Maevix Core).
+ * Developer settings for Maevix Game Framework (Project Settings > Game > Maevix Core).
  * Configures themes, UI layout class overrides, settings collections,
  * and editor-only debug options.
  */
@@ -58,8 +58,8 @@ public:
 	// ============================================================================
 
 	/**
-	 * Widget class for the PrimaryGameLayout.
-	 * This is the root UI widget containing the 4-layer CommonUI stack.
+	 * PrimaryGameLayout Widget Class.
+	 * Root UI widget containing the 4-layer CommonUI stacks.
 	 *
 	 * Leave empty to use default UMCore_PrimaryGameLayout.
 	 * Set to a Blueprint subclass for custom layout structure.
@@ -76,8 +76,8 @@ public:
 	// ============================================================================
 
 	/**
-	 * Widget class for the GameMenuHub.
-	 * This is the tabbed menu container for plugin screens.
+	 * GameMenuHub Widget Class.
+	 * The tabbed menu container for plugin screen(s).
 	 *
 	 * Leave empty to use default UMCore_GameMenuHub.
 	 * Set to a Blueprint subclass for custom hub appearance.
@@ -86,8 +86,9 @@ public:
 	TSoftClassPtr<UMCore_GameMenuHub> MenuHubClass;
 
 	/**
-	 * Menu tabs registered on UISubsystem initialization.
-	 * Configure all default tabs here, including tabs from other Maevix plugins.
+	 * Menu tab(s) registered on UISubsystem initialization.
+	 * 
+	 * Configure all default tabs here, including tabs from/for other Maevix plugins.
 	 * Additional tabs can be added at runtime via RegisterMenuScreen().
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Menu Hub", meta=(DisplayName="Default Menu Tabs"))
@@ -98,7 +99,8 @@ public:
 	// ============================================================================
 
 	/**
-	 * Available UI themes for this project.
+	 * UI themes available for this project.
+	 * 
 	 * Each entry has a display name, description, and theme DataAsset.
 	 * Order determines display order in theme selection UI.
 	 */
@@ -114,10 +116,12 @@ public:
 	// ============================================================================
 
 	/**
-	 * Settings collections for this project. All collections aggregate into a unified
-	 * settings inventory. Categories with the same GameplayTag merge across collections.
-	 * Display order follows each collection's Settings array; cross-collection ordering
-	 * follows the position of each collection in this array.
+	 * Settings collections for this project.
+	 * All collections aggregate into a unified settings inventory.
+	 * Categories with same GameplayTag merge across collections.
+	 * 
+	 * Display order follows collection's order in Settings array; cross-collection
+	 * ordering follows position of each collection in this array.
 	 */
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|Settings",
 		meta=(DisplayName="Settings Collections"))
@@ -137,7 +141,7 @@ public:
 
 	/** Show secondary binding columns in the key binding panel. */
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|Settings")
-	bool bShowSecondaryBindings = false;
+	bool bShowSecondaryBindings{false};
 
 	/**
 	 * Input mapping contexts to display as tabs in the key binding panel.
@@ -161,26 +165,29 @@ public:
 	
 	/**
 	 * Delay for showing revert countdown after a confirmation-required setting change.
-	 * Resets on each new change, preventing modal spam during rapid cycling.
+	 * Resets on each new change, preventing modal spam during setting cycling.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category = "MaevixCore|Settings", meta = (ClampMin = "0.0", ClampMax = "3.0", Units = "s"))
 	float ConfirmationDebounceDelay{0.75f};
 
 	/** How long the revert countdown modal displays before auto-reverting. */
 	UPROPERTY(Config, EditAnywhere, Category = "MaevixCore|Settings", meta = (ClampMin = "5.0", ClampMax = "30.0", Units = "s"))
-	float ConfirmationRevertDelay = 15.0f;
+	float ConfirmationRevertDelay{10.0f};
 
 	// ============================================================================
 	// AUDIO
 	// ============================================================================
 
-	/** SoundMix routing volume slider commits via SetSoundMixClassOverride.
-	 * Defaults to MCore_VolumeMix shipped with the plugin. To customize,
-	 * author your own SoundMix with class adjusters for every SoundClass
-	 * referenced by your audio settings DAs. The SoundClass hierarchy must
-	 * have one Master parent so the Master slider multiplies through the
-	 * parent chain at playback resolution. See README "Customizing the
-	 * Volume Mix" section. */
+	/**
+	 * SoundMix routing volume slider commits via SetSoundMixClassOverride.
+	 * Defaults to MCore_VolumeMix shipped with the plugin.
+	 * 
+	 * To customize, author your own SoundMix with class adjusters for each
+	 * SoundClass referenced by your audio settings DAs.
+	 * 
+	 * SoundClass hierarchy expects one Master parent.
+	 * Master slider multiplies through parent chain at playback resolution.
+	 */
 	UPROPERTY(config, EditAnywhere, Category = "MaevixCore|Audio")
 	TSoftObjectPtr<USoundMix> VolumeMix;
 
@@ -189,48 +196,52 @@ public:
 	// ============================================================================
 
 	/* Bounds for UMCore_GlobalEventSubsystem::ValidateEventRequest. ClampMin enforces
-	 * a safety floor; ClampMax prevents accidentally permissive overrides that would
-	 * open DoS surface area on the server. Defaults match historical hardcoded values. */
+	 * safety floor; ClampMax prevents overly permissive overrides to prevent DoS.
+	 */
 
-	/** Maximum FMCore_EventParameter count per global event. Floor: 1, Ceiling: 32. */
+	/** Max FMCore_EventParameter count per global event. Floor: 1, Ceiling: 32. */
 	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="1", ClampMax="32"))
-	int32 MaxEventParams = 8;
+	int32 MaxEventParams{8};
 
-	/** Maximum ContextID string length in chars. Floor: 16, Ceiling: 256. */
+	/** Max ContextID string length in chars. Floor: 16, Ceiling: 256. */
 	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="16", ClampMax="256"))
-	int32 MaxEventContextIDLength = 64;
+	int32 MaxEventContextIDLength{64};
 
-	/** Maximum FInstancedStruct sizeof for typed payloads. Floor: 256 B, Ceiling: 8 KB. */
+	/** Max FInstancedStruct sizeof for typed payloads. Floor: 256 B, Ceiling: 8 KB. */
 	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="256", ClampMax="8192"))
-	int32 MaxEventStructSizeBytes = 2048;
+	int32 MaxEventStructSizeBytes{2048};
 
-	/** Maximum FBufferArchive serialized payload size for typed payloads. Floor: 512 B, Ceiling: 16 KB. */
+	/** Max FBufferArchive serialized payload size for typed payloads. Floor: 512 B, Ceiling: 16 KB. */
 	UPROPERTY(Config, EditDefaultsOnly, Category="MaevixCore|Networking|Safety|Event Validation",
 		meta=(ClampMin="512", ClampMax="16384"))
-	int32 MaxEventSerializedPayloadBytes = 4096;
+	int32 MaxEventSerializedPayloadBytes{4096};
 
 	// ============================================================================
 	// EVENT DIAGNOSTICS
 	// ============================================================================
 
-	/* When true, suppresses the one-shot warning that fires the first time
+	/**
+	 * Suppresses one-shot warning that fires first time when true.
+	 * 
 	 * UMCore_GlobalEventSubsystem::BroadcastGlobalEvent runs in Standalone mode
-	 * without a UMCore_GlobalEventReplicator on the GameState. The warning exists
-	 * to flag silently degraded multiplayer code during PIE testing; suppress it
-	 * if your project intentionally uses Global scope for local-only delivery. */
+	 * without a UMCore_GlobalEventReplicator on the GameState.
+	 * Warning exists to flag degraded multiplayer code during PIE testing.
+	 * 
+	 * Suppress if project intentionally uses Global scope for local-only delivery.
+	 */
 	UPROPERTY(EditAnywhere, Config, BlueprintReadOnly, Category = "MaevixCore|Events|Diagnostics")
-	bool bSuppressStandaloneNoReplicatorWarning = false;
+	bool bSuppressStandaloneNoReplicatorWarning{false};
 
 	// ============================================================================
 	// LOADING SCREEN
 	// ============================================================================
 
 	/**
-	 * Widget class shown by the MoviePlayer during PreLoadMap transitions.
-	 * Leave empty to disable the loading screen entirely.
+	 * Widget class shown by MoviePlayer during PreLoadMap transition(s).
+	 * Leave empty to disable loading screen entirely.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Loading|Screen",
 		meta=(DisplayName="Loading Screen Widget Class"))
@@ -246,18 +257,19 @@ public:
 	EMCore_LoadingScreenSelectionMode LoadingScreenSelectionMode = EMCore_LoadingScreenSelectionMode::TagBased;
 
 	/**
-	 * Controls how the loading screen exits after the level finishes loading.
-	 * AutoOnLoadComplete reproduces Chunk 1 behavior. InputRequired (default)
-	 * gates dismissal on player input. Manual disables both and is intended
-	 * for async post-load work or server-synchronized ready barriers.
+	 * Controls how loading screen exits after level loading finishes.
+	 * 
+	 * InputRequired (default) gates dismissal on player input.
+	 * Manual disables both and is intended for async post-load work or
+	 * server-synchronized ready barriers.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Loading|Screen",
 		meta=(DisplayName="Dismissal Mode"))
 	EMCore_LoadingDismissalMode LoadingDismissalMode = EMCore_LoadingDismissalMode::InputRequired;
 
 	/**
-	 * Input action whose icon is displayed in the loading screen's dismiss prompt.
-	 * If null while Dismissal Mode is InputRequired, the widget hides the icon
+	 * What input action icon is displayed in the loading screen's dismiss prompt.
+	 * If null && Dismissal Mode is InputRequired, widget hides the icon
 	 * and dismisses on any input.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Loading|Screen",
@@ -267,8 +279,8 @@ public:
 	TSoftObjectPtr<UInputAction> LoadingDismissalAction;
 
 	/**
-	 * Floor on loading screen visibility. The screen stays visible at least
-	 * this long even when the map finishes loading or input arrives sooner.
+	 * Floor for loading screen visibility. Screen stays visible at least
+	 * this long, even when map finishes loading or input received.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Loading|Screen",
 		meta=(ClampMin="0.0", ClampMax="10.0", Units="s",
@@ -284,11 +296,11 @@ public:
 	// ============================================================================
 
 	/**
-	 * Level the New-Game flow travels to (see UMCore_GameFlowLibrary::StartNewGame).
-	 * Stored as a soft pointer, so the level is referenced by path and only loaded on
-	 * travel. Leave unset to disable New-Game travel: the shipped framework ships this
-	 * empty so the menu never hard-references demo content, and each integrator points
-	 * it at their own first level via config.
+	 * Level New-Game flow travels to (see UMCore_GameFlowLibrary::StartNewGame).
+	 * Stored as soft pointer; level is referenced by path and only loaded on
+	 * travel.
+	 * 
+	 * Leave unset to disable New-Game travel.
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|Game Flow",
 		meta=(DisplayName="New Game Target Level"))
@@ -303,30 +315,39 @@ public:
 		meta=(DisplayName="Default Toast Widget Class"))
 	TSoftClassPtr<UMCore_ToastBase> DefaultToastWidgetClass;
 
-	/** Anchor used when a request's AnchorTag is empty or unresolved. If left empty,
-	 *  the service falls back to MCore.UI.Toast.Anchor.TopRight. */
+	/** 
+	 * Anchor used when request's AnchorTag is empty/unresolved.
+	 * If left empty, service falls back to MCore.UI.Toast.Anchor.BottomRight. */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
 		meta=(DisplayName="Default Toast Anchor", Categories="MCore.UI.Toast.Anchor"))
 	FGameplayTag DefaultToastAnchorTag;
 
-	/** Max simultaneously visible toasts per anchor; overflow queues and never drops.
-	 *  Default 1: one toast at a time per anchor, the queue shows the next as a slot frees. */
+	/**
+	 * Max visible toasts per anchor; overflow queues, never drops.
+	 * Default == 1: one toast at a time per anchor, the queue shows the next as slot frees.
+	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
 		meta=(ClampMin="1", ClampMax="16"))
-	int32 DefaultMaxVisibleToasts = 1;
+	int32 DefaultMaxVisibleToasts{1};
 
-	/** Author escape hatch to raise a specific anchor's cap above the default. Ships empty;
-	 *  unlisted anchors use DefaultMaxVisibleToasts. */
+	/**
+	 * Escape hatch to raise specific anchor's cap above the default, ships empty.
+	 * Unlisted anchors use DefaultMaxVisibleToasts.
+	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
 		meta=(DisplayName="Max Visible Per Anchor", Categories="MCore.UI.Toast.Anchor"))
 	TMap<FGameplayTag, int32> ToastMaxVisiblePerAnchor;
 
-	/** Watchdog deadline for WBP intro and outro animations. When a toast sets
-	 *  bAwaitIntroAnimation or bAwaitOutroAnimation but never calls Notify*Complete,
-	 *  the subsystem forces completion after this long so the anchor slot frees. */
+	/**
+	 * Timer for WBP intro and outro animations.
+	 * 
+	 * When a toast sets bAwaitIntroAnimation or bAwaitOutroAnimation
+	 * but never calls Notify*Complete, Subsystem forces completion
+	 * after this long to free anchor slot.
+	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixCore|UI|Toast",
 		meta=(ClampMin="1.0", ClampMax="30.0", Units="s"))
-	float AwaitAnimationTimeoutSeconds = 5.0f;
+	float AwaitAnimationTimeoutSeconds{5.0f};
 
 	// ============================================================================
 	// DEBUG (EDITOR ONLY)
@@ -353,66 +374,34 @@ public:
 	// ============================================================================
 
 	/**
-	 * Whether GameUserSettings-driven setting changes that mutate the host process's
-	 * window/display state (Resolution, Window Mode, HDR toggle, HDR nits)
+	 * Whether GameUserSettings changes that mutate host process's
 	 * should apply when running in PIE.
-	 *
-	 * Default false because applying these in PIE resizes the editor's host
-	 * window and disrupts the editor process. Set to true if you specifically
-	 * need PIE to behave like a packaged build for these settings.
-	 *
-	 * Has no effect outside PIE; packaged builds (Development, Test,
-	 * Shipping) always apply these settings normally.
-	 *
-	 * Mirrors Lyra's bApplyFrameRateSettingsInPIE / bApplyFrontEndPerformanceOptionsInPIE
-	 * pattern from LyraPlatformEmulationSettings.
 	 */
 	UPROPERTY(EditAnywhere, config, Category = "MaevixCore|PIE",
 		meta = (DisplayName = "Apply Display Settings in PIE"))
-	bool bApplyDisplaySettingsInPIE = false;
+	bool bApplyDisplaySettingsInPIE{false};
 
 	/**
-	 * Whether GameUserSettings-driven setting changes that mutate process-global
-	 * renderer state (scalability quality groups, resolution scale,
-	 * dynamic resolution toggle) should apply when running in PIE.
-	 *
-	 * Default false because applying these in PIE recreates the shadow
-	 * virtual physical page pool, invalidates TSR history, and (for
-	 * ResolutionScale) resizes render targets, disrupting the editor
-	 * process. Multi-PIE-window setups amplify the disruption because
-	 * renderer state is shared across PIE worlds. Set to true if you
-	 * specifically need PIE to behave like a packaged build for these
-	 * settings.
-	 *
-	 * Gated keys: OverallScalabilityLevel, the eight individual
-	 * ScalabilityQuality fields (Texture, Shadow, AntiAliasing,
-	 * PostProcess, ViewDistance, Foliage, Shading, Effects),
-	 * GlobalIlluminationQuality, ReflectionQuality, ResolutionScale,
-	 * bUseDynamicResolution.
-	 *
-	 * Has no effect outside PIE. Packaged builds (Development, Test,
-	 * Shipping) always apply these settings normally.
-	 *
-	 * Mirrors Lyra's bApplyFrontEndPerformanceOptionsInPIE pattern from
-	 * LyraPlatformEmulationSettings.
+	 * Whether GameUserSettings setting changes that mutate
+	 * renderer state should apply when running in PIE.
 	 */
 	UPROPERTY(EditAnywhere, config, Category = "MaevixCore|PIE",
 		meta = (DisplayName = "Apply Scalability Settings in PIE"))
-	bool bApplyScalabilitySettingsInPIE = false;
+	bool bApplyScalabilitySettingsInPIE{false};
 
 	// ============================================================================
 	// HELPERS
 	// ============================================================================
 
-	/** Returns true if event system logging is enabled. Always false in shipping builds. */
+	/** Returns true if event system logging is enabled. False in shipping builds. */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|Debug")
 	bool IsEventLoggingEnabled() const;
 
-	/** Returns true if the UI debug overlay is enabled. Always false in shipping builds. */
+	/** Returns true if UI debug overlay is enabled. False in shipping builds. */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|Debug")
 	bool IsUIDebugOverlayEnabled() const;
 
-	/** Returns the theme DataAsset at DefaultThemeIndex (loads synchronously). Returns nullptr if index is invalid. */
+	/** Returns theme DataAsset at DefaultThemeIndex (loads synchronously). nullptr if index is invalid. */
 	UFUNCTION(BlueprintCallable, Category="MaevixCore|Theme")
 	UMCore_PDA_UITheme_Base* GetDefaultTheme() const;
 	
@@ -424,17 +413,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	const TArray<UMCore_DA_SettingsCollection*>& GetAllSettingsCollections() const;
 
-	/** Searches all collections for a setting definition matching the tag. Returns first match. */
+	/** Searches all collections for a setting definition matching passed tag. Returns first match. */
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	UMCore_DA_SettingDefinition* FindSettingDefinitionByTag(const FGameplayTag& SettingTag) const;
 
-	/** Returns all settings across all collections for a category, ordered by collection
-	 *  array index then by setting array position within each collection. */
+	/**
+	 * Returns all settings across all collections for a category, ordered by collection
+	 * array index followed by setting array position within each collection.
+	 */
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	TArray<UMCore_DA_SettingDefinition*> GetSettingsForCategory(const FGameplayTag& CategoryTag) const;
 
-	/** Returns all unique category tags across all collections in first-seen order
-	 *  (collection array index, then setting array position). */
+	/**
+	 * Returns all unique category tags across all collections in first-seen order
+	 * (collection array index > setting array position)
+	 */
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	TArray<FGameplayTag> GetAllSettingsCategories() const;
 
@@ -445,7 +438,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
 	bool HasValidSettingsCollections() const;
 
-	/** Clears the resolved collection cache. Next GetAllSettingsCollections() call will re-resolve. */
+	/** Clears resolved collection cache. Next GetAllSettingsCollections() call will re-resolve. */
 	void InvalidateCollectionCache();
 
 #if WITH_EDITOR
@@ -457,8 +450,10 @@ public:
 	// ============================================================================
 
 	/**
-	 * Returns the default theme for design-time preview (static, no UISubsystem needed).
-	 * Use in NativePreConstruct() for UMG editor preview. At runtime, prefer UISubsystem->GetActiveTheme().
+	 * Returns default theme for design-time preview (static, no UISubsystem needed).
+	 * Use in NativePreConstruct() for UMG editor preview.
+	 * 
+	 * Use UISubsystem->GetActiveTheme() at runtime.
 	 */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|Theme")
 	static UMCore_PDA_UITheme_Base* GetDesignTimeTheme();

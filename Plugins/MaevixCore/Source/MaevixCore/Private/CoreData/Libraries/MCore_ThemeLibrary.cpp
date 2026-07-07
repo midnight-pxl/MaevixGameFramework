@@ -84,13 +84,3 @@ TSubclassOf<UCommonButtonStyle> UMCore_ThemeLibrary::ResolveButtonStyle(TSubclas
 {
 	return StyleOverride ? StyleOverride : ThemeDefault;
 }
-
-UMCore_PDA_ExtensionStyle_Base* UMCore_ThemeLibrary::GetExtensionStyleOfClass(
-	const UMCore_PDA_UITheme_Base* Theme,
-	FGameplayTag StyleTag,
-	TSubclassOf<UMCore_PDA_ExtensionStyle_Base> TargetClass)
-{
-	if (!Theme || !TargetClass) { return nullptr; }
-	UMCore_PDA_ExtensionStyle_Base* Style = Theme->GetExtensionStyle(StyleTag);
-	return (Style && Style->IsA(TargetClass)) ? Style : nullptr;
-}

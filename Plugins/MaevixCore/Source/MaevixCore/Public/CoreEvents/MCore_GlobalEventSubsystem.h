@@ -29,33 +29,21 @@ public:
 	 */
 	void BroadcastGlobalEvent(const FMCore_EventData& EventData);
 	
-	/**
-	 * Register the network replicator component.
-	 * Called by GlobalEventReplicator::BeginPlay().
-	 */
+	/** Called by UMCore_GlobalEventReplicator::BeginPlay(). */
 	void RegisterEventReplicator(UMCore_GlobalEventReplicator* Replicator);
 
-	/**
-	 * Unregister the network replicator component.
-	 * Called by GlobalEventReplicator::EndPlay().
-	 */
+	/** Called by UMCore_GlobalEventReplicator::EndPlay(). */
 	void UnregisterEventReplicator(UMCore_GlobalEventReplicator* Replicator);
 
-	/** 
-	 * Register listener for global events.
-	 * Called by UMCore_EventListenerComponent::BeginPlay()
-	 */
+	/** Called by UMCore_EventListenerComponent::BeginPlay(). */
 	void RegisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent);
 
-	/**
-	 * Unregister listener from global events.
-	 * Called by UMCore_EventListenerComponent::EndPlay()
-	 */
+	/** Called by UMCore_EventListenerComponent::EndPlay(). */
 	void UnregisterGlobalListener(UMCore_EventListenerComponent* ListenerComponent);
-	
+
 	/**
-	 * Deliver event to all registered local listeners.
-	 * Called by GlobalEventReplicator after network transport.
+	 * Called by UMCore_GlobalEventReplicator after network transport; fans
+	 * out to all registered local listeners.
 	 */
 	void DeliverToLocalListeners(const FMCore_EventData& EventData);
 
@@ -63,7 +51,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Events")
 	bool HasGlobalEventAuthority() const;
 	
-	/** Validates an inbound event request. Override to add custom validation rules. */
+	/**
+	 * Server-side validation for client-originated broadcast requests; enforces the
+	 * Network Safety caps in MCore_CoreSettings. Returns false to reject the event.
+	 */
 	bool ValidateEventRequest(const FMCore_EventData& EventData) const;
 
 protected:
@@ -71,11 +62,10 @@ protected:
 	virtual void Deinitialize() override;
 
 private:
-	/** Registered global listener components */
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UMCore_EventListenerComponent>> GlobalListeners;
 
-	/* Cached reference to the network replicator on GameState */
+	// Cached replicator; lives on GameState, weak so teardown doesn't dangle
 	TWeakObjectPtr<UMCore_GlobalEventReplicator> EventReplicator;
 
 	/* One-shot guard for the Standalone-no-replicator diagnostic. Resets on

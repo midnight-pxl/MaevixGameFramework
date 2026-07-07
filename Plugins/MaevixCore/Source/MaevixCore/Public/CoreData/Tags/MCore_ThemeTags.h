@@ -18,4 +18,11 @@ namespace MCore_ThemeTags
      * Payload (FMCore_EventData::EventParams):
      *   ThemePath = soft object path of the new UMCore_PDA_UITheme_Base. */
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Theme_Changed);
+
+    /* Stable identity tags for the shipped UI themes. Plugins match their own
+     * per-theme styles against UMCore_PDA_UITheme_Base::ThemeId by comparing these,
+     * so they never hard-reference a Core theme DataAsset. */
+    MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Theme_Id_Minimal);
+    MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Theme_Id_ModFi);
+    MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Theme_Id_Sample);
 }

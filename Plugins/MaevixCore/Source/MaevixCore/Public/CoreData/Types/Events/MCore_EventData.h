@@ -1,4 +1,4 @@
-// Copyright 2025, Midnight Pixel Studio LLC.
+// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #pragma once
 
@@ -6,12 +6,11 @@
 #include "StructUtils/InstancedStruct.h"
 #include "MCore_EventData.generated.h"
 
-/* Event broadcast scope. Underlying values are explicitly assigned to preserve
- * serialization compatibility -- Global retains its original value (1) from when
- * this enum had only two values. AllLocal was inserted at declaration position 2
- * for logical ordering in BP dropdowns (narrow -> wide scope) but assigned value
- * 2 to avoid renumbering Global. Do not change underlying values without a
- * dedicated CoreRedirects migration. */
+/* Event broadcast scope.
+ * Underlying values are explicitly assigned to preserve
+ * serialization compatibility
+ * 
+ * Do not change underlying values without dedicated CoreRedirects migration. */
 UENUM(BlueprintType)
 enum class EMCore_EventScope : uint8
 {
