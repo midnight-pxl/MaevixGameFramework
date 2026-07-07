@@ -12,13 +12,12 @@ class UCommonTextStyle;
 class UCommonBorderStyle;
 class UMCore_PDA_SliderStyle;
 class UMCore_PDA_ScrollbarStyle;
-class UMCore_PDA_ExtensionStyle_Base;
 
 /**
  * Master UI theme DataAsset referencing CommonUI styles and modular style DataAssets.
  * Widgets query the active theme via UISubsystem->GetActiveTheme().
  *
- * Create child DataAssets for each visual theme (Minimal, Fantasy, Sci-Fi).
+ * Create child DataAssets for each visual theme
  * Set as active in Project Settings or via UISubsystem at runtime.
  */
 UCLASS(Abstract, Blueprintable)
@@ -27,6 +26,19 @@ class MAEVIXCORE_API UMCore_PDA_UITheme_Base : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+
+	// ============================================================================
+	// IDENTITY
+	// ============================================================================
+
+	/**
+	 * Stable tag of theme. Plugins match per-theme styles
+	 * against the active theme based on this tag. No hard-reference to
+	 * DataAsset or dependency on registry ordering.
+	 * Assign a unique tag per shipped theme.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme")
+	FGameplayTag ThemeId;
 
 	// ============================================================================
 	// COMMONUI STYLES
@@ -75,23 +87,5 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|Styles")
 	TObjectPtr<UMCore_PDA_ScrollbarStyle> ScrollbarStyle;
-
-	// ============================================================================
-	// EXTENSION STYLES (PLUGIN INJECTION)
-	// ============================================================================
-
-	/* Plugin-injectable style assets keyed by GameplayTag (e.g. "Vault.Rarity.Legendary").
-	 * Type-constrained to UMCore_PDA_ExtensionStyle_Base subclasses; the editor asset
-	 * picker auto-filters. Downstream plugins extend the base type to author their own
-	 * style shapes without subclassing this theme DA. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|Theme|Extensions")
-	TMap<FGameplayTag, TObjectPtr<UMCore_PDA_ExtensionStyle_Base>> ExtensionStyles;
-
-	/** Returns the extension style registered under StyleTag, or nullptr if absent. */
-	UFUNCTION(BlueprintPure, Category="MaevixCore|Theme", meta=(DisplayName="Get Extension Style"))
-	UMCore_PDA_ExtensionStyle_Base* GetExtensionStyle(FGameplayTag StyleTag) const;
-
-#if WITH_EDITOR
-	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
-#endif
+	
 };
