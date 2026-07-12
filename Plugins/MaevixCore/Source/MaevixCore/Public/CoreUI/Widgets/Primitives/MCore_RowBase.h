@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
+#include "CoreUI/MCore_ThemeSubscription.h"
 #include "MCore_RowBase.generated.h"
 
 class UCommonTextBlock;
@@ -101,7 +102,6 @@ protected:
 private:
 	UFUNCTION()
 	void HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme);
-	void BindThemeDelegate();
-	void UnbindThemeDelegate();
-	bool bThemeDelegateBound{false};
+
+	FMCore_ThemeSubscription ThemeSub;
 };

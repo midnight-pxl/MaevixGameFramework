@@ -6,6 +6,7 @@
 #include "CommonActivatableWidget.h"
 #include "GameplayTagContainer.h"
 #include "Input/UIActionBindingHandle.h"
+#include "CoreUI/MCore_ThemeSubscription.h"
 #include "MCore_ActivatableBase.generated.h"
 
 class UMCore_PDA_UITheme_Base;
@@ -112,10 +113,7 @@ private:
 	UFUNCTION()
 	void HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme);
 
-	void BindThemeDelegate();
-	void UnbindThemeDelegate();
-
-	bool bThemeDelegateBound{false};
+	FMCore_ThemeSubscription ThemeSub;
 
 	/** Saved during deactivation for focus restore on reactivation */
 	TWeakObjectPtr<UWidget> SavedFocusTarget;

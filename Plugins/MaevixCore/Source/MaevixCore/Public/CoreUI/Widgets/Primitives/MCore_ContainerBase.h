@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
+#include "CoreUI/MCore_ThemeSubscription.h"
 #include "MCore_ContainerBase.generated.h"
 
 class UMCore_PDA_UITheme_Base;
@@ -80,11 +81,8 @@ private:
 	UFUNCTION()
 	void HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme);
 
-	void BindThemeDelegate();
-	void UnbindThemeDelegate();
-
 	UPROPERTY(Transient)
 	mutable TWeakObjectPtr<UMCore_PDA_UITheme_Base> CachedTheme;
 
-	bool bThemeDelegateBound{false};
+	FMCore_ThemeSubscription ThemeSub;
 };

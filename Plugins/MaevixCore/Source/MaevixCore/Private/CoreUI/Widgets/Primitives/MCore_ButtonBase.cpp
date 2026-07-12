@@ -36,7 +36,7 @@ void UMCore_ButtonBase::NativeOnInitialized()
 
 	UE_LOG(LogMaevixUI, Verbose, TEXT("ButtonBase::NativeOnInitialized: initialized, widget=%s"), *GetNameSafe(this));
 
-	BindThemeDelegate();
+	ThemeSub.Bind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ButtonBase, HandleThemeChanged));
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
@@ -64,7 +64,7 @@ void UMCore_ButtonBase::NativeDestruct()
 {
 	UE_LOG(LogMaevixUI, Verbose, TEXT("ButtonBase::NativeDestruct: destructing, widget=%s"), *GetNameSafe(this));
 
-	UnbindThemeDelegate();
+	ThemeSub.Unbind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ButtonBase, HandleThemeChanged));
 
 	Super::NativeDestruct();
 }
@@ -230,40 +230,6 @@ void UMCore_ButtonBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
-}
-
-void UMCore_ButtonBase::BindThemeDelegate()
-{
-	if (bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer) { return; }
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UISubsystem) { return; }
-
-	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
-	bThemeDelegateBound = true;
-}
-
-void UMCore_ButtonBase::UnbindThemeDelegate()
-{
-	if (!bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer)
-	{
-		bThemeDelegateBound = false;
-		return;
-	}
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UISubsystem)
-	{
-		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_ButtonBase::HandleThemeChanged);
-	}
-
-	bThemeDelegateBound = false;
 }
 
 void UMCore_ButtonBase::SyncPropertiesToWidgets()

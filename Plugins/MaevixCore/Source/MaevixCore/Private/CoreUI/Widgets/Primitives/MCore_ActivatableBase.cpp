@@ -160,7 +160,7 @@ void UMCore_ActivatableBase::NativeOnInitialized()
 		Reset();
 	}
 
-	BindThemeDelegate();
+	ThemeSub.Bind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ActivatableBase, HandleThemeChanged));
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
@@ -283,40 +283,6 @@ void UMCore_ActivatableBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewThem
 	ApplyTheme(NewTheme);
 }
 
-void UMCore_ActivatableBase::BindThemeDelegate()
-{
-	if (bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer) { return; }
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UISubsystem) { return; }
-
-	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_ActivatableBase::HandleThemeChanged);
-	bThemeDelegateBound = true;
-}
-
-void UMCore_ActivatableBase::UnbindThemeDelegate()
-{
-	if (!bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer)
-	{
-		bThemeDelegateBound = false;
-		return;
-	}
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UISubsystem)
-	{
-		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_ActivatableBase::HandleThemeChanged);
-	}
-
-	bThemeDelegateBound = false;
-}
-
 void UMCore_ActivatableBase::NativeDestruct()
 {
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
@@ -327,7 +293,7 @@ void UMCore_ActivatableBase::NativeDestruct()
 		}
 	}
 
-	UnbindThemeDelegate();
+	ThemeSub.Unbind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ActivatableBase, HandleThemeChanged));
 	Super::NativeDestruct();
 }
 

@@ -32,7 +32,7 @@ void UMCore_ContainerBase::NativeOnInitialized()
 
 	UE_LOG(LogMaevixUI, Verbose, TEXT("ContainerBase::NativeOnInitialized: initialized, widget=%s"), *GetNameSafe(this));
 
-	BindThemeDelegate();
+	ThemeSub.Bind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ContainerBase, HandleThemeChanged));
 
 	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer())
 	{
@@ -47,7 +47,7 @@ void UMCore_ContainerBase::NativeDestruct()
 {
 	UE_LOG(LogMaevixUI, Verbose, TEXT("ContainerBase::NativeDestruct: destructing, widget=%s"), *GetNameSafe(this));
 
-	UnbindThemeDelegate();
+	ThemeSub.Unbind(this, GET_FUNCTION_NAME_CHECKED(UMCore_ContainerBase, HandleThemeChanged));
 
 	Super::NativeDestruct();
 }
@@ -108,38 +108,4 @@ void UMCore_ContainerBase::HandleThemeChanged(UMCore_PDA_UITheme_Base* NewTheme)
 {
 	CachedTheme = NewTheme;
 	ApplyTheme(NewTheme);
-}
-
-void UMCore_ContainerBase::BindThemeDelegate()
-{
-	if (bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer) { return; }
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (!UISubsystem) { return; }
-
-	UISubsystem->OnThemeChanged.AddDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
-	bThemeDelegateBound = true;
-}
-
-void UMCore_ContainerBase::UnbindThemeDelegate()
-{
-	if (!bThemeDelegateBound) { return; }
-
-	ULocalPlayer* LocalPlayer = GetOwningLocalPlayer();
-	if (!LocalPlayer)
-	{
-		bThemeDelegateBound = false;
-		return;
-	}
-
-	UMCore_UISubsystem* UISubsystem = LocalPlayer->GetSubsystem<UMCore_UISubsystem>();
-	if (UISubsystem)
-	{
-		UISubsystem->OnThemeChanged.RemoveDynamic(this, &UMCore_ContainerBase::HandleThemeChanged);
-	}
-
-	bThemeDelegateBound = false;
 }
