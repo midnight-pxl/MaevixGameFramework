@@ -1,4 +1,4 @@
-﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved.
+﻿// Copyright 2025, Midnight Pixel Studio LLC. All Rights Reserved
 
 #include "CoreData/Tags/MCore_MenuTabTags.h"
 

@@ -207,6 +207,13 @@ void UMCore_PressToContinueWidget::RefreshDismissalIcon()
 		LocalPlayer, DefaultKey, DeviceType, IconBrush))
 	{
 		Icon_DismissAction->SetBrush(IconBrush);
+		Icon_DismissAction->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		/* Resolution failed (device has no controller data); collapse so no stale glyph from the
+		   previous device lingers. Txt_Prompt still conveys the gate. */
+		Icon_DismissAction->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
