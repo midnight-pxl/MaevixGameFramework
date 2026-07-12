@@ -17,3 +17,14 @@ void IMCore_Savable::OnPostLoad_Implementation(const FMCore_SaveLoadContext& Con
 {
 	// Default no-op; providers rebuild derived state from restored fields here.
 }
+
+bool IMCore_Savable::ShouldPersistRecord_Implementation(const FMCore_SaveLoadContext& Context) const
+{
+	// Persist by default; a provider returns false to declare its record must not be restored.
+	return true;
+}
+
+void IMCore_Savable::OnRecordDeleted_Implementation(const FMCore_SaveLoadContext& Context)
+{
+	// Default no-op; providers react to their record's deletion here.
+}

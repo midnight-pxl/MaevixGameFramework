@@ -163,9 +163,9 @@ public:
 		const UInputMappingContext* MappingContext);
 
 private:
-	/* Resolve Enhanced Input subsystem from PlayerController with validation */
+	// Resolve Enhanced Input subsystem from PlayerController with validation
 	static UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem(APlayerController* OwningPlayer);
 
-	/* Resolve the active key profile (Subsystem -> UserSettings -> Profile) */
+	// Resolve the active key profile (Subsystem -> UserSettings -> Profile)
 	static UEnhancedPlayerMappableKeyProfile* GetActiveKeyProfile(APlayerController* OwningPlayer);
 };

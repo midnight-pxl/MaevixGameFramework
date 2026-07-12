@@ -41,11 +41,11 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/** Widget to push when UI system ready (HUD, MainMenu, etc.) */
+	/** Widget to push when UI system ready (HUD, MainMenu, etc.). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI")
 	TSubclassOf<UCommonActivatableWidget> PrimaryWidgetClass;
 
-	/** Layer to push PrimaryWidgetClass onto. Default: MCore_UI_Layer_Game */
+	/** Layer to push PrimaryWidgetClass onto. Default: MCore_UI_Layer_Game. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI", meta = (Categories = "MCore.UI.Layer"))
 	FGameplayTag PrimaryWidgetLayer;
 
@@ -55,7 +55,7 @@ protected:
 	/**
 	 * Called when UISubsystem and PrimaryGameLayout are ready.
 	 * Default pushes PrimaryWidgetClass to PrimaryWidgetLayer.
-	 * Override for custom setup (clear layers, push additional widgets, etc.)
+	 * Override for custom setup (clear layers, push additional widgets, etc.).
 	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI")
 	void OnUISystemReady(UMCore_UISubsystem* UISubsystem);

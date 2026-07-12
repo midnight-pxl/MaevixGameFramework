@@ -14,6 +14,7 @@ class UCommonInputSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPressToContinueAccepted);
 
+/** Whether the gate opens in the Ready or Loading visual state. */
 UENUM(BlueprintType)
 enum class EMCore_PressToContinueStartState : uint8
 {
@@ -50,7 +51,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="MaevixCore|UI")
 	FOnPressToContinueAccepted OnAccepted;
 
-	/* Advance from Loading to Ready. No-op if already Ready. Fires K2_OnReadyToContinue. */
+	/** Advance from Loading to Ready. No-op if already Ready. Fires K2_OnReadyToContinue. */
 	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI")
 	void SetReadyToContinue();
 
@@ -61,7 +62,7 @@ public:
 	void SetPromptText(const FText& InText);
 
 protected:
-	/* Switcher layers must be ordered: 0 = Loading (throbber), 1 = Ready (prompt). */
+	/** Switcher layers must be ordered: 0 = Loading (throbber), 1 = Ready (prompt). */
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
 	TObjectPtr<UWidgetSwitcher> WS_Content;
 
@@ -74,14 +75,14 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
 	TObjectPtr<UImage> Img_Background;
 
-	/* Initial visual state on activation. Default Ready preserves the simple "press any key" case. */
+	/** Initial visual state on activation. Default Ready preserves the simple "press any key" case. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|UI|PressToContinue")
 	EMCore_PressToContinueStartState StartState{EMCore_PressToContinueStartState::Ready};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|UI|PressToContinue")
 	FText PromptText{NSLOCTEXT("MaevixCore", "PressAnyKeyToContinue", "Press any key to continue")};
 
-	/*
+	/**
 	 * Anti-bounce window measured from the Loading->Ready transition (or from activation
 	 * if StartState=Ready). Prevents accidental dismiss from key holdovers during the swap.
 	 */
@@ -89,16 +90,16 @@ protected:
 		meta=(ClampMin="0.0", ClampMax="2.0"))
 	float InputDelaySeconds{0.5f};
 
-	/* When false, only keyboard/gamepad/touch dismiss. Mouse clicks are ignored. */
+	/** When false, only keyboard/gamepad/touch dismiss. Mouse clicks are ignored. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|UI|PressToContinue")
 	bool bAcceptMouseInput{true};
 
-	/* Fired when the widget enters the Loading state on activation. WBP-side animation hook. */
+	/** Fired when the widget enters the Loading state on activation. WBP-side animation hook. */
 	UFUNCTION(BlueprintImplementableEvent, Category="MaevixCore|UI|PressToContinue",
 		meta=(DisplayName="On Enter Loading State"))
 	void K2_OnEnterLoadingState();
 
-	/* Fired when the widget enters the Ready state. WBP-side animation hook (e.g. pulsing prompt). */
+	/** Fired when the widget enters the Ready state. WBP-side animation hook (e.g. pulsing prompt). */
 	UFUNCTION(BlueprintImplementableEvent, Category="MaevixCore|UI|PressToContinue",
 		meta=(DisplayName="On Ready To Continue"))
 	void K2_OnReadyToContinue();

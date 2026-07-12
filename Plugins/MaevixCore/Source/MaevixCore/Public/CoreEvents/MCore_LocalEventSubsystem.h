@@ -21,17 +21,17 @@ class MAEVIXCORE_API UMCore_LocalEventSubsystem : public ULocalPlayerSubsystem
 	GENERATED_BODY()
 
 public:
-	/** Register listener component. Called automatically by UMCore_EventListenerComponent::BeginPlay() */
+	/** Called by UMCore_EventListenerComponent::BeginPlay(). */
 	void RegisterLocalListener(UMCore_EventListenerComponent* ListenerComponent);
 
-	/** Unregister listener component. Called automatically by UMCore_EventListenerComponent::EndPlay() */
+	/** Called by UMCore_EventListenerComponent::EndPlay(). */
 	void UnregisterLocalListener(UMCore_EventListenerComponent* ListenerComponent);
 
 	/**
 	 * Broadcast event to all registered local listeners on this LocalPlayer's subsystem.
 	 *
 	 * SourceScope identifies whether the broadcast originated from a Local-scope call or an
-	 * AllLocal iteration -- delivered to listeners via OnEventReceived so they can differentiate
+	 * AllLocal iteration; delivered to listeners via OnEventReceived so they can differentiate
 	 * without inspecting EventData. Defaults to Local for source compatibility with direct
 	 * callers (e.g. UMCore_UISubsystem). Use UMCore_EventFunctionLibrary::BroadcastSimpleEvent()
 	 * or sibling variants instead of calling this directly.
@@ -39,7 +39,10 @@ public:
 	void BroadcastLocalEvent(const FMCore_EventData& EventData,
 		EMCore_EventScope SourceScope = EMCore_EventScope::Local);
 
-	/** Native delegate fired on every local event broadcast. Subsystems can bind here instead of using EventListenerComp. */
+	/**
+	 * Native delegate fired on every local event broadcast. Subsystems can bind here
+	 * instead of attaching a UMCore_EventListenerComponent.
+	 */
 	FOnLocalEventBroadcast OnLocalEventBroadcast;
 
 protected:
@@ -47,7 +50,6 @@ protected:
 	virtual void Deinitialize() override;
 	
 private:
-	/** Registered local listener components */
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UMCore_EventListenerComponent>> LocalListeners;
 };

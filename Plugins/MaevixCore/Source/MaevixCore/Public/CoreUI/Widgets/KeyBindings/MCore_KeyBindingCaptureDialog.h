@@ -27,9 +27,9 @@ class MAEVIXCORE_API UMCore_KeyBindingCaptureDialog : public UMCore_ActivatableB
 public:
 	UMCore_KeyBindingCaptureDialog(const FObjectInitializer& ObjectInitializer);
 
-	// ====================================================================
+	// ============================================================================
 	// PUBLIC API
-	// ====================================================================
+	// ============================================================================
 
 	/** Set the dialog display text for this capture session. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
@@ -39,9 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void ShowCaptureError(const FText& ErrorMessage);
 
-	// ====================================================================
+	// ============================================================================
 	// DELEGATES
-	// ====================================================================
+	// ============================================================================
 
 	/** Fires when the user cancels (Cancel button or Back action). */
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|KeyBinding")
@@ -53,9 +53,9 @@ public:
 
 protected:
 
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> Txt_ActionName;
@@ -69,9 +69,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Cancel;
 
-	// ====================================================================
+	// ============================================================================
 	// CONFIGURATION
-	// ====================================================================
+	// ============================================================================
 
 	/** How long error messages display before restoring the capture prompt. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
@@ -81,9 +81,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI|KeyBinding|Input")
 	FDataTableRowHandle BackInputAction;
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeOnActivated() override;
@@ -91,17 +91,17 @@ protected:
 	virtual void NativeDestruct() override;
 	virtual UWidget* NativeGetDesiredFocusTarget() const override;
 
-	// ====================================================================
+	// ============================================================================
 	// THEME
-	// ====================================================================
+	// ============================================================================
 
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme) override;
 
 private:
 
-	// ====================================================================
+	// ============================================================================
 	// HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleCancelClicked();
@@ -114,9 +114,9 @@ private:
 
 	void DismissDialog();
 
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
 	FTimerHandle ErrorCooldownTimerHandle;
 	FText CachedPromptText;

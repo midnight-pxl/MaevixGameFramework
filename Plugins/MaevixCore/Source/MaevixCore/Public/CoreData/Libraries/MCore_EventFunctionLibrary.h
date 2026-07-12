@@ -24,9 +24,9 @@ class MAEVIXCORE_API UMCore_EventFunctionLibrary : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
-// ============================================================================
-// BROADCAST
-// ============================================================================
+	// ============================================================================
+	// BROADCAST
+	// ============================================================================
 	
 	/**
 	 * Broadcast signal-only event (most common). Listeners query subsystems for current state.
@@ -49,52 +49,52 @@ public:
 		const FString& ContextID,
 		EMCore_EventScope EventScope = EMCore_EventScope::Local);
 
-    /**
+	/**
 	 * Broadcast event with multiple key-value parameters.
 	 * Only use when you need to pass multiple pieces of data not available elsewhere.
 	 */
-    UFUNCTION(BlueprintCallable, Category = "MaevixCore|Events",
-              meta = (DefaultToSelf = "WorldContext"))
+	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Events",
+			  meta = (DefaultToSelf = "WorldContext"))
 	static void BroadcastEvent(const UObject* WorldContext,
 		FGameplayTag EventTag,
 		const TMap<FString, FString>& EventParams,
 		EMCore_EventScope EventScope = EMCore_EventScope::Local);
 	
-// ============================================================================
-// PARAMETER ACCESSORS
-// ============================================================================
+	// ============================================================================
+	// PARAMETER ACCESSORS
+	// ============================================================================
 	
-	/** Get context ID from event data (for events broadcast with BroadcastEventWithContext) */
+	/** Get context ID from event data (for events broadcast with BroadcastEventWithContext). */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Events")
 	static FString GetEventContextID(const FMCore_EventData& EventData);
 	
-	/** Get raw string parameter (returns DefaultValue if key not found) */
+	/** Get raw string parameter (returns DefaultValue if key not found). */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Events")
 	static FString GetEventParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		const FString& DefaultValue = TEXT(""));
 	
-	/** Get parameter as bool (parses "true"/"false"/"1"/"0"/"on"/"off"/"yes"/"no") */
+	/** Get parameter as bool (parses "true"/"false"/"1"/"0"/"on"/"off"/"yes"/"no"). */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Events")
 	static bool GetBoolParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		bool DefaultValue = false);
 
-	/** Get parameter as int32 */
+	/** Get parameter as int32. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Events")
 	static int32 GetIntParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		int32 DefaultValue = 0);
 
-	/** Get parameter as float (parses string to float) */
+	/** Get parameter as float (parses string to float). */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Events")
 	static float GetFloatParameter(const FMCore_EventData& EventData,
 		const FString& Key,
 		float DefaultValue = 0.0f);
 
-// ============================================================================
-// TYPED PAYLOAD
-// ============================================================================
+	// ============================================================================
+	// TYPED PAYLOAD
+	// ============================================================================
 
 	/**
 	 * Broadcast an event with a typed struct payload.
@@ -139,8 +139,17 @@ public:
 		return EventData.TypedPayload.GetPtr<T>();
 	}
 
+	/**
+	 * Resolves the LocalPlayer that owns Context by walking its ownership chain:
+	 * PlayerController, Pawn, owning ActorComponent, UserWidget, or Actor instigator
+	 * and owner links. Pure resolution with no side effects: returns nullptr when no
+	 * chain resolves and never falls back to Player 0, so callers stay split-screen
+	 * safe and log or reroute the miss with their own context.
+	 */
+	static ULocalPlayer* ResolveLocalPlayerFromContext(const UObject* Context);
+
 private:
-	/* Routes event data to the appropriate subsystem based on scope */
+	// Routes event data to the Local or Global subsystem based on scope
 	static void RouteEventToSubsystem(const UObject* WorldContext,
 		const FMCore_EventData& EventData, EMCore_EventScope EventScope);
 };

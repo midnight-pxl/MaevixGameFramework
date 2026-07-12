@@ -41,9 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|TabbedContainer")
 	bool RemoveTab(FName TabID);
 
-	/**
-	 * Remove all tabs and pages. Does NOT destroy page widgets.
-	 */
+	/** Remove all tabs and pages. Does NOT destroy page widgets. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|TabbedContainer")
 	void ClearAllTabs();
 

@@ -6,14 +6,14 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MCore_NetworkingLibrary.generated.h"
 
-/** Network mode types for UE multiplayer */
+/** Network mode types for UE multiplayer. */
 UENUM(BlueprintType)
 enum class EMCore_NetMode : uint8
 {
 	DedicatedServer UMETA(DisplayName = "Dedicated Server"),
 	ListenServer	UMETA(DisplayName = "Listen Server (Host)"),
 	Client			UMETA(DisplayName = "Client"),
-    Standalone		UMETA(DisplayName = "Single-Player")
+	Standalone		UMETA(DisplayName = "Single-Player")
 };
 
 /**

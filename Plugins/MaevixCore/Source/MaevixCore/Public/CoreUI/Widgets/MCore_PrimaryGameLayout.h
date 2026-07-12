@@ -43,24 +43,26 @@ private:
 	// LAYER STACKS: accessed by UISubsystem via friend
 	// ============================================================================
 
-	/** HUD and persistent gameplay UI */
+	/** HUD and persistent gameplay UI. */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_GameLayer;
 
-	/** In-game menus (inventory, map, crafting) */
+	/** In-game menus (inventory, map, crafting). */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_GameMenuLayer;
 
-	/** Full-screen menus (main menu, settings, pause) */
+	/** Full-screen menus (main menu, settings, pause). */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_MenuLayer;
 
-	/** Dialogs and confirmation popups */
+	/** Dialogs and confirmation popups. */
     UPROPERTY(meta=(BindWidget))
     TObjectPtr<UCommonActivatableWidgetStack> MCore_ModalLayer;
 
-	/** Optional non-activatable host for transient toasts. Bound only if the
-	 *  layout WBP supplies a matching widget; absence is non-fatal. */
+	/**
+	 * Optional non-activatable host for transient toasts. Bound only if the
+	 * layout WBP supplies a matching widget; absence is non-fatal.
+	 */
 	UPROPERTY(meta=(BindWidgetOptional))
 	TObjectPtr<UMCore_ToastHost> MCore_ToastHost;
 

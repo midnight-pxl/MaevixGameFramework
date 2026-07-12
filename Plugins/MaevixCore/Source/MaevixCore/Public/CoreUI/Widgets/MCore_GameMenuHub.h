@@ -66,10 +66,10 @@ protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeDestruct() override;
 
-    /* Menu input mode: cursor visible, no capture, full menu navigation */
+    // Menu input mode: cursor visible, no capture, full menu navigation
     virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
-    /* Focus the active tab's content widget for gamepad navigation */
+    // Focus the active tab's content widget for gamepad navigation
     virtual UWidget* NativeGetDesiredFocusTarget() const override;
 
     UPROPERTY(BlueprintReadOnly, meta = (BindWidget))

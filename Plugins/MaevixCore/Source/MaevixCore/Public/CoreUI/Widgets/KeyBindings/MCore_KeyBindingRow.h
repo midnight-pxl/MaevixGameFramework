@@ -34,9 +34,9 @@ class MAEVIXCORE_API UMCore_KeyBindingRow : public UMCore_RowBase
 
 public:
 
-	// ====================================================================
+	// ============================================================================
 	// PUBLIC API
-	// ====================================================================
+	// ============================================================================
 
 	/** Configure this row for a specific action. Sets display name and inits all buttons. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
@@ -63,9 +63,9 @@ public:
 
 protected:
 
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_KeyBindingButton> Btn_KBM_Primary;
@@ -79,18 +79,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_KeyBindingButton> Btn_Gamepad_Secondary;
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
 private:
 
-	// ====================================================================
+	// ============================================================================
 	// HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleRebindComplete(bool bSuccess, FText ErrorMessage);
@@ -98,9 +98,9 @@ private:
 	UFUNCTION()
 	void HandleCaptureStateChanged(UMCore_KeyBindingButton* Button, bool bCapturing);
 
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
 	TWeakObjectPtr<APlayerController> PlayerRef;
 

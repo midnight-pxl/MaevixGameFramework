@@ -23,9 +23,9 @@ class MAEVIXCORE_API UMCore_SettingsWidget_Slider : public UMCore_SettingsWidget
 	GENERATED_BODY()
 
 protected:
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<USlider> Slider_Value;
@@ -43,9 +43,9 @@ protected:
 	bool bShowStepButtons{true};
 	
 protected:
-	// ====================================================================
+	// ============================================================================
 	// OVERRIDES
-	// ====================================================================
+	// ============================================================================
 
 	virtual void OnDefinitionSet_Implementation(const UMCore_DA_SettingDefinition* Definition) override;
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme) override;
@@ -55,17 +55,17 @@ protected:
 	virtual void StepLeft_Implementation() override;
 	virtual void StepRight_Implementation() override;
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
 private:
-	// ====================================================================
+	// ============================================================================
 	// HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleSliderValueChanged(float RawValue);
@@ -76,9 +76,9 @@ private:
 	UFUNCTION()
 	void HandleStepRight();
 
-	// ====================================================================
+	// ============================================================================
 	// HELPERS
-	// ====================================================================
+	// ============================================================================
 
 	void StepByAmount(float Delta);
 	float SnapToStep(float RawValue) const;
@@ -86,10 +86,10 @@ private:
 	void ApplyValueToEngine(float SnappedValue);
 	void SyncSliderAndDisplay(float SnappedValue);
 
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
-	/* Race condition guard; prevents HandleSliderValueChanged from firing during programmatic sets */
+	// Race condition guard; prevents HandleSliderValueChanged from firing during programmatic sets
 	bool bIsUpdatingSlider{false};
 };

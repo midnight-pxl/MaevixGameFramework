@@ -27,27 +27,31 @@ class MAEVIXCORE_API UMCore_RowBase : public UCommonUserWidget
 	GENERATED_BODY()
 
 protected:
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
-	/* Optional row label widget. Subclasses use this for the row's primary
+	/**
+	 * Optional row label widget. Subclasses use this for the row's primary
 	 * identifier text (setting name, action name, etc.). Themed automatically
 	 * via UMCore_PDA_UITheme_Base::LabelTextStyle on ApplyTheme. If unbound
-	 * in the WBP, label theming silently no-ops. */
+	 * in the WBP, label theming silently no-ops.
+	 */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UCommonTextBlock> Txt_Label;
 
-	/* Optional border highlighting the row while focused or hovered. Visibility
+	/**
+	 * Optional border highlighting the row while focused or hovered. Visibility
 	 * and styling are managed automatically by ApplyTheme + focus path events.
 	 * Theme authors control appearance via UMCore_PDA_UITheme_Base::HighlightBorderStyle.
-	 * If unbound in the WBP, the highlight feature silently no-ops. */
+	 * If unbound in the WBP, the highlight feature silently no-ops.
+	 */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UBorder> HighlightBorder;
 
-	// ====================================================================
+	// ============================================================================
 	// THEME
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Theme")
 	void ApplyTheme(UMCore_PDA_UITheme_Base* NewTheme);
@@ -60,9 +64,9 @@ protected:
 	UPROPERTY(Transient)
 	mutable TWeakObjectPtr<UMCore_PDA_UITheme_Base> CachedTheme;
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativePreConstruct() override;
 	virtual void NativeOnInitialized() override;
@@ -75,10 +79,12 @@ protected:
 	virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
 	//~ End UUserWidget interface
 
-	/* Virtual hook called after the row enters hover OR the focus path
+	/**
+	 * Virtual hook called after the row enters hover OR the focus path
 	 * (after state bool + visibility update). Default empty. Subclasses
 	 * override to publish row-attention events (e.g. driving an external
-	 * description pane). Fires once per gain event; no symmetric Lost hook. */
+	 * description pane). Fires once per gain event; no symmetric Lost hook.
+	 */
 	virtual void NotifyRowFocusGained() {}
 
 	/* Recomputes HighlightBorder visibility from the OR of focus-path and hover state.

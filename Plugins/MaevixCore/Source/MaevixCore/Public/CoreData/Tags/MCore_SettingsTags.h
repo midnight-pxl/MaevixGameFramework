@@ -6,9 +6,9 @@
 
 namespace MCore_SettingsTags
 {
-    // ========================================================================
+    // ============================================================================
     // SETTING CATEGORIES
-    // ========================================================================
+    // ============================================================================
 	
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_Video);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_Audio);
@@ -16,9 +16,9 @@ namespace MCore_SettingsTags
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_KeyBinding);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_Accessibility);
 
-    // ========================================================================
+    // ============================================================================
     // DEFAULT SUB-CATEGORIES
-    // ========================================================================
+    // ============================================================================
 
     /*
      * Depth-4 tags (Category.X.General) for settings panel tab layout.
@@ -34,9 +34,9 @@ namespace MCore_SettingsTags
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_KeyBinding_General);
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Category_Accessibility_General);
 	
-    // ========================================================================
+    // ============================================================================
     // DISPLAY SETTINGS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Display_Brightness);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Display_Resolution);
@@ -48,9 +48,9 @@ namespace MCore_SettingsTags
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Display_HDR);
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Display_HDRNits);
 
-    // ========================================================================
+    // ============================================================================
     // GRAPHICS SETTINGS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Graphics_QualityPreset);
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Graphics_GlobalIllumination);
@@ -64,9 +64,9 @@ namespace MCore_SettingsTags
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Graphics_ViewDistance);
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Graphics_EffectsQuality);
 
-    // ========================================================================
+    // ============================================================================
     // AUDIO SETTINGS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Audio_MasterVolume);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Audio_Quality);
@@ -77,9 +77,9 @@ namespace MCore_SettingsTags
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Audio_UIVolume);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Audio_MuteAudio);
 
-    // ========================================================================
+    // ============================================================================
     // CONTROLS SETTINGS
-    // ========================================================================
+    // ============================================================================
 	
 	MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_KeyBinding_Placeholder);
 
@@ -92,9 +92,9 @@ namespace MCore_SettingsTags
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Controls_InvertLookY);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Controls_Vibration);
 
-    // ========================================================================
+    // ============================================================================
     // ACCESSIBILITY SETTINGS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Accessibility_Subtitles);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Accessibility_SubtitleSize);
@@ -105,17 +105,17 @@ namespace MCore_SettingsTags
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Accessibility_TooltipDelay);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Accessibility_ActiveTheme);
 
-    // ========================================================================
+    // ============================================================================
     // SETTING EVENTS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Event_ConfirmationRequired);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Event_GamepadIconSetChanged);
     MAEVIXCORE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MCore_Settings_Event_ExternalValueChange);
 
-    // ========================================================================
+    // ============================================================================
     // UTILITY FUNCTIONS
-    // ========================================================================
+    // ============================================================================
 
     MAEVIXCORE_API FGameplayTag GetCategoryTag(const FString& CategoryName);
     MAEVIXCORE_API FGameplayTag GenerateCustomUISettingTag(const FString& Category, const FString& Setting);

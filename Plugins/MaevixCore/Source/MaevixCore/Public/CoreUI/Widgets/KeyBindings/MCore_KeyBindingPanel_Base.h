@@ -34,9 +34,9 @@ class MAEVIXCORE_API UMCore_KeyBindingPanel_Base : public UCommonUserWidget
 
 public:
 
-	// ====================================================================
+	// ============================================================================
 	// PUBLIC API
-	// ====================================================================
+	// ============================================================================
 
 	/** Query all remappable actions, group by IMC and category, and spawn rows into tabs. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
@@ -46,9 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
 	void RefreshAllRows();
 
-	// ====================================================================
+	// ============================================================================
 	// BLUEPRINT HOOKS
-	// ====================================================================
+	// ============================================================================
 
 	/** Fires after each IMC tab is created and registered in the TabbedContainer. */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI|KeyBinding")
@@ -67,9 +67,9 @@ public:
 
 protected:
 
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_TabbedContainer> TabbedContainer_Bindings;
@@ -78,13 +78,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_ButtonBase> Btn_ResetAllBindings;
 
-	/** Optional. When bound, drives the reset-category confirmation flow for the active IMC tab. Absent = no per-category reset UI. */
+	/**
+	 * Optional. When bound, drives the reset-category confirmation flow for the active IMC tab.
+	 * Absent = no per-category reset UI.
+	 */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UMCore_ButtonBase> Btn_ResetCategory;
 
-	// ====================================================================
+	// ============================================================================
 	// CONFIGURATION
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	TSubclassOf<UMCore_KeyBindingRow> KeyBindingRowClass;
@@ -101,13 +104,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	FText CapturePromptGamepadText;
 	
-	/** Confirmation dialog class for reset operations. Falls back to CoreSettings::DefaultConfirmationDialogClass if null. */
+	/**
+	 * Confirmation dialog class for reset operations. Falls back to
+	 * CoreSettings::DefaultConfirmationDialogClass if null.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	TSubclassOf<UMCore_ConfirmationDialog> ResetConfirmationDialogClass;
 
-	// ====================================================================
+	// ============================================================================
 	// THEME
-	// ====================================================================
+	// ============================================================================
 
 	/** Apply theme styling to this widget. Override for custom theme handling. */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Theme")
@@ -120,9 +126,9 @@ protected:
 	UPROPERTY(Transient)
 	mutable TWeakObjectPtr<UMCore_PDA_UITheme_Base> CachedTheme;
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativePreConstruct() override;
 	virtual void NativeOnInitialized() override;
@@ -130,24 +136,24 @@ protected:
 
 private:
 
-	// ====================================================================
+	// ============================================================================
 	// PANEL BUILD
-	// ====================================================================
+	// ============================================================================
 
 	UScrollBox* BuildContextPage(APlayerController* OwningPlayer, const UInputMappingContext* MappingContext);
 	UScrollBox* BuildFallbackPage(APlayerController* OwningPlayer);
 	UCommonTextBlock* CreateThemedCategoryHeader(const FText& CategoryDisplayName);
 
-	// ====================================================================
+	// ============================================================================
 	// TAB CALLBACKS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleContextTabSelected(FName TabID);
 
-	// ====================================================================
+	// ============================================================================
 	// RESET HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleResetAllClicked();
@@ -176,9 +182,9 @@ private:
 	UFUNCTION()
 	void HandleCaptureDialogReadyForCapture();
 
-	// ====================================================================
+	// ============================================================================
 	// THEME INTERNALS
-	// ====================================================================
+	// ============================================================================
 
 	void BindThemeDelegate();
 	void UnbindThemeDelegate();
@@ -188,16 +194,16 @@ private:
 
 	bool bThemeDelegateBound{false};
 
-	// ====================================================================
+	// ============================================================================
 	// DIALOG HELPERS
-	// ====================================================================
+	// ============================================================================
 
 	void DismissActiveCaptureDialog();
 	void DismissActiveConfirmationDialog();
 
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMCore_KeyBindingRow>> AllRows;

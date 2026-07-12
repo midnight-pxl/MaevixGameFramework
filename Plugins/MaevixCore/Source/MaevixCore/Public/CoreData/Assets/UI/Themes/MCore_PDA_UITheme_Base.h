@@ -17,7 +17,7 @@ class UMCore_PDA_ScrollbarStyle;
  * Master UI theme DataAsset referencing CommonUI styles and modular style DataAssets.
  * Widgets query the active theme via UISubsystem->GetActiveTheme().
  *
- * Create child DataAssets for each visual theme
+ * Create child DataAssets for each visual theme.
  * Set as active in Project Settings or via UISubsystem at runtime.
  */
 UCLASS(Abstract, Blueprintable)
@@ -50,11 +50,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|CommonUI")
 	TSubclassOf<UCommonBorderStyle> HighlightBorderStyle;
 
-	/** Main actions: play, confirm, submit */
+	/** Main actions: play, confirm, submit. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|CommonUI")
 	TSubclassOf<UCommonButtonStyle> PrimaryButtonStyle;
 
-	/** Cancel, back, navigation, settings controls */
+	/** Cancel, back, navigation, settings controls. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|CommonUI")
 	TSubclassOf<UCommonButtonStyle> SecondaryButtonStyle;
 

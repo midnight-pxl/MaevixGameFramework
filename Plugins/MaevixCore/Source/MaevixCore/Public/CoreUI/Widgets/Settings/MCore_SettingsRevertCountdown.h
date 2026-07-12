@@ -39,9 +39,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Settings")
 	FOnCountdownResult OnCountdownResult;
 
-	/** Marks this countdown as resolved without firing the auto-revert fallback.
-	 *  Call before DeactivateWidget() when replacing this countdown with a merged
-	 *  successor inside the debounce window. */
+	/**
+	 * Marks this countdown as resolved without firing the auto-revert fallback.
+	 * Call before DeactivateWidget() when replacing this countdown with a merged
+	 * successor inside the debounce window.
+	 */
 	void SuppressFallbackForReplacement();
 
 protected:
@@ -73,7 +75,7 @@ protected:
 private:
 	void ResolveCountdown(bool bConfirmed);
 
-	/* Looks up each pending tag's definition and calls the appropriate batch setter */
+	// Looks up each pending tag's definition and calls the appropriate batch setter
 	void ApplySettings(bool bConfirmed);
 
 	UFUNCTION()

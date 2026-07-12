@@ -28,7 +28,9 @@ public:
 
 	virtual void OnNetworkShutdown() {}
 
-	/** Publishes this component's authority verdict. The base fires this once at initialization;
-	    read authority at point of use if you need it live (see UMCore_NetworkingComponent). */
+	/**
+	 * Publishes this component's authority verdict. The base fires this once at initialization;
+	 * read authority at point of use if you need it live (see UMCore_NetworkingComponent).
+	 */
 	virtual void OnAuthorityChanged(bool bHasAuthority) {}
 };

@@ -11,9 +11,12 @@
 UENUM(BlueprintType)
 enum class EMCore_AuthorityExecResult : uint8
 {
-	Executed,           /* Owner was authoritative; the operation ran. */
-	SkippedNoAuthority, /* Owner exists but is not authoritative; operation did not run. */
-	SkippedNoOwner      /* No owning Actor resolved; operation could not be gated or run. */
+	/** Owner was authoritative; the operation ran. */
+	Executed,
+	/** Owner exists but is not authoritative; operation did not run. */
+	SkippedNoAuthority,
+	/** No owning Actor resolved; operation could not be gated or run. */
+	SkippedNoOwner
 };
 
 /**
@@ -76,16 +79,16 @@ protected:
 	 * Runs Operation only when the owning Actor is the network authority, re-reading authority
 	 * live on every call rather than trusting an init-time cache.
 	 *
-	 * @warning This gates execution on authority; it does not make the call network transparent.
-	 * The subclass still owns its own Server RPC. ExecuteWithAuthority is meant to run inside that
-	 * RPC handler, as the authority gate around the authoritative mutation. This is a C++ inherited
-	 * surface (a template cannot be a UFUNCTION), so Blueprint-only downstream code does not call
-	 * it and instead branches on the pure CanExecuteServerOperation check.
+	 * Gates execution on authority; does not make the call network-transparent. The subclass still
+	 * owns its own Server RPC, and ExecuteWithAuthority is meant to run inside that RPC handler as
+	 * the authority gate around the authoritative mutation. C++ inherited surface only (a template
+	 * cannot be a UFUNCTION), so Blueprint-only downstream code branches on the pure
+	 * CanExecuteServerOperation check instead.
 	 *
-	 * @param Operation Callable invoked with no arguments when authoritative. Surface any operation
-	 * result through a captured reference; this method returns the authority outcome only.
-	 * @return Executed when the operation ran, SkippedNoAuthority when the owner is not
-	 * authoritative, SkippedNoOwner when no owning Actor resolved.
+	 * Operation is invoked with no arguments when authoritative; surface any result through a
+	 * captured reference, since this returns the authority outcome only: Executed when it ran,
+	 * SkippedNoAuthority when the owner is not authoritative, SkippedNoOwner when no owning Actor
+	 * resolved.
 	 */
 	template<typename TOperation>
 	EMCore_AuthorityExecResult ExecuteWithAuthority(TOperation&& Operation)

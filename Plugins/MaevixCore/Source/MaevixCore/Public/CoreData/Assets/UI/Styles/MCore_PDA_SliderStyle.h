@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|Slider|Colors")
 	FSlateColor BarNormalTint = FLinearColor{ 0.3f, 0.3f, 0.3f, 1.0f };
 
-	/** Tint for the filled portion of the bar */
+	/** Tint for the filled portion of the bar. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Theme|Slider|Colors")
 	FSlateColor BarFilledTint = FLinearColor{ 0.8f, 0.8f, 0.8f, 1.0f };
 

@@ -25,14 +25,14 @@ public:
   	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MaevixCore|Menu Hub")
   	TSubclassOf<UCommonActivatableWidget> ScreenWidgetClass;
 
-  	/** Sort order (lower = left, higher = right) */
+  	/** Sort order (lower = left, higher = right). */
   	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MaevixCore|Menu Hub")
   	int32 Priority{0};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MaevixCore|Menu Hub")
 	TObjectPtr<UTexture2D> TabIcon{nullptr};
 
-	/** Extracts display name from the last segment of TabID (e.g. "Inventory" from "MVault.UI.Categories.Inventory") */
+	/** Extracts display name from the last segment of TabID (e.g. "Inventory" from "MVault.UI.Categories.Inventory"). */
 	FText GetDisplayName() const
 	{
 		if (!TabID.IsValid())

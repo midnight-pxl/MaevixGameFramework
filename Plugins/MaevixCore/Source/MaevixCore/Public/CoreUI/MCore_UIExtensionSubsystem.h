@@ -62,18 +62,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	void UnregisterExtension(UPARAM(ref) FMCore_UIExtensionHandle& ExtensionHandle);
 
-	/**
-	 * Get widget class for extension handle.
-	 * Used by extension point widgets to create instances.
-	 */
+	/** Widget class behind an extension handle. Used by extension-point widgets to spawn instances. */
 	UFUNCTION(BlueprintCallable, Category="MaevixCore|UI|Extension")
 	TSubclassOf<UUserWidget> GetWidgetClassForExtension(const FMCore_UIExtensionHandle& ExtensionHandle) const;
 
-	/** Check if extension handle is currently registered */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|UI|Extension")
 	bool IsExtensionRegistered(const FMCore_UIExtensionHandle& ExtensionHandle) const;
 
-	/** Check if extension point handle is currently registered */
 	UFUNCTION(BlueprintPure, Category="MaevixCore|UI|Extension")
 	bool IsExtensionPointRegistered(const FMCore_UIExtensionPointHandle& ExtensionPointHandle) const;
 

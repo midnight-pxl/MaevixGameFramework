@@ -39,16 +39,21 @@ class MAEVIXCORE_API UMCore_LocalServiceRegistrySubsystem : public ULocalPlayerS
 	GENERATED_BODY()
 
 public:
-	/**
-	 * Lower-tier C++ primitives beneath the UMCore_ServiceRegistryLibrary facade (RegisterService /
+	/* Lower-tier C++ primitives beneath the UMCore_ServiceRegistryLibrary facade (RegisterService /
 	 * ResolveService / UnregisterService). Direct C++ escape hatch; the facade is the validated path
 	 * (it gates ImplementsInterface and routes scope by WorldContext). Storage layer only.
 	 */
 
-	/** Stores Provider under (InterfaceClass, Discriminator) and returns a stamped handle, or an invalid handle if rejected. */
+	/**
+	 * Stores Provider under (InterfaceClass, Discriminator) and returns a stamped handle,
+	 * or an invalid handle if rejected.
+	 */
 	FMCore_ServiceHandle RegisterProvider(UClass* InterfaceClass, FGameplayTag Discriminator, UObject* Provider);
 
-	/** Returns the live provider for (InterfaceClass, Discriminator), or nullptr. Non const: prunes a stale entry on access. */
+	/**
+	 * Returns the live provider for (InterfaceClass, Discriminator), or nullptr. Non const:
+	 * prunes a stale entry on access.
+	 */
 	UObject* ResolveProvider(UClass* InterfaceClass, FGameplayTag Discriminator);
 
 	/** Removes the registration with the given id. Returns true if an entry was found and removed. */

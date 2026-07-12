@@ -46,17 +46,19 @@ public:
 		return IsValid(PrimaryGameLayout) && PrimaryGameLayout->AreAllLayersBound();
 	}
 
-	/** The PrimaryGameLayout if created, else nullptr. Lets sibling subsystems (e.g. the
-	 *  toast service) attach to it, including on the already-ready late-init path. */
+	/**
+	 * The PrimaryGameLayout if created, else nullptr. Lets sibling subsystems (e.g. the
+	 * toast service) attach to it, including on the already-ready late-init path.
+	 */
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|UI|Layout")
 	UMCore_PrimaryGameLayout* GetPrimaryGameLayout() const { return PrimaryGameLayout; }
 
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|UI|Events")
 	FOnPrimaryGameLayoutReady OnPrimaryGameLayoutReady;
 	
-// ============================================================================
-// SCREEN MANAGEMENT
-// ============================================================================
+	// ============================================================================
+	// SCREEN MANAGEMENT
+	// ============================================================================
 
 	/** Opens a screen on the specified layer. Returns existing instance if already active (dedup by default). */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI", meta = (DeterminesOutputType = "ScreenClass"))
@@ -97,9 +99,9 @@ public:
 
 	void NotifyWidgetDestroyed(UCommonActivatableWidget* Widget);
 
-// ============================================================================
-// MENU HUB
-// ============================================================================
+	// ============================================================================
+	// MENU HUB
+	// ============================================================================
 
 	/** Opens the GameMenuHub on the GameMenu layer. Returns existing if already active. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
@@ -128,9 +130,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Menu Hub")
 	void RebuildMenuHubTabBar();
 	
-// ============================================================================
-// THEME
-// ============================================================================
+	// ============================================================================
+	// THEME
+	// ============================================================================
 
 	UFUNCTION(BlueprintPure, Category = "MaevixCore|Theme")
 	UMCore_PDA_UITheme_Base* GetActiveTheme() const { return CachedActiveTheme; }
@@ -164,11 +166,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI")
 	TSubclassOf<UMCore_PrimaryGameLayout> PrimaryGameLayoutClass;
 	
-	/** Widget class for MenuHub (loaded from settings or defaults) */
+	/** Widget class for MenuHub (loaded from settings or defaults). */
 	UPROPERTY()
 	TSubclassOf<UMCore_GameMenuHub> MenuHubClass;
 
-	/** Z-order for layout when added to viewport */
+	/** Z-order for layout when added to viewport. */
 	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|UI", meta = (ClampMin = "-100", ClampMax = "100"))
 	int32 PrimaryGameLayoutZOrder = 0;
 	
@@ -190,9 +192,9 @@ private:
 	void UntrackWidget(UCommonActivatableWidget* Widget, FGameplayTag LayerTag);
 	UMCore_GameMenuHub* FindTrackedMenuHub() const;
 
-	/* Creates and adds PrimaryGameLayout to viewport */
+	// Creates and adds PrimaryGameLayout to viewport
 	void CreatePrimaryGameLayout();
-	/* Deferred layout creation once PlayerController is ready */
+	// Deferred layout creation once PlayerController is ready
 	void OnPlayerControllerReady(APlayerController* OwningPlayer);
 	
 	void HandleLocalEvent(const FMCore_EventData& EventData);
@@ -201,7 +203,7 @@ private:
 	 * exists, ActiveThemePath is empty, or the asset failed to load. */
 	UMCore_PDA_UITheme_Base* LoadSavedActiveTheme() const;
 
-	/* Writes NewTheme's path to the player save and flushes to disk. */
+	// Writes NewTheme's path to the player save and flushes to disk.
 	void PersistActiveTheme(UMCore_PDA_UITheme_Base* NewTheme);
 
 	/* Broadcasts MCore.Theme.Changed via the local event subsystem, payload
@@ -212,7 +214,7 @@ private:
 	FDelegateHandle PlayerControllerReadyHandle;
 	FDelegateHandle LocalEventHandle;
 	
-	/** Strong reference; UISubsystem owns the layout lifecycle */
+	// Strong reference; UISubsystem owns the layout lifecycle
 	UPROPERTY(Transient)
 	TObjectPtr<UMCore_PrimaryGameLayout> PrimaryGameLayout;
 	
@@ -224,10 +226,10 @@ private:
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, TObjectPtr<UCommonActivatableWidgetStack>> LayerStackMap;
 
-	/* Widgets pushed via PushWidgetToLayer, tracked per-layer with weak refs */
+	// Widgets pushed via PushWidgetToLayer, tracked per-layer with weak refs
 	TMap<FGameplayTag, TArray<TWeakObjectPtr<UCommonActivatableWidget>>> TrackedWidgets;
 
-	/** Registered menu screens for this local player */
+	// Registered menu screens for this local player
 	UPROPERTY(Transient)
 	TArray<FMCore_MenuTab> RegisteredMenuScreens;
 };

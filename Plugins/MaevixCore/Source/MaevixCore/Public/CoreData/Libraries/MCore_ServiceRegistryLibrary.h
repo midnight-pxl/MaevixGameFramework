@@ -48,10 +48,13 @@ public:
 
 		UObject* Provider = nullptr;
 		ResolveService(WorldContext, IX::UClassType::StaticClass(), Discriminator, Provider);
-		return TScriptInterface<IX>(Provider); /* converting ctor casts internally; empty when Provider is null */
+		return TScriptInterface<IX>(Provider); // converting ctor casts internally; empty when Provider is null
 	}
 
-	/** Registers Provider as the IX implementation for the WorldContext's scope; returns a handle (invalid if rejected). */
+	/**
+	 * Registers Provider as the IX implementation for the WorldContext's scope; returns a
+	 * handle (invalid if rejected).
+	 */
 	template<class IX>
 	static FMCore_ServiceHandle RegisterService(const UObject* WorldContext, TScriptInterface<IX> Provider,
 		FGameplayTag Discriminator = FGameplayTag())

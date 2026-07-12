@@ -9,7 +9,7 @@
 class UHorizontalBox;
 
 /**
- * Maevix TabList for housing tab buttons within UIs
+ * Maevix TabList for housing tab buttons within UIs.
  */
 UCLASS(Blueprintable, meta = (DisableNativeTick))
 class MAEVIXCORE_API UMCore_TabListBase : public UCommonTabListWidgetBase

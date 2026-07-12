@@ -9,8 +9,10 @@
 class UMCore_ToastBase;
 class UTexture2D;
 
-/** Delivery scope for a toast request. Toasts never replicate; AllLocal fans the
- *  same request to every LocalPlayer's own service on this client. */
+/**
+ * Delivery scope for a toast request. Toasts never replicate; AllLocal fans the
+ * same request to every LocalPlayer's own service on this client.
+ */
 UENUM(BlueprintType)
 enum class EMCore_ToastScope : uint8
 {
@@ -20,9 +22,11 @@ enum class EMCore_ToastScope : uint8
 	AllLocal    = 1 UMETA(DisplayName = "All Local Players")
 };
 
-/** Opaque handle to a submitted toast. Pass to DismissToast. Scoped to the
- *  submitting LocalPlayer's service. For AllLocal it refers to the caller's own
- *  player; sibling players' copies expire by Duration. */
+/**
+ * Opaque handle to a submitted toast. Pass to DismissToast. Scoped to the
+ * submitting LocalPlayer's service. For AllLocal it refers to the caller's own
+ * player; sibling players' copies expire by Duration.
+ */
 USTRUCT(BlueprintType)
 struct MAEVIXCORE_API FMCore_ToastHandle
 {
@@ -44,11 +48,13 @@ private:
 	uint32 HandleID;
 };
 
-/** Caller-submitted toast content and policy. Only Title is required.
- *  StyleVariant is interpreted by the toast WBP (mapped to visuals via the cached
- *  theme); an empty tag is treated as the WBP's default style. Empty AnchorTag
- *  resolves to the configured default anchor. Duration <= 0 means persistent until
- *  DismissToast. */
+/**
+ * Caller-submitted toast content and policy. Only Title is required.
+ * StyleVariant is interpreted by the toast WBP (mapped to visuals via the cached
+ * theme); an empty tag is treated as the WBP's default style. Empty AnchorTag
+ * resolves to the configured default anchor. Duration <= 0 means persistent until
+ * DismissToast.
+ */
 USTRUCT(BlueprintType)
 struct MAEVIXCORE_API FMCore_ToastRequest
 {

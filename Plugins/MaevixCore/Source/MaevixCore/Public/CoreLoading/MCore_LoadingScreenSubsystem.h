@@ -110,7 +110,7 @@ private:
 	void HandlePreLoadMap(const FString& MapName);
 	void HandlePostLoadMap(UWorld* LoadedWorld);
 
-	/* Builds the aggregated entry pool by sync-loading every configured library. */
+	// Builds the aggregated entry pool by sync-loading every configured library.
 	TArray<FMCore_LoadingScreenEntry> ResolveEntryPool() const;
 
 	// ============================================================================
@@ -138,7 +138,7 @@ private:
 	   and so external code can fetch the live widget to mutate its prompt UX. */
 	TWeakObjectPtr<UMCore_LoadingScreenWidget> ActiveWidget;
 
-	/* Cursor for Sequential selection mode. In-memory only; resets on game restart. */
+	// Cursor for Sequential selection mode. In-memory only; resets on game restart.
 	int32 LastSelectedIndex{INDEX_NONE};
 
 	FDelegateHandle PreLoadMapHandle;

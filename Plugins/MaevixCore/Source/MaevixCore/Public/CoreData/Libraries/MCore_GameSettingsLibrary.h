@@ -164,9 +164,11 @@ public:
 		meta = (WorldContext = "WorldContextObject"))
 	static void ReloadAndApplyFromDisk(const UObject* WorldContextObject);
 
-	/** Re-applies every persisted setting to the engine without touching disk. Used by the
-	 *  boot-time replay path; also called internally by ReloadAndApplyFromDisk after refreshing
-	 *  in-memory state. Idempotent and safe to call repeatedly. Early-outs on dedicated server. */
+	/**
+	 * Re-applies every persisted setting to the engine without touching disk. Used by the
+	 * boot-time replay path; also called internally by ReloadAndApplyFromDisk after refreshing
+	 * in-memory state. Idempotent and safe to call repeatedly. Early-outs on dedicated server.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings",
 		meta = (WorldContext = "WorldContextObject"))
 	static void ApplyAllSettingsToEngine(const UObject* WorldContextObject);
@@ -226,7 +228,7 @@ private:
 	 * DA's save key (Definition->NamedSetter matched against 10 known names). */
 	static void CascadeScalabilityValuesToSave(UMCore_PlayerSettingsSave* Save);
 
-	/* Sets LastSelectedQualityPreset to -1 (Custom) on the given save. No-op if Save is null. */
+	// Sets LastSelectedQualityPreset to -1 (Custom) on the given save. No-op if Save is null.
 	static void MarkQualityPresetCustom(UMCore_PlayerSettingsSave* Save);
 
 	static void ApplyToConsoleVariable(const FName& CVarName, float Value);

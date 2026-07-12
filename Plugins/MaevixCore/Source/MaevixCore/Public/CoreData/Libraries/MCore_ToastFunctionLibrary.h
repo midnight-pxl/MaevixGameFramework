@@ -30,6 +30,6 @@ public:
 	static void DismissToast(const UObject* WorldContext, UPARAM(ref) FMCore_ToastHandle& Handle);
 
 private:
-	/** Resolve the owning LocalPlayer from a WorldContext. No Player 0 fallback (split-screen safe). */
+	// Resolve the owning LocalPlayer from a WorldContext. No Player 0 fallback (split-screen safe).
 	static ULocalPlayer* ResolveLocalPlayer(const UObject* WorldContext);
 };

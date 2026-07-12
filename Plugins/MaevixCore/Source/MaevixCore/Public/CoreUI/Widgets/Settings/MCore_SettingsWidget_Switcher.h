@@ -22,9 +22,9 @@ class MAEVIXCORE_API UMCore_SettingsWidget_Switcher : public UMCore_SettingsWidg
 	GENERATED_BODY()
 
 protected:
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Previous;
@@ -35,9 +35,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Next;
 
-	// ====================================================================
+	// ============================================================================
 	// OVERRIDES
-	// ====================================================================
+	// ============================================================================
 
 	virtual void OnDefinitionSet_Implementation(const UMCore_DA_SettingDefinition* Definition) override;
 	virtual void ApplyTheme_Implementation(UMCore_PDA_UITheme_Base* NewTheme) override;
@@ -47,24 +47,26 @@ protected:
 	virtual void StepLeft_Implementation() override;
 	virtual void StepRight_Implementation() override;
 
-	/** Returns the index that should currently be displayed.
-	 *  Default reads the setting's save-key int via GameSettingsLibrary.
-	 *  Override for widgets where display state diverges from save (e.g. QualityPreset Custom). */
+	/**
+	 * Returns the index that should currently be displayed.
+	 * Default reads the setting's save-key int via GameSettingsLibrary.
+	 * Override for widgets where display state diverges from save (e.g. QualityPreset Custom).
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Settings")
 	int32 ResolveDisplayedIndex();
 	virtual int32 ResolveDisplayedIndex_Implementation();
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
 private:
-	// ====================================================================
+	// ============================================================================
 	// HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandlePreviousClicked();
@@ -72,18 +74,18 @@ private:
 	UFUNCTION()
 	void HandleNextClicked();
 
-	// ====================================================================
+	// ============================================================================
 	// HELPERS
-	// ====================================================================
+	// ============================================================================
 
 	void CycleOption(int32 Direction);
 	void UpdateDisplay();
 	void ApplyCurrentValue();
 	void ReadCurrentValue();
 
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
 	TArray<FText> Options;
 	int32 CurrentIndex{0};

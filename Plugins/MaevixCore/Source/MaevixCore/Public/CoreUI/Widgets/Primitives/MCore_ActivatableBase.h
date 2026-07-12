@@ -21,9 +21,7 @@ struct MAEVIXCORE_API FMCore_InputActionBindingHandle
 	bool IsValid() const { return CommonHandle.IsValid(); }
 };
 
-/**
- * Dynamic delegate signature for input action callbacks.
- */
+/** Dynamic delegate signature for input action callbacks. */
 DECLARE_DYNAMIC_DELEGATE_OneParam(FInputActionExecutedDelegate, FName, ActionName);
 
 /**
@@ -41,7 +39,7 @@ class MAEVIXCORE_API UMCore_ActivatableBase : public UCommonActivatableWidget
 public:
 	UMCore_ActivatableBase(const FObjectInitializer& ObjectInitializer);
 
-	/** GameplayTags that block this widget from activating when present on OwningPlayer */
+	/** GameplayTags that block this widget from activating when present on OwningPlayer. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="MaevixCore|UI|Activation", meta=(Categories = "State"))
 	FGameplayTagContainer BlockTags;
 
@@ -98,7 +96,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "MaevixCore|Theme", meta = (DisplayName = "On Theme Applied"))
 	void K2_OnThemeApplied(UMCore_PDA_UITheme_Base* Theme);
 
-	/* Check if activation should be blocked based on OwningPlayer's tags */
+	/** Check if activation should be blocked based on OwningPlayer's tags */
 	bool bShouldBlockActivation() const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="MaevixCore|UI|Activation")
@@ -119,6 +117,6 @@ private:
 
 	bool bThemeDelegateBound{false};
 
-	/* Saved during deactivation for focus restore on reactivation */
+	/** Saved during deactivation for focus restore on reactivation */
 	TWeakObjectPtr<UWidget> SavedFocusTarget;
 };

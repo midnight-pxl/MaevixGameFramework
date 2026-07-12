@@ -108,6 +108,6 @@ private:
 	 */
 	TMap<FMCore_ServiceKey, FMCore_ServiceEntry> Services;
 
-	/* Monotonic id source, mirrors FMCore_UIExtensionHandle's uint32 scheme. 0 stays reserved as invalid. */
+	// Monotonic id source, mirrors FMCore_UIExtensionHandle's uint32 scheme. 0 stays reserved as invalid.
 	uint32 NextRegistrationId = 1;
 };

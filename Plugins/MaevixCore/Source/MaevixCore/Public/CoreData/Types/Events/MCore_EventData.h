@@ -6,11 +6,12 @@
 #include "StructUtils/InstancedStruct.h"
 #include "MCore_EventData.generated.h"
 
-/* Event broadcast scope.
- * Underlying values are explicitly assigned to preserve
- * serialization compatibility
- * 
- * Do not change underlying values without dedicated CoreRedirects migration. */
+/**
+ * Event broadcast scope. Underlying values are explicitly assigned to preserve
+ * serialization compatibility.
+ *
+ * Do not change underlying values without dedicated CoreRedirects migration.
+ */
 UENUM(BlueprintType)
 enum class EMCore_EventScope : uint8
 {
@@ -22,7 +23,7 @@ enum class EMCore_EventScope : uint8
 	                   ToolTip = "All players via server multicast - cross-network gameplay state. Requires UMCore_GlobalEventReplicator on GameState.")
 };
 
-/** Single key-value parameter entry, RPC-safe */
+/** Single key-value parameter entry, RPC-safe. */
 USTRUCT(BlueprintType)
 struct MAEVIXCORE_API FMCore_EventParameter
 {
@@ -76,7 +77,7 @@ struct MAEVIXCORE_API FMCore_EventData
 		EventParams.Reserve(InEventParams.Num());
 		for (const auto& Pair : InEventParams)
 		{
-			/* Skip invalid entries */
+			// Skip invalid entries
 			if (!Pair.Key.IsEmpty())
 			{
 				EventParams.Emplace(Pair.Key, Pair.Value);
@@ -89,10 +90,10 @@ struct MAEVIXCORE_API FMCore_EventData
 
 	bool IsValid() const { return EventTag.IsValid(); }
 
-	/* Parameter lookup by key, returns DefaultValue if not found */
+	/** Parameter lookup by key, returns DefaultValue if not found. */
 	FString GetParameter(const FString& Key, const FString& DefaultValue = TEXT("")) const
 	{
-		/* Linear search is optimal for typical 1-8 parameters */
+		// Linear search is optimal for typical 1-8 parameters
 		for (const FMCore_EventParameter& Param : EventParams)
 		{
 			if (Param.Key == Key)

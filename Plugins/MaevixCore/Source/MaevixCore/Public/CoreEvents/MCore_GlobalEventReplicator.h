@@ -18,7 +18,7 @@ class UMCore_GlobalEventSubsystem;
  * Late-join semantics: this replicator does NOT persist event history. Clients that join the
  * session after a global event has fired will not receive that event. Consumers requiring
  * durable state should propagate state via replicated properties on the GameState or a
- * dedicated replicated subobject, then derive UI events from property change notifications --
+ * dedicated replicated subobject, then derive UI events from property change notifications;
  * do not rely on Global-scope event broadcasts as a state-restoration mechanism.
  */
 UCLASS(ClassGroup=(MaevixCore), meta=(BlueprintSpawnableComponent, DisplayName="Global Event Replicator"))
@@ -32,7 +32,7 @@ public:
 	/**
 	 * Request a global event broadcast.
 	 * Routes to server RPC or direct multicast based on authority.
-	 * Called by GlobalEventSubsystem - do not call directly.
+	 * Called by GlobalEventSubsystem. Do not call directly.
 	 */
 	void RequestBroadcast(const FMCore_EventData& EventData);
 	
@@ -63,9 +63,9 @@ protected:
 	void MulticastToClients(const FMCore_EventData& EventData);
 
 private:
-	/* Find and cache the GlobalEventSubsystem */
+	// Find and cache the GlobalEventSubsystem
 	UMCore_GlobalEventSubsystem* GetEventSubsystem() const;
 	
-	/* Cached reference to avoid repeated lookups */
+	// Cached reference to avoid repeated lookups
 	mutable TWeakObjectPtr<UMCore_GlobalEventSubsystem> CachedSubsystem;
 };

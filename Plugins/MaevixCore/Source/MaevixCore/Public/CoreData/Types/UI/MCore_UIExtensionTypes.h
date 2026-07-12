@@ -9,7 +9,7 @@
 class UUserWidget;
 class UMCore_UIExtensionSubsystem;
 
-/** Action taken on a UI extension (added or removed from extension point) */
+/** Action taken on a UI extension (added or removed from extension point). */
 UENUM(BlueprintType)
 enum class EMCore_UIExtensionAction : uint8
 {
@@ -79,13 +79,13 @@ DECLARE_DYNAMIC_DELEGATE_TwoParams(
 
 /**
  * Internal data representing a UI extension (widget injected into extension points).
- * Not exposed to Blueprint - managed by subsystem.
+ * Not exposed to Blueprint; managed by subsystem.
  */
 struct FMCore_UIExtension
 {
 	FGameplayTag ExtensionPointTag;
 
-	/** Sort priority - higher values appear first (default: 0) */
+	/** Sort priority; higher values appear first (default: 0). */
 	int32 Priority{0};
 
 	/**
@@ -98,7 +98,7 @@ struct FMCore_UIExtension
 
 	uint32 HandleID{0};
 
-	/** Higher priority extensions sort first (fixes Lyra's missing sort) */
+	/** Higher priority extensions sort first (fixes Lyra's missing sort). */
 	bool operator<(const FMCore_UIExtension& Other) const
 	{
 		return Priority > Other.Priority;
@@ -107,7 +107,7 @@ struct FMCore_UIExtension
 
 /**
  * Internal data representing a UI extension point (slot that receives injected widgets).
- * Not exposed to Blueprint - managed by subsystem.
+ * Not exposed to Blueprint; managed by subsystem.
  */
 struct FMCore_UIExtensionPoint
 {
@@ -121,6 +121,6 @@ struct FMCore_UIExtensionPoint
 
 	FOnUIExtensionChanged OnChangeCallback;
 
-	/** Validates context matching between this point and the given extension */
+	/** Validates context matching between this point and the given extension. */
 	bool DoesExtensionPassContract(const FMCore_UIExtension* Extension) const;
 };

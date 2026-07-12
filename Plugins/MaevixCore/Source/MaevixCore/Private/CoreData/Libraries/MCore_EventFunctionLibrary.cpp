@@ -13,83 +13,59 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
-namespace
+ULocalPlayer* UMCore_EventFunctionLibrary::ResolveLocalPlayerFromContext(const UObject* Context)
 {
-	/* Resolves the LocalPlayer from a WorldContext object by trying, in order:
-	 *   (1) WorldContext is a PlayerController -> GetLocalPlayer();
-	 *   (2) WorldContext is a Pawn -> Controller -> GetLocalPlayer();
-	 *   (3) WorldContext is an ActorComponent -> recurse on its Owner;
-	 *   (4) WorldContext is a UserWidget -> GetOwningLocalPlayer();
-	 *   (5) WorldContext is an Actor -> Instigator -> Controller -> GetLocalPlayer();
-	 *   (6) Owner-chain walk -> first APlayerController encountered -> GetLocalPlayer();
-	 * Returns nullptr with a warning log when no owner chain resolves -- callers must
-	 * pass a player-owned WorldContext or use EMCore_EventScope::AllLocal/Global instead.
-	 * Split-screen safety: no Player 0 fallback.
-	 *
-	 * @see UMCore_EventListenerComponent::ResolveOwningLocalPlayer -- the Actor-based
-	 *      symmetric chain used by listener registration in BeginPlay. Both share
-	 *      the same no-Player-0-fallback policy (audit §5.6, Phase 1 + Phase 2). */
-	ULocalPlayer* ResolveLocalPlayer(const UObject* WorldContext)
-	{
-		if (!WorldContext) { return nullptr; }
+	if (!Context) { return nullptr; }
 
-		if (const APlayerController* PlayerController = Cast<APlayerController>(WorldContext))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Context))
+	{
+		return PlayerController->GetLocalPlayer();
+	}
+
+	if (const APawn* Pawn = Cast<APawn>(Context))
+	{
+		if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
 		{
 			return PlayerController->GetLocalPlayer();
 		}
+	}
 
-		if (const APawn* Pawn = Cast<APawn>(WorldContext))
+	if (const UActorComponent* Component = Cast<UActorComponent>(Context))
+	{
+		return ResolveLocalPlayerFromContext(Component->GetOwner());
+	}
+
+	if (const UUserWidget* Widget = Cast<UUserWidget>(Context))
+	{
+		return Widget->GetOwningLocalPlayer();
+	}
+
+	if (const AActor* Actor = Cast<AActor>(Context))
+	{
+		if (const APawn* Instigator = Actor->GetInstigator())
 		{
-			if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
+			if (const APlayerController* PlayerController = Cast<APlayerController>(Instigator->GetController()))
 			{
 				return PlayerController->GetLocalPlayer();
 			}
 		}
 
-		if (const UActorComponent* Component = Cast<UActorComponent>(WorldContext))
+		/* Walk owner chain (covers PlayerState, HUD, etc. that set Owner to the PlayerController) */
+		AActor* OwnerActor = Actor->GetOwner();
+		while (OwnerActor)
 		{
-			return ResolveLocalPlayer(Component->GetOwner());
-		}
-
-		if (const UUserWidget* Widget = Cast<UUserWidget>(WorldContext))
-		{
-			return Widget->GetOwningLocalPlayer();
-		}
-
-		if (const AActor* Actor = Cast<AActor>(WorldContext))
-		{
-			if (const APawn* Instigator = Actor->GetInstigator())
+			if (const APlayerController* PlayerController = Cast<APlayerController>(OwnerActor))
 			{
-				if (const APlayerController* PlayerController = Cast<APlayerController>(Instigator->GetController()))
-				{
-					return PlayerController->GetLocalPlayer();
-				}
+				return PlayerController->GetLocalPlayer();
 			}
-
-			AActor* OwnerActor = Actor->GetOwner();
-			while (OwnerActor)
-			{
-				if (const APlayerController* PlayerController = Cast<APlayerController>(OwnerActor))
-				{
-					return PlayerController->GetLocalPlayer();
-				}
-				OwnerActor = OwnerActor->GetOwner();
-			}
+			OwnerActor = OwnerActor->GetOwner();
 		}
-
-		/* No owner chain resolved to a specific LocalPlayer. Symmetric to the
-		 * UMCore_EventListenerComponent fix (Phase 1) -- in split-screen this fallback
-		 * would have contaminated Player 0. Library callers must either pass a
-		 * player-owned WorldContext (PlayerController/Pawn/Widget) or use
-		 * EMCore_EventScope::AllLocal to deliver to every LocalPlayer on this
-		 * GameInstance. */
-		UE_LOG(LogMaevixEvent, Warning,
-			TEXT("EventFunctionLibrary::ResolveLocalPlayer -- WorldContext '%s' has no LocalPlayer owner chain. "
-				 "Pass a PlayerController, Pawn, or Widget as WorldContext, or use EMCore_EventScope::AllLocal "
-				 "to target every LocalPlayer on this GameInstance, or EMCore_EventScope::Global for networked delivery."),
-			*GetNameSafe(WorldContext));
-		return nullptr;
 	}
+
+	/* No owner chain resolved to a specific LocalPlayer. No Player 0 fallback (would
+	 * contaminate split-screen); returns nullptr silently so each caller logs or
+	 * reroutes the miss with its own context. */
+	return nullptr;
 }
 
 // ============================================================================
@@ -262,10 +238,14 @@ void UMCore_EventFunctionLibrary::RouteEventToSubsystem(const UObject* WorldCont
 	case EMCore_EventScope::Local:
 	{
 		/* Local: resolve the correct LocalPlayer from the calling context (split-screen safe) */
-		ULocalPlayer* LocalPlayer = ResolveLocalPlayer(WorldContext);
+		ULocalPlayer* LocalPlayer = ResolveLocalPlayerFromContext(WorldContext);
 		if (!LocalPlayer)
 		{
-			/* ResolveLocalPlayer already emitted a Warning describing the resolution failure. */
+			UE_LOG(LogMaevixEvent, Warning,
+				TEXT("EventFunctionLibrary::RouteEventToSubsystem: WorldContext '%s' has no LocalPlayer owner chain. "
+					 "Pass a PlayerController, Pawn, or Widget as WorldContext, or use EMCore_EventScope::AllLocal "
+					 "to target every LocalPlayer on this GameInstance, or EMCore_EventScope::Global for networked delivery."),
+				*GetNameSafe(WorldContext));
 			return;
 		}
 		if (UMCore_LocalEventSubsystem* LocalSystem = LocalPlayer->GetSubsystem<UMCore_LocalEventSubsystem>())

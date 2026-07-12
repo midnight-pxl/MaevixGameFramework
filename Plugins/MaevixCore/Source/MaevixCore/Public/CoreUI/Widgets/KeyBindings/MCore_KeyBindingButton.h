@@ -16,6 +16,7 @@ class ULocalPlayer;
 class IInputProcessor;
 class FMCore_KeyCaptureProcessor;
 
+/** Display/interaction state of a key binding slot button. */
 UENUM(BlueprintType)
 enum class EMCore_KeyBindingButtonState : uint8
 {
@@ -42,9 +43,9 @@ class MAEVIXCORE_API UMCore_KeyBindingButton : public UCommonUserWidget
 	friend class FMCore_KeyCaptureProcessor;
 
 public:
-	// ====================================================================
+	// ============================================================================
 	// PUBLIC API
-	// ====================================================================
+	// ============================================================================
 
 	/** Configure this button for a specific action, slot, and device type. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|UI|KeyBinding")
@@ -82,24 +83,24 @@ public:
 	EMCore_KeyBindingButtonState CurrentState = EMCore_KeyBindingButtonState::Unbound;
 
 protected:
-	// ====================================================================
+	// ============================================================================
 	// BIND WIDGETS
-	// ====================================================================
+	// ============================================================================
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UMCore_ButtonBase> Btn_Capture;
 
-	// ====================================================================
+	// ============================================================================
 	// CONFIGURATION
-	// ====================================================================
+	// ============================================================================
 
 	/** Text shown when no key is bound for this slot. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI|KeyBinding")
 	FText UnboundText;
 
-	// ====================================================================
+	// ============================================================================
 	// HANDLERS
-	// ====================================================================
+	// ============================================================================
 
 	UFUNCTION()
 	void HandleButtonPressed();
@@ -108,24 +109,24 @@ protected:
 	UFUNCTION()
 	void HandleInputMethodChanged(ECommonInputType NewInputType);
 
-	// ====================================================================
+	// ============================================================================
 	// INPUT PROCESSOR CALLBACKS
-	// ====================================================================
+	// ============================================================================
 
 	void OnKeyCaptured(FKey NewKey);
 	void OnCaptureCancelled();
 
-	// ====================================================================
+	// ============================================================================
 	// LIFECYCLE
-	// ====================================================================
+	// ============================================================================
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
 private:
-	// ====================================================================
+	// ============================================================================
 	// STATE
-	// ====================================================================
+	// ============================================================================
 
 	TWeakObjectPtr<APlayerController> PlayerRef;
 

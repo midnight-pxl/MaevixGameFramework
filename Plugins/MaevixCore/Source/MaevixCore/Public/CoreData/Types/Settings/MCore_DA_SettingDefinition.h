@@ -15,23 +15,25 @@ class USoundClass;
 class USoundMix;
 class UMCore_SettingsWidget_Base;
 
-/** How slider values display in the UI */
+/** How slider values display in the UI. */
 UENUM(BlueprintType)
 enum class EMCore_SliderDisplayFormat : uint8
 {
-	/* Show raw value: 0.75 */
+	/** Show raw value: 0.75. */
 	RawValue,
-	/* Show percentage: 75% */
+	/** Show percentage: 75%. */
 	Percentage,
-	/* Show integer: 75 */
+	/** Show integer: 75. */
 	WholeNumber
 };
 
-/** Role this setting plays in driving the Slate color-vision-deficiency filter.
-   Author two DAs; a Dropdown for Type and a Slider for Severity; both with
-   this field non-None. The library caches Type + Severity across invocations
-   so either DA's apply re-issues a SetColorVisionDeficiencyType call with the
-   current value of both axes. */
+/**
+ * Role this setting plays in driving the Slate color-vision-deficiency filter.
+ * Author two DAs; a Dropdown for Type and a Slider for Severity; both with
+ * this field non-None. The library caches Type + Severity across invocations
+ * so either DA's apply re-issues a SetColorVisionDeficiencyType call with the
+ * current value of both axes.
+ */
 UENUM(BlueprintType)
 enum class EMCore_ColorVisionRole : uint8
 {
@@ -58,7 +60,7 @@ public:
 	// IDENTITY
 	// ============================================================================
 
-	/** Unique gameplay tag identifying this setting (e.g. Settings.Graphics.ShadowQuality) */
+	/** Unique gameplay tag identifying this setting (e.g. Settings.Graphics.ShadowQuality). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Identity",
 		meta = (Categories = "Settings"))
 	FGameplayTag SettingTag;
@@ -66,7 +68,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Identity")
 	FText SettingDisplayName;
 
-	/** Optional tooltip/description */
+	/** Optional tooltip/description. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Identity")
 	FText Description;
 
@@ -77,7 +79,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Type")
 	EMCore_SettingType SettingType = EMCore_SettingType::Toggle;
 
-	/** How this slider value displays in the UI */
+	/** How this slider value displays in the UI. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Slider",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 				EditConditionHides))
@@ -113,8 +115,10 @@ public:
 				EditConditionHides))
 	TArray<FText> DropdownOptions;
 
-	/** If > 0, user can only cycle indices 0..NumSelectableOptions-1. Higher indices are
-	 *  display-only (e.g. "Custom" status). 0 means all DropdownOptions are selectable. */
+	/**
+	 * If > 0, user can only cycle indices 0..NumSelectableOptions-1. Higher indices are
+	 * display-only (e.g. "Custom" status). 0 means all DropdownOptions are selectable.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Dropdown",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 				EditConditionHides, ClampMin = "0"))
@@ -143,7 +147,7 @@ public:
 	// CATEGORIZATION
 	// ============================================================================
 
-	/** Category tag for grouping (e.g. Settings.Category.Graphics) */
+	/** Category tag for grouping (e.g. Settings.Category.Graphics). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Category",
 		meta = (Categories = "Settings.Category"))
 	FGameplayTag CategoryTag;
@@ -160,7 +164,8 @@ public:
 	// APPLY CONFIGURATION
 	// ============================================================================
 
-	/** Engine setter target. Routes via the three-bucket dispatcher in
+	/**
+	 * Engine setter target. Routes via the three-bucket dispatcher in
 	 * MCore_GameSettingsLibrary::ApplyViaNamedSetter:
 	 *   Bucket 1: Top-level UPROPERTY on UGameUserSettings (e.g. bUseVSync,
 	 *             FullscreenMode, AudioQualityLevel, FrameRateLimit).
@@ -170,43 +175,52 @@ public:
 	 *             (OverallScalabilityLevel, ScreenResolution,
 	 *              EnableHDRDisplayOutput, DisplayGamma, ApplicationScale).
 	 *
-	 * Use the literal engine name. Do not translate or invent keys. */
+	 * Use the literal engine name. Do not translate or invent keys
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply",
 		meta = (DisplayName = "Named Setter"))
 	FName NamedSetter = NAME_None;
-
-	/** Optional override of the widget class to instantiate for this setting.
-	 *  Null = use the type-driven default from CoreSettings. */
+	
+	/**
+	 * Optional override of the widget class to instantiate for this setting.
+	 * Null = use the type-driven default from CoreSettings.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply",
 		meta = (DisplayName = "Widget Class Override"))
 	TSubclassOf<UMCore_SettingsWidget_Base> WidgetClassOverride;
 
-	/** Console variable to write to (empty = none) */
+	/** Console variable to write to (empty = none). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply")
 	FName ConsoleVariable;
 
-	/** Sound class to adjust volume on (Audio settings) */
+	/** Sound class to adjust volume on (Audio settings). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Slider",
 		        EditConditionHides))
 	TSoftObjectPtr<USoundClass> SoundClass;
 
-	/** When true, widget queries UKismetSystemLibrary::GetSupportedFullscreenResolutions
-	   at runtime instead of using DA-authored DropdownOptions */
+	/**
+	 * When true, widget queries UKismetSystemLibrary::GetSupportedFullscreenResolutions
+	 * at runtime instead of using DA-authored DropdownOptions.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Dropdown",
 		        EditConditionHides))
 	bool bPopulateFromSupportedResolutions = false;
 
-	/** Drives UWidgetBlueprintLibrary::SetColorVisionDeficiencyType at the Slate
-	   renderer layer. Default None = inert. Pair two DAs: a Dropdown for Type
-	   (values 0-3 = Normal/Deuteranope/Protanope/Tritanope) and a Slider for
-	   Severity (0.0-10.0). */
+	/**
+	 * Drives UWidgetBlueprintLibrary::SetColorVisionDeficiencyType at the Slate
+	 * renderer layer. Default None = inert. Pair two DAs: a Dropdown for Type
+	 * (values 0-3 = Normal/Deuteranope/Protanope/Tritanope) and a Slider for
+	 * Severity (0.0-10.0).
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply")
 	EMCore_ColorVisionRole ColorVisionRole = EMCore_ColorVisionRole::None;
 
-	/** SoundMix pushed when toggle is ON, popped when OFF.
-	   Library tracks matched push/pop pairs per setting save key */
+	/**
+	 * SoundMix pushed when toggle is ON, popped when OFF.
+	 * Library tracks matched push/pop pairs per setting save key.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Definition|Apply",
 		meta = (EditCondition = "SettingType == EMCore_SettingType::Toggle",
 		        EditConditionHides))
@@ -233,7 +247,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Settings")
 	FString GetSaveKey() const;
 
-	/** Validates this definition's internal configuration. Returns false if SettingTag/SettingDisplayName is missing or values are out of range. Distinct from UObject liveness (use global IsValid for that). */
+	/**
+	 * Validates this definition's internal configuration. Returns false if SettingTag/
+	 * SettingDisplayName is missing or values are out of range. Distinct from UObject
+	 * liveness (use global IsValid for that).
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Settings")
 	bool IsDefinitionValid() const;
 

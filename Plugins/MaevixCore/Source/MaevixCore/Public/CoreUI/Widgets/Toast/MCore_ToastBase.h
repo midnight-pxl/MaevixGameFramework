@@ -32,13 +32,17 @@ public:
 	FMCore_OnToastIntroComplete OnIntroComplete;
 	FMCore_OnToastOutroComplete OnOutroComplete;
 
-	/** Returns true when completion is deferred to a WBP animation (subsystem arms a
-	 *  watchdog), false when it completed synchronously during this call. */
+	/**
+	 * Returns true when completion is deferred to a WBP animation (subsystem arms a
+	 * watchdog), false when it completed synchronously during this call.
+	 */
 	bool PlayIntro();
 	bool PlayOutro();
 
-	/** Populate visuals from the request. Default fills Txt_Title / Txt_Body / Img_Icon
-	 *  and collapses the body and icon when empty. */
+	/**
+	 * Populate visuals from the request. Default fills Txt_Title / Txt_Body / Img_Icon
+	 * and collapses the body and icon when empty.
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|UI|Toast")
 	void PopulateToast(const FMCore_ToastRequest& Request);
 	virtual void PopulateToast_Implementation(const FMCore_ToastRequest& Request);

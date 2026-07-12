@@ -37,9 +37,9 @@ class MAEVIXCORE_API UMCore_SettingsWidget_Base : public UMCore_RowBase
 	GENERATED_BODY()
 
 public:
-    // ====================================================================
+    // ============================================================================
     // INITIALIZATION
-    // ====================================================================
+    // ============================================================================
 
     /** Bind this widget to a setting definition. Populates display name and calls OnDefinitionSet. */
     UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
@@ -51,9 +51,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "MaevixCore|Settings")
     FGameplayTag GetSettingTag() const;
 
-    // ====================================================================
+    // ============================================================================
     // VALUE INTERFACE
-    // ====================================================================
+    // ============================================================================
 
     /** Reset to DataAsset default value. */
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Settings")
@@ -81,9 +81,9 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Settings")
     void StepRight();
 
-    // ====================================================================
+    // ============================================================================
     // EVENTS
-    // ====================================================================
+    // ============================================================================
 
     UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Settings")
     FOnSettingValueChanged OnSettingValueChanged;
@@ -92,9 +92,9 @@ public:
     FOnSettingFocused  OnSettingFocused;
 
 protected:
-    // ====================================================================
+    // ============================================================================
     // SUBCLASS HOOKS
-    // ====================================================================
+    // ============================================================================
 
     /**
      * Called after InitFromDefinition; subclass reads type-specific
@@ -103,13 +103,16 @@ protected:
     UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Settings")
     void OnDefinitionSet(const UMCore_DA_SettingDefinition* Definition);
 
-    /** Subclasses call this after applying a new value internally. Fires OnSettingValueChanged with the current GetValueAsString(). */
+    /**
+     * Subclasses call this after applying a new value internally. Fires
+     * OnSettingValueChanged with the current GetValueAsString().
+     */
     UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
     void BroadcastValueChanged();
 
-    // ====================================================================
+    // ============================================================================
     // DATA
-    // ====================================================================
+    // ============================================================================
 
     UPROPERTY(Transient, BlueprintReadOnly, Category = "MaevixCore|Settings")
     TObjectPtr<const UMCore_DA_SettingDefinition> SettingDefinition;
@@ -117,9 +120,9 @@ protected:
     UPROPERTY(Transient, BlueprintReadOnly, Category = "MaevixCore|Settings")
     bool bIsSettingEnabled{true};
 
-    // ====================================================================
+    // ============================================================================
     // LIFECYCLE
-    // ====================================================================
+    // ============================================================================
 
     virtual void NativeOnInitialized() override;
     virtual void NativeDestruct() override;
@@ -129,11 +132,11 @@ protected:
      * hover or focus. */
     virtual void NotifyRowFocusGained() override;
 
-    /* Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset. */
+    // Broadcasts OnSettingFocused using the cached definition. No-op if definition is unset.
     void BroadcastFocusedIfValid();
 
 private:
-    /* Filters local events for MCore.Settings.Event.ExternalValueChange and refreshes display. */
+    // Filters local events for MCore.Settings.Event.ExternalValueChange and refreshes display.
     void HandleLocalEvent(const FMCore_EventData& EventData);
     FDelegateHandle EventSubscriptionHandle;
 };

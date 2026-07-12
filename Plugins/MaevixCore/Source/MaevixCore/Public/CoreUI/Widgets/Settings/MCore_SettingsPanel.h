@@ -57,8 +57,8 @@ protected:
 	TSubclassOf<UMCore_TabbedContainer> SubTabContainerClass;
 
 	/**
-	 * Confirmation dialog class for reset operations. falls back to
-	 * DefaultConfirmationDialogClass in CoreSettings if null
+	 * Confirmation dialog class for reset operations. Falls back to
+	 * DefaultConfirmationDialogClass in CoreSettings if null.
 	 */
 	UPROPERTY(EditDefaultsOnly, Category = "MaevixCore|Settings|Panel")
 	TSubclassOf<UMCore_ConfirmationDialog> ResetConfirmationDialogClass;
@@ -123,12 +123,12 @@ protected:
 	// BLUEPRINT EXTENSION POINTS
 	// ============================================================================
 	
-	/** Called after each category page is built and populated with setting widgets */
+	/** Called after each category page is built and populated with setting widgets. */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Settings")
 	void OnCategoryPageCreated(const FGameplayTag& CategoryTag,
 		UScrollBox* PageScrollBox);
 	
-	/** Called after the full panel build completes. All tabs + pages ready */
+	/** Called after the full panel build completes. All tabs + pages ready. */
 	UFUNCTION(BlueprintNativeEvent, Category = "MaevixCore|Settings")
 	void OnPanelBuildComplete();
  

@@ -24,19 +24,19 @@ class MAEVIXCORE_API UMCore_PlayerSettingsSave : public USaveGame
 	public:
     UMCore_PlayerSettingsSave();
 
-	// ========================================================================
+	// ============================================================================
 	// FRAMEWORK UI STATE
-	// ========================================================================
+	// ============================================================================
 
-    /** UI scale multiplier (0.5 to 3.0) */
+    /** UI scale multiplier (0.5 to 3.0). */
     UPROPERTY(SaveGame)
     float UIScale{1.0f};
 
-    /** Tooltip hover delay in milliseconds */
+    /** Tooltip hover delay in milliseconds. */
     UPROPERTY(SaveGame)
     int32 TooltipDelayMs{500};
 
-    /** Last settings tab the player had open (restored on re-open) */
+    /** Last settings tab the player had open (restored on re-open). */
     UPROPERTY(SaveGame)
     FGameplayTag LastSelectedCategory;
 
@@ -50,25 +50,31 @@ class MAEVIXCORE_API UMCore_PlayerSettingsSave : public USaveGame
     UPROPERTY(SaveGame, BlueprintReadWrite, Category = "MaevixCore|Settings")
     int32 GamepadIconSetIndex = 0;
 
-	/** Last value the user explicitly selected for the QualityPreset (OverallScalabilityLevel).
-	   -1 means Custom (user has tweaked individual scalability settings). 0..3 are preset levels. */
+	/**
+	 * Last value the user explicitly selected for the QualityPreset (OverallScalabilityLevel).
+	 * -1 means Custom (user has tweaked individual scalability settings). 0..3 are preset levels.
+	 */
 	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "MaevixCore|Settings|QualityPreset")
 	int32 LastSelectedQualityPreset{-1};
 
-	/** Disambiguates first-load (-1 = uninitialized, will be backfilled from engine state) from
-	   explicitly-Custom (-1 chosen because user tweaked an individual scalability). */
+	/**
+	 * Disambiguates first-load (-1 = uninitialized, will be backfilled from engine state) from
+	 * explicitly-Custom (-1 chosen because user tweaked an individual scalability).
+	 */
 	UPROPERTY(SaveGame)
 	bool bQualityPresetInitialized{false};
 
-	/** Soft path to the user's active UMCore_PDA_UITheme_Base. Empty path =
-	   no override (UISubsystem falls back to project default). FSoftObjectPath
-	   survives asset moves/renames better than an FName ID. */
+	/**
+	 * Soft path to the user's active UMCore_PDA_UITheme_Base. Empty path =
+	 * no override (UISubsystem falls back to project default). FSoftObjectPath
+	 * survives asset moves/renames better than an FName ID.
+	 */
 	UPROPERTY(SaveGame)
 	FSoftObjectPath ActiveThemePath;
 
-	// ========================================================================
+	// ============================================================================
 	// GENERIC SETTING STORAGE
-	// ========================================================================
+	// ============================================================================
 
 	UPROPERTY(SaveGame)
 	TMap<FString, float> FloatSettings;
@@ -79,9 +85,9 @@ class MAEVIXCORE_API UMCore_PlayerSettingsSave : public USaveGame
 	UPROPERTY(SaveGame)
 	TMap<FString, bool> BoolSettings;
 
-	// ========================================================================
+	// ============================================================================
 	// GENERIC ACCESSORS
-	// ========================================================================
+	// ============================================================================
 
 	/** Returns true and populates OutValue if a float value exists for the given key. */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MaevixCore|Settings")
@@ -104,9 +110,9 @@ class MAEVIXCORE_API UMCore_PlayerSettingsSave : public USaveGame
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
 	void SetBoolSetting(const FString& Key, bool Value);
 
-	// ========================================================================
+	// ============================================================================
 	// PERSISTENCE
-	// ========================================================================
+	// ============================================================================
 
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")
 	void SaveSettings();
@@ -129,9 +135,9 @@ class MAEVIXCORE_API UMCore_PlayerSettingsSave : public USaveGame
 
 	const FString& GetCachedSlotName() const { return CachedSlotName; }
 
-	// ========================================================================
+	// ============================================================================
 	// FRAMEWORK CONVENIENCE
-	// ========================================================================
+	// ============================================================================
 
 	/** Set UI scale (clamped 0.5-3.0) and apply immediately. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Settings")

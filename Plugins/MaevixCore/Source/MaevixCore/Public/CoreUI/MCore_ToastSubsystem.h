@@ -96,9 +96,9 @@ private:
 
 	TMap<FGameplayTag, FMCore_ToastQueue> QueuesByAnchor;
 	TArray<FActiveToastRecord> ActiveToasts;
-	TMap<uint32, FMCore_ToastRequest> PendingRequests;   /* handleID maps to request, for promotion */
+	TMap<uint32, FMCore_ToastRequest> PendingRequests; // handleID maps to request, for promotion
 
 	uint32 NextHandleID = 1;
-	bool bHostWarningIssued = false;          /* one-shot missing-host / missing-anchor warning */
-	bool bWidgetClassWarningIssued = false;   /* one-shot missing-DefaultToastWidgetClass warning */
+	bool bHostWarningIssued = false; // one-shot missing-host / missing-anchor warning
+	bool bWidgetClassWarningIssued = false; // one-shot missing-DefaultToastWidgetClass warning
 };

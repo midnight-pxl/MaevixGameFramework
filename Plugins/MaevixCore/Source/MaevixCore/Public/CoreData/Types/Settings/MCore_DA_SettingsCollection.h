@@ -27,7 +27,7 @@ public:
 	// PROPERTIES
 	// ============================================================================
 
-	/** Display name for this collection (e.g. "Default Settings", "PC Settings") */
+	/** Display name for this collection (e.g. "Default Settings", "PC Settings"). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|Settings|Collection")
 	FText CollectionName;
 

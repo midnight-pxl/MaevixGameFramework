@@ -2,6 +2,7 @@
 
 #include "CoreEvents/MCore_EventListenerComponent.h"
 
+#include "CoreData/Libraries/MCore_EventFunctionLibrary.h"
 #include "CoreData/Logging/LogMaevixEvent.h"
 #include "CoreData/Types/Events/MCore_EventData.h"
 #include "CoreEvents/MCore_GlobalEventSubsystem.h"
@@ -72,45 +73,14 @@ void UMCore_EventListenerComponent::BeginPlay()
 
 ULocalPlayer* UMCore_EventListenerComponent::ResolveOwningLocalPlayer() const
 {
-	if (AActor* Owner = GetOwner())
+	if (ULocalPlayer* LocalPlayer = UMCore_EventFunctionLibrary::ResolveLocalPlayerFromContext(this))
 	{
-		if (const APlayerController* PlayerController = Cast<APlayerController>(Owner))
-		{
-			return PlayerController->GetLocalPlayer();
-		}
-
-		if (const APawn* Pawn = Cast<APawn>(Owner))
-		{
-			if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
-			{
-				return PlayerController->GetLocalPlayer();
-			}
-		}
-
-		if (const APawn* Instigator = Owner->GetInstigator())
-		{
-			if (const APlayerController* PlayerController = Cast<APlayerController>(Instigator->GetController()))
-			{
-				return PlayerController->GetLocalPlayer();
-			}
-		}
-
-		/* Walk owner chain (covers PlayerState, HUD, etc. that set Owner to the PlayerController) */
-		AActor* OwnerActor = Owner->GetOwner();
-		while (OwnerActor)
-		{
-			if (const APlayerController* PlayerController = Cast<APlayerController>(OwnerActor))
-			{
-				return PlayerController->GetLocalPlayer();
-			}
-			OwnerActor = OwnerActor->GetOwner();
-		}
+		return LocalPlayer;
 	}
 
-	/* No owner chain resolved to a specific LocalPlayer. In split-screen this fallback
-	 * would have contaminated Player 0; instead we explicitly fail and log so the developer
-	 * is forced to either attach this component to a player-owned actor or wire the listener
-	 * directly via UMCore_LocalEventSubsystem with an explicit LocalPlayer. */
+	/* No owner chain resolved to a specific LocalPlayer. No Player 0 fallback (would
+	 * contaminate split-screen); fail loudly so the component is attached to a
+	 * player-owned actor or wired via UMCore_LocalEventSubsystem explicitly. */
 	UE_LOG(LogMaevixEvent, Warning,
 		TEXT("EventListenerComponent::ResolveOwningLocalPlayer -- actor '%s' has no LocalPlayer owner chain. "
 			 "Component will not register. Attach to a player-owned actor (Pawn/Controller/Widget) "

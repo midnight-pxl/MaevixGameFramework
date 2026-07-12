@@ -16,7 +16,7 @@
  * - Action bar population
  *
  * This class provides the required concrete implementation.
- * The base class handles all routing logic - no overrides needed.
+ * The base class handles all routing logic; no overrides needed.
  */
 UCLASS()
 class MAEVIXCORE_API UMCore_UIActionRouter : public UCommonUIActionRouterBase

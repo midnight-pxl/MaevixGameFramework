@@ -15,6 +15,7 @@ class UImage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaevixButtonClicked);
 
+/** Determines how a button displays its content elements. */
 UENUM(BlueprintType)
 enum class EMCore_ButtonDisplayMode : uint8
 {
@@ -23,12 +24,13 @@ enum class EMCore_ButtonDisplayMode : uint8
 	TextAndIcon
 };
 
+/** Selects the theme text style a button pulls: body label vs tab. */
 UENUM(BlueprintType)
 enum class EMCore_ButtonStyleMode : uint8
 {
-	/* Pulls LabelTextStyle. Default for all buttons */
+	/** Pulls LabelTextStyle. Default for all buttons. */
 	Standard,
-	/* Pulls TabTextStyle. Set by UMCore_TabbedContainer for tab buttons */
+	/** Pulls TabTextStyle. Set by UMCore_TabbedContainer for tab buttons. */
 	Tab
 };
 
@@ -98,7 +100,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Button")
 	void SetButtonIconSoft(TSoftObjectPtr<UTexture2D> InIcon);
 
-	/* Set the icon from a pre-resolved Slate brush. Use for CommonInput-resolved icons. */
+	/** Set the icon from a pre-resolved Slate brush. Use for CommonInput-resolved icons. */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Button")
 	void SetButtonIconBrush(const FSlateBrush& InBrush);
 
@@ -118,16 +120,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UImage> Img_BtnIcon;
 
-	/* Switcher layers must be ordered: 0=TextOnly, 1=IconOnly, 2=TextAndIcon */
+	/** Switcher layers must be ordered: 0=TextOnly, 1=IconOnly, 2=TextAndIcon. */
 	UPROPERTY(BlueprintReadOnly, Category = "MaevixCore|Components", meta = (BindWidgetOptional))
 	TObjectPtr<UWidgetSwitcher> WS_BtnContent;
 
 	UPROPERTY(BlueprintAssignable, Category = "MaevixCore|Button")
 	FOnMaevixButtonClicked OnButtonClicked;
 
-	/**
-	 * Programmatically trigger this button's click logic (sound, animation, delegates).
-	 */
+	/** Programmatically trigger this button's click logic (sound, animation, delegates). */
 	UFUNCTION(BlueprintCallable, Category = "MaevixCore|Button")
 	void SimulateClick();
 

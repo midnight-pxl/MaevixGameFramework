@@ -43,7 +43,7 @@ public:
 	virtual FGuid GetSaveGuid_Implementation() const;
 
 	/**
-	 * Called just before the orchestrator serializes this provider, so it can flush transient state into its
+	 * Called just before the caller serializes this provider, so it can flush transient state into its
 	 * SaveGame fields. Non-const because the provider mutates itself.
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Persistence")
@@ -51,10 +51,31 @@ public:
 	virtual void OnPreSave_Implementation(const FMCore_SaveLoadContext& Context);
 
 	/**
-	 * Called after the orchestrator restores this provider's serialized fields, so it can rebuild derived state
+	 * Called after the caller restores this provider's serialized fields, so it can rebuild derived state
 	 * from them. Non-const because the provider mutates itself.
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Persistence")
 	void OnPostLoad(const FMCore_SaveLoadContext& Context);
 	virtual void OnPostLoad_Implementation(const FMCore_SaveLoadContext& Context);
+
+	/**
+	 * Whether this object's saved record should persist. A false means this record must not be restored on
+	 * a later load. Default true persists normally.
+	 *
+	 * Authority is carried on the context. Branch on Context.bIsServerAuthority rather than inferring net role.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Persistence")
+	bool ShouldPersistRecord(const FMCore_SaveLoadContext& Context) const;
+	virtual bool ShouldPersistRecord_Implementation(const FMCore_SaveLoadContext& Context) const;
+
+	/**
+	 * Notifies this object that its saved record was deleted. A notification, never a request: it cannot
+	 * cancel or veto the deletion. The object may be mid-teardown, so implementers must not assume a valid
+	 * world context. Default no-op.
+	 *
+	 * Authority is carried on the context. Branch on Context.bIsServerAuthority rather than inferring net role.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "MaevixCore|Persistence")
+	void OnRecordDeleted(const FMCore_SaveLoadContext& Context);
+	virtual void OnRecordDeleted_Implementation(const FMCore_SaveLoadContext& Context);
 };
