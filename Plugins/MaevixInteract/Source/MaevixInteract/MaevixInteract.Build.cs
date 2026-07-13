@@ -27,6 +27,7 @@ public class MaevixInteract : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"GameplayTags",
+				"DeveloperSettings",
 				"MaevixCore"
 			}
 			);
