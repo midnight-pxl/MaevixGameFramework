@@ -38,4 +38,12 @@ public:
 	 */
 	UPROPERTY(Config, EditAnywhere, Category="MaevixInteract|Detection", meta=(DisplayName="Interactable Object Channel"))
 	TEnumAsByte<ECollisionChannel> InteractableObjectChannel = ECC_WorldStatic;
+
+	/**
+	 * Trace channel the Interactor's focus sweep runs on. Create it as a Trace channel with Default Response
+	 * Block, so world geometry and interactable meshes occlude the sweep with no per-actor setup. Defaults to
+	 * Visibility, which is not a valid interaction trace channel; the Interactor errors at play until set.
+	 */
+	UPROPERTY(Config, EditAnywhere, Category="MaevixInteract|Detection", meta=(DisplayName="Interaction Trace Channel"))
+	TEnumAsByte<ECollisionChannel> InteractionTraceChannel = ECC_Visibility;
 };
