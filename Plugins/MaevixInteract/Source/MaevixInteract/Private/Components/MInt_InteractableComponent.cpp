@@ -46,16 +46,16 @@ void UMInt_InteractableComponent::OnRegister()
 	}
 
 	const UMInt_DeveloperSettings* Settings = UMInt_DeveloperSettings::Get();
-	const ECollisionChannel Mine = Settings->InteractableObjectChannel.GetValue();
-	const ECollisionChannel Watch = Settings->InteractorObjectChannel.GetValue();
+	const ECollisionChannel InteractableChannel = Settings->InteractableObjectChannel.GetValue();
+	const ECollisionChannel InteractorChannel = Settings->InteractorObjectChannel.GetValue();
 
-	if (!IsValidObjectChannel(Mine) || !IsValidObjectChannel(Watch))
+	if (!IsValidObjectChannel(InteractableChannel) || !IsValidObjectChannel(InteractorChannel))
 	{
 		UE_LOG(LogMaevixInteract, Error,
 			TEXT("UMInt_InteractableComponent on actor '%s' has invalid interaction channels (Interactable: '%s', Interactor: '%s'). ")
 			TEXT("Create custom Object channels under Project Settings > Engine > Collision, then set both under ")
 			TEXT("Project Settings > Game > Maevix Interact. Detection is disabled until configured."),
-			*GetNameSafe(GetOwner()), *ChannelDisplayName(Mine), *ChannelDisplayName(Watch));
+			*GetNameSafe(GetOwner()), *ChannelDisplayName(InteractableChannel), *ChannelDisplayName(InteractorChannel));
 		return;
 	}
 
@@ -64,19 +64,19 @@ void UMInt_InteractableComponent::OnRegister()
 	// placed loot room that is a quadratic number of overlap pairs the physics scene tracks and dispatches
 	// events for, all doing nothing. Two distinct channels is the whole reason for this model over a single
 	// shared one, and a settings typo must not be able to collapse it back.
-	if (Mine == Watch)
+	if (InteractableChannel == InteractorChannel)
 	{
 		UE_LOG(LogMaevixInteract, Error,
 			TEXT("UMInt_InteractableComponent on actor '%s' has Interactable and Interactor Object Channels both set to '%s'. ")
 			TEXT("They must be two distinct channels. Set them under Project Settings > Game > Maevix Interact. ")
 			TEXT("Detection is disabled until configured."),
-			*GetNameSafe(GetOwner()), *ChannelDisplayName(Mine));
+			*GetNameSafe(GetOwner()), *ChannelDisplayName(InteractableChannel));
 		return;
 	}
 
-	SetCollisionObjectType(Mine);
+	SetCollisionObjectType(InteractableChannel);
 	SetCollisionResponseToAllChannels(ECR_Ignore);
-	SetCollisionResponseToChannel(Watch, ECR_Overlap);
+	SetCollisionResponseToChannel(InteractorChannel, ECR_Overlap);
 	// MANDATORY: ignore every other channel, the P2b interaction trace channel included. This is a ~150cm
 	// volume that passes through walls; if it blocked or was traceable, the camera trace would hit the
 	// sphere instead of the interactable's mesh and players could focus interactables through geometry.

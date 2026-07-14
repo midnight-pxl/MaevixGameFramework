@@ -200,8 +200,8 @@ void UMInt_InteractorComponent::ResolveAndBroadcastIfChanged()
 {
 	PruneCandidates();
 
-	AActor* Target = nullptr;
-	UObject* Provider = nullptr;
+	AActor* Target{nullptr};
+	UObject* Provider{nullptr};
 	FHitResult Hit;
 	ResolveFocus(Hit, Target, Provider);
 
@@ -322,10 +322,10 @@ void UMInt_InteractorComponent::PruneCandidates()
 
 bool UMInt_InteractorComponent::IsCandidateActor(const AActor* Actor) const
 {
-	for (const TWeakObjectPtr<UPrimitiveComponent>& Weak : Candidates)
+	for (const TWeakObjectPtr<UPrimitiveComponent>& CandidateRef : Candidates)
 	{
-		const UPrimitiveComponent* Comp = Weak.Get();
-		if (Comp && Comp->GetOwner() == Actor)
+		const UPrimitiveComponent* CandidateComponent = CandidateRef.Get();
+		if (CandidateComponent && CandidateComponent->GetOwner() == Actor)
 		{
 			return true;
 		}
@@ -371,10 +371,10 @@ void UMInt_InteractorComponent::GetInteractionTraceRay_Implementation(FVector& O
 	// models (cursor, AI) override this seam; the default intentionally yields no ray without a PlayerController.
 	if (const APawn* Pawn = Cast<APawn>(GetOwner()))
 	{
-		if (const APlayerController* PC = Cast<APlayerController>(Pawn->GetController()))
+		if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
 		{
 			FRotator ViewRotation = FRotator::ZeroRotator;
-			PC->GetPlayerViewPoint(OutViewLocation, ViewRotation);
+			PlayerController->GetPlayerViewPoint(OutViewLocation, ViewRotation);
 			OutViewDirection = ViewRotation.Vector();
 		}
 	}

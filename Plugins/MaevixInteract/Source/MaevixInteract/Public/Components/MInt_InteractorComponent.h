@@ -27,22 +27,22 @@ public:
 
 	/** Reach from the character to the focused interactable, in centimeters. Camera-relative: boom length cancels out. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaevixInteract|Interactor", meta=(ClampMin="0.0", UIMin="0.0", Units="cm"))
-	float InteractDistance = 200.0f;
+	float InteractDistance{200.0f};
 
 	/** Focus sweep radius, cm. The real cost knob: broadphase scales with radius squared, and a fat radius grabs things beside the reticle. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaevixInteract|Interactor", meta=(ClampMin="0.0", UIMin="0.0", Units="cm"))
-	float TraceRadius = 5.0f;
+	float TraceRadius{5.0f};
 
 	/** Minimum seconds between focus sweeps. 0 sweeps every gated tick; raise to throttle. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaevixInteract|Interactor", meta=(ClampMin="0.0", UIMin="0.0", Units="s"))
-	float TraceInterval = 0.0f;
+	float TraceInterval{0.0f};
 
 	/**
 	 * This Interactor's presence volume radius, in centimeters. Does NOT define interaction range: range is
 	 * each interactable's DetectionRadius intersected with InteractDistance. This only sets candidate proximity.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaevixInteract|Interactor", meta=(ClampMin="0.0", UIMin="0.0", Units="cm"))
-	float VolumeRadius = 32.0f;
+	float VolumeRadius{32.0f};
 
 	/** Broadcast on focus gained, lost (null Target), changed, or the focused target's state version change. */
 	UPROPERTY(BlueprintAssignable, Category="MaevixInteract|Interactor")
@@ -100,11 +100,11 @@ private:
 
 	TWeakObjectPtr<AActor> CachedTarget;
 	TWeakObjectPtr<UObject> CachedProvider;
-	int32 CachedStateVersion = 0;
-	float TimeSinceTrace = 0.0f;
+	int32 CachedStateVersion{0};
+	float TimeSinceTrace{0.0f};
 	TEnumAsByte<ECollisionChannel> CachedTraceChannel = ECC_Visibility;
-	bool bChannelsConfigured = false;
-	bool bDetectionActive = false;
+	bool bChannelsConfigured{false};
+	bool bDetectionActive{false};
 	/** Whether the last broadcast reported a focus. Tracked separately from CachedTarget so a destroyed focus still emits focus-lost. */
-	bool bFocused = false;
+	bool bFocused{false};
 };

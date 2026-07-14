@@ -38,7 +38,7 @@ public:
 	/** Detection sphere radius, in centimeters. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaevixInteract|Interactable",
 		meta=(ClampMin="0.0", UIMin="0.0", Units="cm"))
-	float DetectionRadius = 150.0f;
+	float DetectionRadius{150.0f};
 
 	// IMCore_Interactable
 	virtual bool CanInteract_Implementation(const FMCore_InteractionContext& Context) const override;

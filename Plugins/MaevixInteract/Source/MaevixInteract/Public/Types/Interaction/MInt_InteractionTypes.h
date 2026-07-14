@@ -21,11 +21,11 @@ struct MAEVIXINTERACT_API FMInt_ResolvedInteraction
 
 	/** Focused actor. Null means nothing is focused. */
 	UPROPERTY(BlueprintReadOnly, Category="MaevixInteract|Interaction")
-	TObjectPtr<AActor> Target = nullptr;
+	TObjectPtr<AActor> Target{nullptr};
 
 	/** Object the IMCore_Interactable calls dispatch to (an interactable component, or the actor itself). */
 	UPROPERTY(BlueprintReadOnly, Category="MaevixInteract|Interaction")
-	TObjectPtr<UObject> Provider = nullptr;
+	TObjectPtr<UObject> Provider{nullptr};
 
 	/** Prompt text and type tag for the focused interactable in its current state. */
 	UPROPERTY(BlueprintReadOnly, Category="MaevixInteract|Interaction")

@@ -32,5 +32,5 @@ struct MAEVIXINTERACT_API FMInt_ExecutionConfig
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MaevixInteract|Execution",
 		meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float BaseHoldSeconds = 1.0f;
+	float BaseHoldSeconds{1.0f};
 };
