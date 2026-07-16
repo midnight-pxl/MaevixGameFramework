@@ -28,19 +28,17 @@ class MAEVIXCORE_API AMCore_PlayerController : public APlayerController
 public:
 	AMCore_PlayerController();
 
-	// ============================================================================
-	// ACTOR OVERRIDES
-	// ============================================================================
-
-	virtual void BeginPlay() override;
-
 protected:
 	// ============================================================================
 	// PLAYERCONTROLLER OVERRIDES
 	// ============================================================================
 
+	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	
+	
 	/** Widget to push when UI system ready (HUD, MainMenu, etc.). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MaevixCore|UI")
 	TSubclassOf<UCommonActivatableWidget> PrimaryWidgetClass;

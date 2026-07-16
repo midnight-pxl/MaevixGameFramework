@@ -2,14 +2,18 @@
 
 #include "CorePlayer/MCore_PlayerController.h"
 
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 #include "CoreData/Tags/MCore_UILayerTags.h"
 #include "CoreData/Logging/LogMaevixPlayer.h"
+#include "CorePlayer/MCore_CameraManager.h"
 #include "CoreUI/MCore_UISubsystem.h"
 #include "CoreUI/Widgets/Primitives/MCore_ActivatableBase.h"
 
 AMCore_PlayerController::AMCore_PlayerController()
 {
 	PrimaryWidgetLayer = MCore_UILayerTags::MCore_UI_Layer_Game;
+	PlayerCameraManagerClass = AMCore_CameraManager::StaticClass();
 }
 
 void AMCore_PlayerController::BeginPlay()
@@ -19,6 +23,22 @@ void AMCore_PlayerController::BeginPlay()
 	if (!IsLocalController()) { return; }
 
 	InitializeUISystem();
+}
+
+void AMCore_PlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	
+	/** Add IMCs only for Local Player Controller(s) */
+	if (!IsLocalController()) { return; }
+	
+	if (UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		for (UInputMappingContext* CurrentContext : InputContexts)
+		{
+			InputSubsystem->AddMappingContext(CurrentContext, 0);
+		}
+	}
 }
 
 void AMCore_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
