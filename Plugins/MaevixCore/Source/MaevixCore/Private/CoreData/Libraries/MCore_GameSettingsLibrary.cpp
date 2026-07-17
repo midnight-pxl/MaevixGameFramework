@@ -1236,19 +1236,16 @@ void UMCore_GameSettingsLibrary::ApplyToConsoleVariable(const FName& CVarName, b
 // SOUND CLASS
 // ============================================================================
 
-namespace
-{
-	/* File-scope cache of the most recent slider value committed per SoundClass.
-	 * Drives the parent-chain product cascade in ApplyToSoundClass; every commit
-	 * walks the cache and re-pushes Product(self * cached ancestors) for every
-	 * tracked class, so a Master adjustment correctly propagates to all
-	 * descendant categories without clobbering their independently-set values.
-	 * Weak pointers so cache entries don't extend SoundClass lifetimes; stale
-	 * entries are skipped at walk time. */
-	TMap<TWeakObjectPtr<USoundClass>, float> GMCore_VolumeCache;
+/* File-scope cache of the most recent slider value committed per SoundClass.
+ * Drives the parent-chain product cascade in ApplyToSoundClass; every commit
+ * walks the cache and re-pushes Product(self * cached ancestors) for every
+ * tracked class, so a Master adjustment correctly propagates to all
+ * descendant categories without clobbering their independently-set values.
+ * Weak pointers so cache entries don't extend SoundClass lifetimes; stale
+ * entries are skipped at walk time. */
+static TMap<TWeakObjectPtr<USoundClass>, float> GMCore_VolumeCache;
 
-	constexpr int32 GMCore_VolumeWalkMaxDepth = 16;
-}
+static constexpr int32 GMCore_VolumeWalkMaxDepth = 16;
 
 /* Applies a volume slider commit to a SoundClass via the SoundMix override
  * pathway. Direct mutation of USoundClass::Properties.Volume is silently

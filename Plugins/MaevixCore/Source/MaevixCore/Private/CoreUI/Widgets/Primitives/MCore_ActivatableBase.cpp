@@ -18,26 +18,23 @@
 
 #define LOCTEXT_NAMESPACE "MaevixCoreUI"
 
-namespace
+static UWidget* MCore_FindFocusedDescendant(UWidget* Root)
 {
-	UWidget* FindFocusedDescendant(UWidget* Root)
-	{
-		if (!Root) { return nullptr; }
-		if (Root->HasKeyboardFocus()) { return Root; }
+	if (!Root) { return nullptr; }
+	if (Root->HasKeyboardFocus()) { return Root; }
 
-		if (UPanelWidget* Panel = Cast<UPanelWidget>(Root))
+	if (UPanelWidget* Panel = Cast<UPanelWidget>(Root))
+	{
+		for (int32 i = 0; i < Panel->GetChildrenCount(); i++)
 		{
-			for (int32 i = 0; i < Panel->GetChildrenCount(); i++)
+			if (UWidget* Found = MCore_FindFocusedDescendant(Panel->GetChildAt(i)))
 			{
-				if (UWidget* Found = FindFocusedDescendant(Panel->GetChildAt(i)))
-				{
-					return Found;
-				}
+				return Found;
 			}
 		}
-
-		return nullptr;
 	}
+
+	return nullptr;
 }
 
 UMCore_ActivatableBase::UMCore_ActivatableBase(const FObjectInitializer& ObjectInitializer)
@@ -220,7 +217,7 @@ void UMCore_ActivatableBase::NativeOnDeactivated()
 	SavedFocusTarget = nullptr;
 	if (WidgetTree && WidgetTree->RootWidget)
 	{
-		SavedFocusTarget = FindFocusedDescendant(WidgetTree->RootWidget);
+		SavedFocusTarget = MCore_FindFocusedDescendant(WidgetTree->RootWidget);
 	}
 
 	/* Cleanup input bindings BEFORE calling Super to prevent memory leaks */

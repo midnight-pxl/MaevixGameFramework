@@ -12,31 +12,28 @@
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 
-namespace
+/* Cache hosts on UMCore_SettingsCollectionSubsystem (UGameInstanceSubsystem). The
+   CDO has no world context, so proxies walk GEngine's world contexts to find a
+   live Game/PIE world's GameInstance. Cooker/commandlet contexts have no
+   GameInstance and are skipped. */
+static UMCore_SettingsCollectionSubsystem* MCore_FindRuntimeSubsystem()
 {
-	/* Cache hosts on UMCore_SettingsCollectionSubsystem (UGameInstanceSubsystem). The
-	   CDO has no world context, so proxies walk GEngine's world contexts to find a
-	   live Game/PIE world's GameInstance. Cooker/commandlet contexts have no
-	   GameInstance and are skipped. */
-	UMCore_SettingsCollectionSubsystem* FindRuntimeSubsystem()
-	{
-		if (!GEngine) { return nullptr; }
+	if (!GEngine) { return nullptr; }
 
-		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+	for (const FWorldContext& Context : GEngine->GetWorldContexts())
+	{
+		if (Context.WorldType != EWorldType::Game && Context.WorldType != EWorldType::PIE)
 		{
-			if (Context.WorldType != EWorldType::Game && Context.WorldType != EWorldType::PIE)
-			{
-				continue;
-			}
-			if (!Context.OwningGameInstance) { continue; }
-			if (UMCore_SettingsCollectionSubsystem* Subsystem =
-				Context.OwningGameInstance->GetSubsystem<UMCore_SettingsCollectionSubsystem>())
-			{
-				return Subsystem;
-			}
+			continue;
 		}
-		return nullptr;
+		if (!Context.OwningGameInstance) { continue; }
+		if (UMCore_SettingsCollectionSubsystem* Subsystem =
+			Context.OwningGameInstance->GetSubsystem<UMCore_SettingsCollectionSubsystem>())
+		{
+			return Subsystem;
+		}
 	}
+	return nullptr;
 }
 
 UMCore_CoreSettings::UMCore_CoreSettings()
@@ -114,7 +111,7 @@ bool UMCore_CoreSettings::IsValidThemeIndex(int32 Index) const
 
 const TArray<UMCore_DA_SettingsCollection*>& UMCore_CoreSettings::GetAllSettingsCollections() const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->GetAllSettingsCollections();
 	}
@@ -127,7 +124,7 @@ const TArray<UMCore_DA_SettingsCollection*>& UMCore_CoreSettings::GetAllSettings
 UMCore_DA_SettingDefinition* UMCore_CoreSettings::FindSettingDefinitionByTag(
 	const FGameplayTag& SettingTag) const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->FindSettingDefinitionByTag(SettingTag);
 	}
@@ -137,7 +134,7 @@ UMCore_DA_SettingDefinition* UMCore_CoreSettings::FindSettingDefinitionByTag(
 TArray<UMCore_DA_SettingDefinition*> UMCore_CoreSettings::GetSettingsForCategory(
 	const FGameplayTag& CategoryTag) const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->GetSettingsForCategory(CategoryTag);
 	}
@@ -146,7 +143,7 @@ TArray<UMCore_DA_SettingDefinition*> UMCore_CoreSettings::GetSettingsForCategory
 
 TArray<FGameplayTag> UMCore_CoreSettings::GetAllSettingsCategories() const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->GetAllSettingsCategories();
 	}
@@ -155,7 +152,7 @@ TArray<FGameplayTag> UMCore_CoreSettings::GetAllSettingsCategories() const
 
 FText UMCore_CoreSettings::GetCategoryDisplayName(const FGameplayTag& CategoryTag) const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->GetCategoryDisplayName(CategoryTag);
 	}
@@ -164,7 +161,7 @@ FText UMCore_CoreSettings::GetCategoryDisplayName(const FGameplayTag& CategoryTa
 
 bool UMCore_CoreSettings::HasValidSettingsCollections() const
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		return Subsystem->HasValidSettingsCollections();
 	}
@@ -173,7 +170,7 @@ bool UMCore_CoreSettings::HasValidSettingsCollections() const
 
 void UMCore_CoreSettings::InvalidateCollectionCache()
 {
-	if (UMCore_SettingsCollectionSubsystem* Subsystem = FindRuntimeSubsystem())
+	if (UMCore_SettingsCollectionSubsystem* Subsystem = MCore_FindRuntimeSubsystem())
 	{
 		Subsystem->InvalidateCollectionCache();
 	}

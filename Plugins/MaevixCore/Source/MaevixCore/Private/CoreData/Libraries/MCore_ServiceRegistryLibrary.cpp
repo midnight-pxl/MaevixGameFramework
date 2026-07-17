@@ -14,86 +14,83 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
-namespace
+/* Resolves the LocalPlayer that owns WorldContext, trying in order:
+ *   (1) a directly passed LocalPlayer;
+ *   (2) PlayerController -> GetLocalPlayer();
+ *   (3) Pawn -> Controller -> GetLocalPlayer();
+ *   (4) ActorComponent -> recurse on its Owner;
+ *   (5) UserWidget -> GetOwningLocalPlayer();
+ *   (6) Actor -> Instigator -> Controller -> GetLocalPlayer(), then owner chain walk to the first PlayerController.
+ * Returns nullptr (no log) when nothing resolves: that is the caller's signal to route to the
+ * GameInstance scope. No Player 0 fallback, mirroring UMCore_EventFunctionLibrary::ResolveLocalPlayer
+ * (split screen safety). */
+static ULocalPlayer* MCore_DeriveLocalPlayer(const UObject* WorldContext)
 {
-	/* Resolves the LocalPlayer that owns WorldContext, trying in order:
-	 *   (1) a directly passed LocalPlayer;
-	 *   (2) PlayerController -> GetLocalPlayer();
-	 *   (3) Pawn -> Controller -> GetLocalPlayer();
-	 *   (4) ActorComponent -> recurse on its Owner;
-	 *   (5) UserWidget -> GetOwningLocalPlayer();
-	 *   (6) Actor -> Instigator -> Controller -> GetLocalPlayer(), then owner chain walk to the first PlayerController.
-	 * Returns nullptr (no log) when nothing resolves: that is the caller's signal to route to the
-	 * GameInstance scope. No Player 0 fallback, mirroring UMCore_EventFunctionLibrary::ResolveLocalPlayer
-	 * (split screen safety). */
-	ULocalPlayer* DeriveLocalPlayer(const UObject* WorldContext)
+	if (!WorldContext) { return nullptr; }
+
+	if (ULocalPlayer* DirectLocalPlayer = const_cast<ULocalPlayer*>(Cast<ULocalPlayer>(WorldContext)))
 	{
-		if (!WorldContext) { return nullptr; }
+		return DirectLocalPlayer;
+	}
 
-		if (ULocalPlayer* DirectLocalPlayer = const_cast<ULocalPlayer*>(Cast<ULocalPlayer>(WorldContext)))
-		{
-			return DirectLocalPlayer;
-		}
+	if (const APlayerController* PlayerController = Cast<APlayerController>(WorldContext))
+	{
+		return PlayerController->GetLocalPlayer();
+	}
 
-		if (const APlayerController* PlayerController = Cast<APlayerController>(WorldContext))
+	if (const APawn* Pawn = Cast<APawn>(WorldContext))
+	{
+		if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
 		{
 			return PlayerController->GetLocalPlayer();
 		}
+	}
 
-		if (const APawn* Pawn = Cast<APawn>(WorldContext))
+	if (const UActorComponent* Component = Cast<UActorComponent>(WorldContext))
+	{
+		return MCore_DeriveLocalPlayer(Component->GetOwner());
+	}
+
+	if (const UUserWidget* Widget = Cast<UUserWidget>(WorldContext))
+	{
+		return Widget->GetOwningLocalPlayer();
+	}
+
+	if (const AActor* Actor = Cast<AActor>(WorldContext))
+	{
+		if (const APawn* Instigator = Actor->GetInstigator())
 		{
-			if (const APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController()))
+			if (const APlayerController* PlayerController = Cast<APlayerController>(Instigator->GetController()))
 			{
 				return PlayerController->GetLocalPlayer();
 			}
 		}
 
-		if (const UActorComponent* Component = Cast<UActorComponent>(WorldContext))
+		AActor* OwnerActor = Actor->GetOwner();
+		while (OwnerActor)
 		{
-			return DeriveLocalPlayer(Component->GetOwner());
-		}
-
-		if (const UUserWidget* Widget = Cast<UUserWidget>(WorldContext))
-		{
-			return Widget->GetOwningLocalPlayer();
-		}
-
-		if (const AActor* Actor = Cast<AActor>(WorldContext))
-		{
-			if (const APawn* Instigator = Actor->GetInstigator())
+			if (const APlayerController* PlayerController = Cast<APlayerController>(OwnerActor))
 			{
-				if (const APlayerController* PlayerController = Cast<APlayerController>(Instigator->GetController()))
-				{
-					return PlayerController->GetLocalPlayer();
-				}
+				return PlayerController->GetLocalPlayer();
 			}
-
-			AActor* OwnerActor = Actor->GetOwner();
-			while (OwnerActor)
-			{
-				if (const APlayerController* PlayerController = Cast<APlayerController>(OwnerActor))
-				{
-					return PlayerController->GetLocalPlayer();
-				}
-				OwnerActor = OwnerActor->GetOwner();
-			}
+			OwnerActor = OwnerActor->GetOwner();
 		}
-
-		/* No owner chain resolved to a specific LocalPlayer. Intentionally no Player 0 fallback (it would
-		   contaminate split screen). The caller treats nullptr as route to the GameInstance scope. */
-		return nullptr;
 	}
 
-	UMCore_GlobalServiceRegistrySubsystem* GetGlobalRegistry(const UObject* WorldContext)
-	{
-		UWorld* World = GEngine
-			? GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull)
-			: nullptr;
-		if (!World) { return nullptr; }
+	/* No owner chain resolved to a specific LocalPlayer. Intentionally no Player 0 fallback (it would
+	   contaminate split screen). The caller treats nullptr as route to the GameInstance scope. */
+	return nullptr;
+}
 
-		UGameInstance* GameInstance = World->GetGameInstance();
-		return GameInstance ? GameInstance->GetSubsystem<UMCore_GlobalServiceRegistrySubsystem>() : nullptr;
-	}
+static UMCore_GlobalServiceRegistrySubsystem* MCore_GetGlobalRegistry(const UObject* WorldContext)
+{
+	UWorld* World = GEngine
+		? GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull)
+		: nullptr;
+	if (!World) { return nullptr; }
+
+	UGameInstance* GameInstance = World->GetGameInstance();
+	return GameInstance ? GameInstance->GetSubsystem<UMCore_GlobalServiceRegistrySubsystem>() : nullptr;
 }
 
 bool UMCore_ServiceRegistryLibrary::ResolveService(const UObject* WorldContext,
@@ -110,7 +107,7 @@ bool UMCore_ServiceRegistryLibrary::ResolveService(const UObject* WorldContext,
 
 	/* Most specific first: try the caller's LocalPlayer scope, then fall back to the GameInstance scope so a
 	   per player provider wins over a global one. */
-	if (ULocalPlayer* LocalPlayer = DeriveLocalPlayer(WorldContext))
+	if (ULocalPlayer* LocalPlayer = MCore_DeriveLocalPlayer(WorldContext))
 	{
 		if (UMCore_LocalServiceRegistrySubsystem* LocalRegistry =
 			LocalPlayer->GetSubsystem<UMCore_LocalServiceRegistrySubsystem>())
@@ -121,7 +118,7 @@ bool UMCore_ServiceRegistryLibrary::ResolveService(const UObject* WorldContext,
 
 	if (!OutProvider)
 	{
-		if (UMCore_GlobalServiceRegistrySubsystem* GlobalRegistry = GetGlobalRegistry(WorldContext))
+		if (UMCore_GlobalServiceRegistrySubsystem* GlobalRegistry = MCore_GetGlobalRegistry(WorldContext))
 		{
 			OutProvider = GlobalRegistry->ResolveProvider(InterfaceClass, Discriminator);
 		}
@@ -156,7 +153,7 @@ FMCore_ServiceHandle UMCore_ServiceRegistryLibrary::RegisterService(const UObjec
 
 	/* Route by scope: a player owned context registers in that LocalPlayer's registry, otherwise the
 	   GameInstance registry. On a dedicated server no LocalPlayer is ever derivable, so this lands on Global. */
-	if (ULocalPlayer* LocalPlayer = DeriveLocalPlayer(WorldContext))
+	if (ULocalPlayer* LocalPlayer = MCore_DeriveLocalPlayer(WorldContext))
 	{
 		if (UMCore_LocalServiceRegistrySubsystem* LocalRegistry =
 			LocalPlayer->GetSubsystem<UMCore_LocalServiceRegistrySubsystem>())
@@ -169,7 +166,7 @@ FMCore_ServiceHandle UMCore_ServiceRegistryLibrary::RegisterService(const UObjec
 		return FMCore_ServiceHandle();
 	}
 
-	UMCore_GlobalServiceRegistrySubsystem* GlobalRegistry = GetGlobalRegistry(WorldContext);
+	UMCore_GlobalServiceRegistrySubsystem* GlobalRegistry = MCore_GetGlobalRegistry(WorldContext);
 	if (!GlobalRegistry)
 	{
 		UE_LOG(LogMaevixServices, Warning,

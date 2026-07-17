@@ -8,24 +8,21 @@
 #include "Components/Image.h"
 #include "Engine/Texture2D.h"
 
-namespace
+/* One warning per (widget class, bind name) per process: a misnamed BindWidgetOptional
+   surfaces once as a log line rather than spamming on every populate. */
+static void MCore_WarnMissingBindOnce(const UMCore_ToastBase* Toast, const TCHAR* BindName)
 {
-	/* One warning per (widget class, bind name) per process: a misnamed BindWidgetOptional
-	   surfaces once as a log line rather than spamming on every populate. */
-	void WarnMissingBindOnce(const UMCore_ToastBase* Toast, const TCHAR* BindName)
-	{
-		static TSet<FString> Warned;
-		const FString ClassName = GetNameSafe(Toast ? Toast->GetClass() : nullptr);
-		const FString Key = FString::Printf(TEXT("%s.%s"), *ClassName, BindName);
+	static TSet<FString> Warned;
+	const FString ClassName = GetNameSafe(Toast ? Toast->GetClass() : nullptr);
+	const FString Key = FString::Printf(TEXT("%s.%s"), *ClassName, BindName);
 
-		bool bAlreadyWarned = false;
-		Warned.Add(Key, &bAlreadyWarned);
-		if (!bAlreadyWarned)
-		{
-			UE_LOG(LogMaevixToast, Warning,
-				TEXT("ToastBase::PopulateToast: '%s' has non-empty text but no '%s' bind; check the WBP BindWidgetOptional name."),
-				*ClassName, BindName);
-		}
+	bool bAlreadyWarned = false;
+	Warned.Add(Key, &bAlreadyWarned);
+	if (!bAlreadyWarned)
+	{
+		UE_LOG(LogMaevixToast, Warning,
+			TEXT("ToastBase::PopulateToast: '%s' has non-empty text but no '%s' bind; check the WBP BindWidgetOptional name."),
+			*ClassName, BindName);
 	}
 }
 
@@ -84,7 +81,7 @@ void UMCore_ToastBase::PopulateToast_Implementation(const FMCore_ToastRequest& R
 	}
 	else if (!Request.Title.IsEmpty())
 	{
-		WarnMissingBindOnce(this, TEXT("Txt_Title"));
+		MCore_WarnMissingBindOnce(this, TEXT("Txt_Title"));
 	}
 
 	if (Txt_Body)
@@ -97,7 +94,7 @@ void UMCore_ToastBase::PopulateToast_Implementation(const FMCore_ToastRequest& R
 	}
 	else if (!Request.Body.IsEmpty())
 	{
-		WarnMissingBindOnce(this, TEXT("Txt_Body"));
+		MCore_WarnMissingBindOnce(this, TEXT("Txt_Body"));
 	}
 
 	if (Img_Icon)

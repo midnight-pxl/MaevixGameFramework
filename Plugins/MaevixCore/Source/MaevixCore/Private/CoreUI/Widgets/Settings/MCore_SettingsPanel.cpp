@@ -31,25 +31,22 @@
 // FILE-LOCAL HELPERS
 // ============================================================================
 
-namespace
+static FGameplayTag MCore_GetParentTag(const FGameplayTag& Tag)
 {
-	FGameplayTag GetParentTag(const FGameplayTag& Tag)
+	const FString TagStr = Tag.ToString();
+	int32 LastDot;
+	if (TagStr.FindLastChar(TEXT('.'), LastDot))
 	{
-		const FString TagStr = Tag.ToString();
-		int32 LastDot;
-		if (TagStr.FindLastChar(TEXT('.'), LastDot))
-		{
-			return FGameplayTag::RequestGameplayTag(FName(*TagStr.Left(LastDot)), false);
-		}
-		return FGameplayTag();
+		return FGameplayTag::RequestGameplayTag(FName(*TagStr.Left(LastDot)), false);
 	}
+	return FGameplayTag();
+}
 
-	void SetTabButtonLabel(UMCore_TabbedContainer* Container, FName TabID, const FGameplayTag& Tag)
+static void MCore_SetTabButtonLabel(UMCore_TabbedContainer* Container, FName TabID, const FGameplayTag& Tag)
+{
+	if (UMCore_ButtonBase* TabButton = Cast<UMCore_ButtonBase>(Container->GetTabButton(TabID)))
 	{
-		if (UMCore_ButtonBase* TabButton = Cast<UMCore_ButtonBase>(Container->GetTabButton(TabID)))
-		{
-			TabButton->SetButtonText(UMCore_CoreSettings::Get()->GetCategoryDisplayName(Tag));
-		}
+		TabButton->SetButtonText(UMCore_CoreSettings::Get()->GetCategoryDisplayName(Tag));
 	}
 }
 
@@ -353,7 +350,7 @@ void UMCore_SettingsPanel::BuildPanel()
 
 	for (const FGameplayTag& LeafTag : AllCategories)
 	{
-		const FGameplayTag ParentTag = GetParentTag(LeafTag);
+		const FGameplayTag ParentTag = MCore_GetParentTag(LeafTag);
 		if (!ParentTag.IsValid())
 		{
 			continue;
@@ -418,7 +415,7 @@ void UMCore_SettingsPanel::BuildPanel()
 			*TabID.ToString(), MainTabOrder.IndexOfByKey(ParentTag));
 		if (PageWidget && TabbedContainer_Main->AddTab(TabID, PageWidget))
 		{
-			SetTabButtonLabel(TabbedContainer_Main, TabID, ParentTag);
+			MCore_SetTabButtonLabel(TabbedContainer_Main, TabID, ParentTag);
 
 			if (FirstTabID.IsNone())
 			{
@@ -471,7 +468,7 @@ UMCore_TabbedContainer* UMCore_SettingsPanel::BuildTabbedPage(
 
 		if (SubContainer->AddTab(SubTabID, SubPage))
 		{
-			SetTabButtonLabel(SubContainer, SubTabID, ChildTag);
+			MCore_SetTabButtonLabel(SubContainer, SubTabID, ChildTag);
 			TabIDToLeafTag.Add(SubTabID, ChildTag);
 
 			OnCategoryPageCreated(ChildTag, SubPage);

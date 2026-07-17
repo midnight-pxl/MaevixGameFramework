@@ -6,39 +6,15 @@
 #include "CoreData/Interfaces/MCore_Interactable.h"
 #include "Interfaces/MInt_ExecutionConfigProvider.h"
 #include "Logging/LogMaevixInteract.h"
+#include "MInt_CollisionChannels.h"
 #include "Settings/MInt_DeveloperSettings.h"
 
 #include "CollisionQueryParams.h"
-#include "Engine/CollisionProfile.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
-
-namespace
-{
-	// Duplicated (with a Trace variant) from the interactable component's .cpp. Two copies is the agreed
-	// threshold; extract to a shared internal header on a third consumer, not before.
-	bool IsValidObjectChannel(ECollisionChannel Channel)
-	{
-		return Channel >= ECC_GameTraceChannel1
-			&& Channel <= ECC_GameTraceChannel18
-			&& UCollisionProfile::Get()->ConvertToObjectType(Channel) != ObjectTypeQuery_MAX;
-	}
-
-	bool IsValidTraceChannel(ECollisionChannel Channel)
-	{
-		return Channel >= ECC_GameTraceChannel1
-			&& Channel <= ECC_GameTraceChannel18
-			&& UCollisionProfile::Get()->ConvertToTraceType(Channel) != TraceTypeQuery_MAX;
-	}
-
-	FString ChannelDisplayName(ECollisionChannel Channel)
-	{
-		return StaticEnum<ECollisionChannel>()->GetDisplayNameTextByValue(static_cast<int64>(Channel)).ToString();
-	}
-}
 
 UMInt_InteractorComponent::UMInt_InteractorComponent()
 {
@@ -60,13 +36,13 @@ void UMInt_InteractorComponent::BeginPlay()
 	const ECollisionChannel InteractableChannel = Settings->InteractableObjectChannel.GetValue();
 	const ECollisionChannel TraceChannel = Settings->InteractionTraceChannel.GetValue();
 
-	if (!IsValidObjectChannel(MyChannel) || !IsValidObjectChannel(InteractableChannel) || !IsValidTraceChannel(TraceChannel))
+	if (!MInt_IsValidObjectChannel(MyChannel) || !MInt_IsValidObjectChannel(InteractableChannel) || !MInt_IsValidTraceChannel(TraceChannel))
 	{
 		UE_LOG(LogMaevixInteract, Error,
 			TEXT("UMInt_InteractorComponent on actor '%s' has invalid interaction channels (Interactor: '%s', Interactable: '%s', Trace: '%s'). ")
 			TEXT("Create the two Object channels and the Trace channel under Project Settings > Engine > Collision, then set all three ")
 			TEXT("under Project Settings > Game > Maevix Interact. Detection is disabled until configured."),
-			*GetNameSafe(GetOwner()), *ChannelDisplayName(MyChannel), *ChannelDisplayName(InteractableChannel), *ChannelDisplayName(TraceChannel));
+			*GetNameSafe(GetOwner()), *MInt_ChannelDisplayName(MyChannel), *MInt_ChannelDisplayName(InteractableChannel), *MInt_ChannelDisplayName(TraceChannel));
 		GoInert();
 		return;
 	}

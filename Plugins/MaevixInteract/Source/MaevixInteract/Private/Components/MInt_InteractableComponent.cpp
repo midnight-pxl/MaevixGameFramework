@@ -2,28 +2,11 @@
 
 #include "Components/MInt_InteractableComponent.h"
 
-#include "Engine/CollisionProfile.h"
 #include "Engine/EngineTypes.h"
 #include "GameFramework/Actor.h"
 #include "Logging/LogMaevixInteract.h"
+#include "MInt_CollisionChannels.h"
 #include "Settings/MInt_DeveloperSettings.h"
-
-namespace
-{
-	/** True when Channel is a project-defined game Object channel, not a built-in and not a Trace channel. */
-	bool IsValidObjectChannel(ECollisionChannel Channel)
-	{
-		return Channel >= ECC_GameTraceChannel1
-			&& Channel <= ECC_GameTraceChannel18
-			&& UCollisionProfile::Get()->ConvertToObjectType(Channel) != ObjectTypeQuery_MAX;
-	}
-
-	/** Configured display name of Channel, or its raw enum name when unnamed. For log messages. */
-	FString ChannelDisplayName(ECollisionChannel Channel)
-	{
-		return StaticEnum<ECollisionChannel>()->GetDisplayNameTextByValue(static_cast<int64>(Channel)).ToString();
-	}
-}
 
 UMInt_InteractableComponent::UMInt_InteractableComponent()
 {
@@ -49,13 +32,13 @@ void UMInt_InteractableComponent::OnRegister()
 	const ECollisionChannel InteractableChannel = Settings->InteractableObjectChannel.GetValue();
 	const ECollisionChannel InteractorChannel = Settings->InteractorObjectChannel.GetValue();
 
-	if (!IsValidObjectChannel(InteractableChannel) || !IsValidObjectChannel(InteractorChannel))
+	if (!MInt_IsValidObjectChannel(InteractableChannel) || !MInt_IsValidObjectChannel(InteractorChannel))
 	{
 		UE_LOG(LogMaevixInteract, Error,
 			TEXT("UMInt_InteractableComponent on actor '%s' has invalid interaction channels (Interactable: '%s', Interactor: '%s'). ")
 			TEXT("Create custom Object channels under Project Settings > Engine > Collision, then set both under ")
 			TEXT("Project Settings > Game > Maevix Interact. Detection is disabled until configured."),
-			*GetNameSafe(GetOwner()), *ChannelDisplayName(InteractableChannel), *ChannelDisplayName(InteractorChannel));
+			*GetNameSafe(GetOwner()), *MInt_ChannelDisplayName(InteractableChannel), *MInt_ChannelDisplayName(InteractorChannel));
 		return;
 	}
 
@@ -70,7 +53,7 @@ void UMInt_InteractableComponent::OnRegister()
 			TEXT("UMInt_InteractableComponent on actor '%s' has Interactable and Interactor Object Channels both set to '%s'. ")
 			TEXT("They must be two distinct channels. Set them under Project Settings > Game > Maevix Interact. ")
 			TEXT("Detection is disabled until configured."),
-			*GetNameSafe(GetOwner()), *ChannelDisplayName(InteractableChannel));
+			*GetNameSafe(GetOwner()), *MInt_ChannelDisplayName(InteractableChannel));
 		return;
 	}
 
