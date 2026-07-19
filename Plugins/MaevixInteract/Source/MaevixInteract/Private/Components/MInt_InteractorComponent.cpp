@@ -16,6 +16,21 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
+static const TCHAR* MInt_FocusResolveOutcomeToString(EMInt_FocusResolveOutcome Outcome)
+{
+	switch (Outcome)
+	{
+	case EMInt_FocusResolveOutcome::NoCandidates:    return TEXT("NoCandidates");
+	case EMInt_FocusResolveOutcome::NoViewRay:       return TEXT("NoViewRay");
+	case EMInt_FocusResolveOutcome::SweepMiss:       return TEXT("SweepMiss");
+	case EMInt_FocusResolveOutcome::HitNotCandidate: return TEXT("HitNotCandidate");
+	case EMInt_FocusResolveOutcome::NoProvider:      return TEXT("NoProvider");
+	case EMInt_FocusResolveOutcome::CannotInteract:  return TEXT("CannotInteract");
+	case EMInt_FocusResolveOutcome::Focused:         return TEXT("Focused");
+	}
+	return TEXT("Unknown");
+}
+
 UMInt_InteractorComponent::UMInt_InteractorComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;            // required so SetComponentTickEnabled(true) can work
@@ -49,6 +64,10 @@ void UMInt_InteractorComponent::BeginPlay()
 
 	CachedTraceChannel = TraceChannel;
 	bChannelsConfigured = true;
+
+	UE_LOG(LogMaevixInteract, Log,
+		TEXT("UMInt_InteractorComponent::BeginPlay: detection channels configured: Owner='%s', TraceChannel='%s'"),
+		*GetNameSafe(GetOwner()), *MInt_ChannelDisplayName(TraceChannel));
 
 	// This volume is an object on the Interactor channel and overlaps only the Interactable channel.
 	SetCollisionObjectType(MyChannel);
@@ -90,10 +109,19 @@ void UMInt_InteractorComponent::RefreshLocality()
 	const APawn* Pawn = Cast<APawn>(GetOwner());
 	if (bChannelsConfigured && Pawn && Pawn->IsLocallyControlled())
 	{
+		UE_LOG(LogMaevixInteract, Log,
+			TEXT("UMInt_InteractorComponent::RefreshLocality: detection active: Owner='%s'"),
+			*GetNameSafe(GetOwner()));
 		GoActive();
 	}
 	else
 	{
+		const TCHAR* InertReason = !bChannelsConfigured ? TEXT("channels unconfigured")
+			: !Pawn ? TEXT("owner is not a pawn")
+			: TEXT("pawn is not locally controlled");
+		UE_LOG(LogMaevixInteract, Log,
+			TEXT("UMInt_InteractorComponent::RefreshLocality: detection inert: Owner='%s', Reason='%s'"),
+			*GetNameSafe(GetOwner()), InertReason);
 		GoInert();
 	}
 }
@@ -134,6 +162,11 @@ void UMInt_InteractorComponent::HandleBeginOverlap(UPrimitiveComponent* /*Overla
 	{
 		SetComponentTickEnabled(true);
 	}
+
+	UE_LOG(LogMaevixInteract, Verbose,
+		TEXT("UMInt_InteractorComponent::HandleBeginOverlap: candidate added: Owner='%s', Candidate='%s', Count=%d, TickEnabled=%s"),
+		*GetNameSafe(GetOwner()), *GetNameSafe(OtherComp),
+		Candidates.Num(), bWasEmpty ? TEXT("true") : TEXT("false"));
 }
 
 void UMInt_InteractorComponent::HandleEndOverlap(UPrimitiveComponent* /*OverlappedComponent*/, AActor* /*OtherActor*/,
@@ -149,6 +182,11 @@ void UMInt_InteractorComponent::HandleEndOverlap(UPrimitiveComponent* /*Overlapp
 		SetComponentTickEnabled(false);
 		ClearFocusIfAny();
 	}
+
+	UE_LOG(LogMaevixInteract, Verbose,
+		TEXT("UMInt_InteractorComponent::HandleEndOverlap: candidate removed: Owner='%s', Candidate='%s', Count=%d, TickDisabled=%s"),
+		*GetNameSafe(GetOwner()), *GetNameSafe(OtherComp),
+		Candidates.Num(), Candidates.IsEmpty() ? TEXT("true") : TEXT("false"));
 }
 
 void UMInt_InteractorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -179,7 +217,16 @@ void UMInt_InteractorComponent::ResolveAndBroadcastIfChanged()
 	AActor* Target{nullptr};
 	UObject* Provider{nullptr};
 	FHitResult Hit;
-	ResolveFocus(Hit, Target, Provider);
+	EMInt_FocusResolveOutcome Outcome = EMInt_FocusResolveOutcome::NoCandidates;
+	ResolveFocus(Hit, Target, Provider, Outcome);
+
+	if (Outcome != LastResolveOutcome)
+	{
+		UE_LOG(LogMaevixInteract, Verbose,
+			TEXT("UMInt_InteractorComponent::ResolveAndBroadcastIfChanged: resolve outcome changed: Owner='%s', Outcome='%s', Count=%d"),
+			*GetNameSafe(GetOwner()), MInt_FocusResolveOutcomeToString(Outcome), Candidates.Num());
+		LastResolveOutcome = Outcome;
+	}
 
 	const bool bNowFocused = (Target != nullptr);
 	const bool bIdentityChanged = (CachedTarget.Get() != Target) || (CachedProvider.Get() != Provider);
@@ -198,13 +245,15 @@ void UMInt_InteractorComponent::ResolveAndBroadcastIfChanged()
 	}
 }
 
-bool UMInt_InteractorComponent::ResolveFocus(FHitResult& OutHit, AActor*& OutTarget, UObject*& OutProvider) const
+bool UMInt_InteractorComponent::ResolveFocus(FHitResult& OutHit, AActor*& OutTarget, UObject*& OutProvider,
+	EMInt_FocusResolveOutcome& OutOutcome) const
 {
 	OutTarget = nullptr;
 	OutProvider = nullptr;
 
 	if (Candidates.IsEmpty())
 	{
+		OutOutcome = EMInt_FocusResolveOutcome::NoCandidates;
 		return false;
 	}
 
@@ -214,6 +263,7 @@ bool UMInt_InteractorComponent::ResolveFocus(FHitResult& OutHit, AActor*& OutTar
 	ViewDir = ViewDir.GetSafeNormal();
 	if (ViewDir.IsNearlyZero())
 	{
+		OutOutcome = EMInt_FocusResolveOutcome::NoViewRay;
 		return false; // no valid view (a non-player owner without a GetInteractionTraceRay override)
 	}
 
@@ -226,28 +276,35 @@ bool UMInt_InteractorComponent::ResolveFocus(FHitResult& OutHit, AActor*& OutTar
 	if (!GetWorld()->SweepSingleByChannel(OutHit, Start, End, FQuat::Identity, CachedTraceChannel,
 			FCollisionShape::MakeSphere(TraceRadius), Params))
 	{
+		OutOutcome = EMInt_FocusResolveOutcome::SweepMiss;
 		return false;
 	}
 
 	AActor* HitActor = OutHit.GetActor();
 	if (!HitActor || !IsCandidateActor(HitActor)) // the trace answers "looking at"; the candidate set answers "in reach"
 	{
+		OutOutcome = EMInt_FocusResolveOutcome::HitNotCandidate;
 		return false;
 	}
 
 	UObject* Provider = ResolveProvider(HitActor);
 	if (!Provider || !IMCore_Interactable::Execute_CanInteract(Provider, MakeContext()))
 	{
+		OutOutcome = !Provider ? EMInt_FocusResolveOutcome::NoProvider : EMInt_FocusResolveOutcome::CannotInteract;
 		return false;
 	}
 
 	OutTarget = HitActor;
 	OutProvider = Provider;
+	OutOutcome = EMInt_FocusResolveOutcome::Focused;
 	return true;
 }
 
 void UMInt_InteractorComponent::BroadcastResolved(AActor* Target, UObject* Provider, const FHitResult& Hit)
 {
+	const bool bWasFocused = bFocused;
+	const AActor* PreviousTarget = CachedTarget.Get();
+
 	FMInt_ResolvedInteraction Resolved;
 	Resolved.Target = Target;
 	Resolved.Provider = Provider;
@@ -269,6 +326,19 @@ void UMInt_InteractorComponent::BroadcastResolved(AActor* Target, UObject* Provi
 	CachedProvider = Provider;
 	CachedStateVersion = Version;
 	bFocused = (Target != nullptr);
+
+	if (!bWasFocused && bFocused)
+	{
+		UE_LOG(LogMaevixInteract, Log,
+			TEXT("UMInt_InteractorComponent::BroadcastResolved: focus acquired: Owner='%s', Target='%s'"),
+			*GetNameSafe(GetOwner()), *GetNameSafe(Target));
+	}
+	else if (bWasFocused && !bFocused)
+	{
+		UE_LOG(LogMaevixInteract, Log,
+			TEXT("UMInt_InteractorComponent::BroadcastResolved: focus lost: Owner='%s', Target='%s'"),
+			*GetNameSafe(GetOwner()), *GetNameSafe(PreviousTarget));
+	}
 
 	OnInteractFocusChanged.Broadcast(Resolved);
 }

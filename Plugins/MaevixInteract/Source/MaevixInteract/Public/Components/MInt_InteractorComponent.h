@@ -12,6 +12,18 @@ class AController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMInt_OnInteractFocusChanged, const FMInt_ResolvedInteraction&, Resolved);
 
+/** Which exit ResolveFocus() took on its last run. Diagnostic only, never reflected or serialized. */
+enum class EMInt_FocusResolveOutcome : uint8
+{
+	NoCandidates,
+	NoViewRay,
+	SweepMiss,
+	HitNotCandidate,
+	NoProvider,
+	CannotInteract,
+	Focused
+};
+
 /**
  * Player-side interaction driver. A local pawn carries this Interactor volume; it tracks nearby interactable
  * volumes by overlap, sweeps the camera ray to decide which one is focused, and broadcasts the resolved
@@ -87,7 +99,8 @@ private:
 	void GoInert();
 
 	void ResolveAndBroadcastIfChanged();
-	bool ResolveFocus(FHitResult& OutHit, AActor*& OutTarget, UObject*& OutProvider) const;
+	bool ResolveFocus(FHitResult& OutHit, AActor*& OutTarget, UObject*& OutProvider,
+		EMInt_FocusResolveOutcome& OutOutcome) const;
 	void BroadcastResolved(AActor* Target, UObject* Provider, const FHitResult& Hit);
 	void ClearFocusIfAny();
 	void PruneCandidates();
@@ -107,4 +120,7 @@ private:
 	bool bDetectionActive{false};
 	/** Whether the last broadcast reported a focus. Tracked separately from CachedTarget so a destroyed focus still emits focus-lost. */
 	bool bFocused{false};
+
+	/** Last outcome ResolveFocus() reported. Edge-triggers the resolve-outcome diagnostic so it logs only on change. */
+	EMInt_FocusResolveOutcome LastResolveOutcome = EMInt_FocusResolveOutcome::NoCandidates;
 };

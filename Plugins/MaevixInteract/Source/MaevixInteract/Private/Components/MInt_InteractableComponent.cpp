@@ -64,6 +64,10 @@ void UMInt_InteractableComponent::OnRegister()
 	// volume that passes through walls; if it blocked or was traceable, the camera trace would hit the
 	// sphere instead of the interactable's mesh and players could focus interactables through geometry.
 	// Do not "fix" this by making the sphere Block or Overlap anything besides the Interactor channel.
+
+	UE_LOG(LogMaevixInteract, Verbose,
+		TEXT("UMInt_InteractableComponent::OnRegister: interactable registered: Owner='%s', InteractableChannel='%s'"),
+		*GetNameSafe(GetOwner()), *MInt_ChannelDisplayName(InteractableChannel));
 }
 
 bool UMInt_InteractableComponent::CanInteract_Implementation(const FMCore_InteractionContext& Context) const
