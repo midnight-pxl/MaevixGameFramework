@@ -22,7 +22,7 @@ void UMInt_InteractableComponent::OnRegister()
 {
 	Super::OnRegister();
 
-	// CDO/archetype has no owner to name and never runs detection; only real instances configure collision.
+	/** Has no owner and never runs detection; only real instances configure collision. */
 	if (IsTemplate())
 	{
 		return;
@@ -42,11 +42,7 @@ void UMInt_InteractableComponent::OnRegister()
 		return;
 	}
 
-	// The two channels must differ. If the interactable's object type equalled the channel it responds
-	// Overlap to, every interactable sphere would overlap every other interactable sphere: in a densely
-	// placed loot room that is a quadratic number of overlap pairs the physics scene tracks and dispatches
-	// events for, all doing nothing. Two distinct channels is the whole reason for this model over a single
-	// shared one, and a settings typo must not be able to collapse it back.
+	/** Channels for Interactable and Interactor must differ */ 
 	if (InteractableChannel == InteractorChannel)
 	{
 		UE_LOG(LogMaevixInteract, Error,
@@ -60,10 +56,10 @@ void UMInt_InteractableComponent::OnRegister()
 	SetCollisionObjectType(InteractableChannel);
 	SetCollisionResponseToAllChannels(ECR_Ignore);
 	SetCollisionResponseToChannel(InteractorChannel, ECR_Overlap);
-	// MANDATORY: ignore every other channel, the P2b interaction trace channel included. This is a ~150cm
-	// volume that passes through walls; if it blocked or was traceable, the camera trace would hit the
-	// sphere instead of the interactable's mesh and players could focus interactables through geometry.
-	// Do not "fix" this by making the sphere Block or Overlap anything besides the Interactor channel.
+	/**
+	 * MANDATORY: ignore every other channel. Do not "fix" this by making the sphere
+	 * Block or Overlap anything besides the Interactor channel.
+	 */
 
 	UE_LOG(LogMaevixInteract, Verbose,
 		TEXT("UMInt_InteractableComponent::OnRegister: interactable registered: Owner='%s', InteractableChannel='%s'"),
@@ -85,19 +81,33 @@ void UMInt_InteractableComponent::OnInteract_Implementation(const FMCore_Interac
 	{
 		IMCore_Interactable::Execute_OnInteract(Owner, Context);
 	}
-	// Authored default: no-op. The game supplies commit behavior via the owner's interface override.
+	/** NOP. The game supplies commit behavior via the owner's interface override. */
 }
 
 FMCore_InteractionData UMInt_InteractableComponent::GetInteractionData_Implementation(const FMCore_InteractionContext& Context) const
 {
-	if (const AActor* Owner = GetOwner(); Owner && Owner->Implements<UMCore_Interactable>())
-	{
-		return IMCore_Interactable::Execute_GetInteractionData(Owner, Context);
-	}
-
+	/**
+	 * Component-authored props are the base; an owner that implements IMCore_Interactable overrides only
+	 * the fields it fills (non-empty PromptText, valid InteractionTypeTag), the rest fall back here. Guards
+	 * an owner that adopts the empty interface default which would otherwise blank the authored prompt.
+	 */
 	FMCore_InteractionData Data;
 	Data.PromptText = PromptText;
 	Data.InteractionTypeTag = InteractionTypeTag;
+
+	if (const AActor* Owner = GetOwner(); Owner && Owner->Implements<UMCore_Interactable>())
+	{
+		const FMCore_InteractionData OwnerData = IMCore_Interactable::Execute_GetInteractionData(Owner, Context);
+		if (!OwnerData.PromptText.IsEmpty())
+		{
+			Data.PromptText = OwnerData.PromptText;
+		}
+		if (OwnerData.InteractionTypeTag.IsValid())
+		{
+			Data.InteractionTypeTag = OwnerData.InteractionTypeTag;
+		}
+	}
+
 	return Data;
 }
 
@@ -112,6 +122,11 @@ int32 UMInt_InteractableComponent::GetInteractionStateVersion_Implementation() c
 
 FMInt_ExecutionConfig UMInt_InteractableComponent::GetExecutionConfig_Implementation() const
 {
+	/**
+	 * Owner override (when it implements IMInt_ExecutionConfigProvider) supplies the whole config, not a
+	 * per-field merge. Author execution timing in a single place:
+	 * the component, or a full owner override, never both.
+	 */
 	if (const AActor* Owner = GetOwner(); Owner && Owner->Implements<UMInt_ExecutionConfigProvider>())
 	{
 		return IMInt_ExecutionConfigProvider::Execute_GetExecutionConfig(Owner);

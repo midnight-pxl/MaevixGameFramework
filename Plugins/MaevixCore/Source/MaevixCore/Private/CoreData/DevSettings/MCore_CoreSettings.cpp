@@ -12,10 +12,11 @@
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 
-/* Cache hosts on UMCore_SettingsCollectionSubsystem (UGameInstanceSubsystem). The
-   CDO has no world context, so proxies walk GEngine's world contexts to find a
-   live Game/PIE world's GameInstance. Cooker/commandlet contexts have no
-   GameInstance and are skipped. */
+/**
+ * Cache hosts on UMCore_SettingsCollectionSubsystem (UGameInstanceSubsystem).
+ * Proxies walk GEngine's world contexts to find a
+ * live Game/PIE world's GameInstance. 
+ */
 static UMCore_SettingsCollectionSubsystem* MCore_FindRuntimeSubsystem()
 {
 	if (!GEngine) { return nullptr; }
@@ -80,16 +81,10 @@ bool UMCore_CoreSettings::IsUIDebugOverlayEnabled() const
 
 UMCore_PDA_UITheme_Base* UMCore_CoreSettings::GetDefaultTheme() const
 {
-	if (!IsValidThemeIndex(DefaultThemeIndex))
-	{
-		return nullptr;
-	}
+	if (!IsValidThemeIndex(DefaultThemeIndex)) { return nullptr; }
 
 	const FMCore_ThemeEntry& ThemeEntry = AvailableThemes[DefaultThemeIndex];
-	if (ThemeEntry.ThemeAsset.IsNull())
-	{
-		return nullptr;
-	}
+	if (ThemeEntry.ThemeAsset.IsNull()) { return nullptr; }
 
 	return ThemeEntry.ThemeAsset.LoadSynchronous();
 }
